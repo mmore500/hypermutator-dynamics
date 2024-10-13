@@ -3,6 +3,7 @@
 import sys
 
 import pandas as pd
+
 from pylib.munge._calc_fixprobs_from_traits import calc_fixprobs_from_traits
 
 if __name__ == "__main__":
