@@ -2,12 +2,13 @@ import pandas as pd
 import polars as pl
 
 
-def calc_characters_from_genomes_cupy(genomes_df: pd.DataFrame) -> pl.DataFrame:
+def calc_characters_from_genomes_cupy(
+    genomes_df: pd.DataFrame,
+) -> pl.DataFrame:
 
     genomes_df["available beneficial mutations"] = (
         genomes_df["genomeFlavor"]
-        .str
-        .extract("(\d+)", expand=False)
+        .str.extract("(\d+)", expand=False)
         .fillna(1)
         .astype("int8")
     )
@@ -51,30 +52,36 @@ def calc_characters_from_genomes_cupy(genomes_df: pd.DataFrame) -> pl.DataFrame:
     )
 
     df = df.with_columns(
-        (
-            pl.col("row").cast(pl.UInt64) // pl.col("nRowSubgrid")
-        ).alias("rowGroup").cast(pl.UInt16),
-        (
-            pl.col("col").cast(pl.UInt64) // pl.col("nColSubgrid")
-        ).alias("colGroup").cast(pl.UInt16),
+        (pl.col("row").cast(pl.UInt64) // pl.col("nRowSubgrid"))
+        .alias("rowGroup")
+        .cast(pl.UInt16),
+        (pl.col("col").cast(pl.UInt64) // pl.col("nColSubgrid"))
+        .alias("colGroup")
+        .cast(pl.UInt16),
     )
 
     df = df.with_columns(
-    (
+        (
             pl.when(
                 pl.col("nColSubgrid") == 0,
-            ).then(
+            )
+            .then(
                 pl.col("col").max() + 1,
-            ).otherwise(
+            )
+            .otherwise(
                 pl.col("nColSubgrid"),
-            ).cast(pl.UInt64)
+            )
+            .cast(pl.UInt64)
             * pl.when(
                 pl.col("nRowSubgrid") == 0,
-            ).then(
+            )
+            .then(
                 pl.col("row").max() + 1,
-            ).otherwise(
+            )
+            .otherwise(
                 pl.col("nRowSubgrid"),
-            ).cast(pl.UInt64)
+            )
+            .cast(pl.UInt64)
             * pl.col("tilePopSize").cast(pl.UInt64)
         ).alias("population size"),
     ).drop("nColSubgrid", "nRowSubgrid", "tilePopSize", "col", "row")
@@ -84,8 +91,9 @@ def calc_characters_from_genomes_cupy(genomes_df: pd.DataFrame) -> pl.DataFrame:
             pl.col("colGroup").cast(pl.UInt64)
             + (pl.col("colGroup").max() + 1).cast(pl.UInt64)
             * pl.col("rowGroup").cast(pl.UInt64)
-        ).alias("group").cast(pl.UInt32),
+        )
+        .alias("group")
+        .cast(pl.UInt32),
     ).drop("rowGroup", "colGroup")
-
 
     return df
