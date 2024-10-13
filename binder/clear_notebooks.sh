@@ -30,6 +30,7 @@ echo "--------------------------------------"
 shopt -s nullglob
 
 for notebook in "${script_dir}/"*.ipynb; do
+  (
   jupyter nbconvert \
     --ClearOutputPreprocessor.enabled=True \
     --clear-output \
@@ -76,7 +77,10 @@ for notebook in "${script_dir}/"*.ipynb; do
   ); \
   fp.write('\n'); \
   "
+  ) &
 done
+
+wait
 
 shopt -u nullglob
 
