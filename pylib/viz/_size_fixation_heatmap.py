@@ -29,25 +29,31 @@ def _munge_fixprobs_df(
     on: str,
     values: str,
 ) -> pd.DataFrame:
-    return pl.DataFrame(fixprobs_df).filter(
-        pl.col("genotype") == genotype
-    ).with_columns(
-        pl.col("population size")
-        .cast(pl.Float64)
-        .map_elements(
-            lambda x: f"{x:.2e}",
-            return_dtype=pl.String,
-        ),
-    ).pivot(
-        index=index,
-        on=on,
-        values=values,
-        aggregate_function="mean",
-    ).sort(
-        index,
-        descending=True,
-    ).to_pandas().set_index(
-        index,
+    return (
+        pl.DataFrame(fixprobs_df)
+        .filter(pl.col("genotype") == genotype)
+        .with_columns(
+            pl.col("population size")
+            .cast(pl.Float64)
+            .map_elements(
+                lambda x: f"{x:.2e}",
+                return_dtype=pl.String,
+            ),
+        )
+        .pivot(
+            index=index,
+            on=on,
+            values=values,
+            aggregate_function="mean",
+        )
+        .sort(
+            index,
+            descending=True,
+        )
+        .to_pandas()
+        .set_index(
+            index,
+        )
     )
 
 
@@ -71,11 +77,11 @@ def size_fixation_heatmap(
     ax = sns.heatmap(
         hmdf,
         cmap=_make_cmap(),
-        annot=True,       # Optional: Add annotations inside the squares
-        fmt=".2f",        # Formatting numbers to 2 decimal places
-        linewidths=.5,    # Line width between cells
+        annot=True,  # Optional: Add annotations inside the squares
+        fmt=".2f",  # Formatting numbers to 2 decimal places
+        linewidths=0.5,  # Line width between cells
         vmin=0.0,
-        vmax=1.0,         # Fixation probability color range
+        vmax=1.0,  # Fixation probability color range
         cbar_kws={
             "label": "",
             "shrink": 0.7,
