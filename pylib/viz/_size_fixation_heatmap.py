@@ -18,13 +18,19 @@ def _make_cmap():
 
     return mpl_colors.LinearSegmentedColormap.from_list(
         "custom_cmap",
-        list(reversed(colors_combined)),
+        list(colors_combined),
     )
 
 
-def _munge_fixprobs_df(fixprobs_df: pd.DataFrame) -> pd.DataFrame:
+def _munge_fixprobs_df(
+    fixprobs_df: pd.DataFrame,
+    genotype: str,
+    index: str,
+    on: str,
+    values: str,
+) -> pd.DataFrame:
     return pl.DataFrame(fixprobs_df).filter(
-        pl.col("genotype") == "normomutator"
+        pl.col("genotype") == genotype
     ).with_columns(
         pl.col("population size")
         .cast(pl.Float64)
@@ -33,27 +39,32 @@ def _munge_fixprobs_df(fixprobs_df: pd.DataFrame) -> pd.DataFrame:
             return_dtype=pl.String,
         ),
     ).pivot(
-        index="available beneficial mutations",
-        on="population size",
-        values="fixation probability",
+        index=index,
+        on=on,
+        values=values,
         aggregate_function="mean",
     ).sort(
-        "available beneficial mutations",
+        index,
         descending=True,
     ).to_pandas().set_index(
-        "available beneficial mutations",
+        index,
     )
 
 
 def size_fixation_heatmap(
     fixprobs_df: pd.DataFrame,
+    genotype: str,
     index: str,
     on: str,
     values: str,
 ) -> mpl_Axes:
 
     hmdf = _munge_fixprobs_df(
-        fixprobs_df
+        fixprobs_df,
+        genotype=genotype,
+        index=index,
+        on=on,
+        values=values,
     )
 
     # Assume hmdf is your DataFrame and custom_cmap is your colormap
@@ -73,7 +84,6 @@ def size_fixation_heatmap(
 
     # Invert colorbar and add labels as before
     cbar = plt.gcf().axes[-1]  # Access the colorbar
-    cbar.invert_yaxis()
     cbar_label_top = "normo\nmutate\nfavored"
     cbar_label_bottom = "\nhyper\nmutate\nfavored"
     plt.text(
