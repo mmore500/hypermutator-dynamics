@@ -1,4 +1,4 @@
-from matplotlib import cm as mpl_colors
+from matplotlib import colors as mpl_colors
 
 
 def get_nben_cmap() -> mpl_colors.LinearSegmentedColormap:
