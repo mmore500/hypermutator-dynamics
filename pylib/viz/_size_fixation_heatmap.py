@@ -1,8 +1,8 @@
-import numpy as np
-from matplotlib.axes import Axes as mpl_Axes
-import matplotlib.pyplot as plt
 from matplotlib import colors as mpl_colors
 from matplotlib import ticker as mpl_ticker
+from matplotlib.axes import Axes as mpl_Axes
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import polars as pl
 import seaborn as sns
