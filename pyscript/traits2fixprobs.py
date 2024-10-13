@@ -12,6 +12,6 @@ if __name__ == "__main__":
     df = pd.read_parquet(target_path)
     print(f"read {len(df)} rows")
     df = calc_fixprobs_from_traits(df)
-    out_path =target_path.replace('a=traits', 'a=fixprobs')
+    out_path = target_path.replace("a=traits", "a=fixprobs")
     print(f"writing {out_path}")
     df.to_parquet(target_path.replace("a=traits", "a=fixprobs"))
