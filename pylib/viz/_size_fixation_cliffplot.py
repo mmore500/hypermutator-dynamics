@@ -63,7 +63,7 @@ def size_fixation_cliffplot(
         [
             pos.x0,
             0.88,
-            pos.width * 6.7,
+            pos.width * fixprobs_df[col].nunique() * 1.1,
             delta,
         ],
     )
