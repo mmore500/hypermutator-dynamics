@@ -7,6 +7,7 @@ import seaborn as sns
 from ._fill_above_linesx import fill_above_linesx
 from ._fill_under_linesx import fill_under_linesx
 
+
 def size_fixation_cliffplot(
     fixprobs_df: pd.DataFrame,
     x: str,
