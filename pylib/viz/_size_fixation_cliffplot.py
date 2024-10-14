@@ -46,7 +46,6 @@ def size_fixation_cliffplot(
 
     # g.figure.suptitle("n={apn} agents per node", x=0.63, y=1.02)
     g.figure.subplots_adjust(wspace=0.12)
-    g.set_xticklabels(rotation=-45)
 
     for i, ax in enumerate(g.axes.flat):
         fill_above_linesx(ax, color=sns.color_palette("tab10")[0])
@@ -54,6 +53,9 @@ def size_fixation_cliffplot(
         ax.set_title("")
         if i + 1 != (len(g.axes.flat) + 1) // 2:  # leave one xlabel
             ax.set_xlabel("")
+        ax.axvline(0.5, color="white", lw=1, ls="--")
+        ax.set_xticks([0, 0.5, 1])
+        ax.set_xticklabels(["", "0.5", ""])
 
     # Create a new dummy axis above the plot
     g.figure.subplots_adjust(top=0.85)
