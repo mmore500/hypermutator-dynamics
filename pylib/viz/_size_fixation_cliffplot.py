@@ -1,6 +1,7 @@
 import typing
 
 from matplotlib import ticker as mpl_ticker
+import opytional as opyt
 import pandas as pd
 import seaborn as sns
 
@@ -16,6 +17,7 @@ def size_fixation_cliffplot(
     hue: str,
     hue_order: typing.List[str],
     errorbar: str,
+    col_label: typing.Optional[str] = None,
     ylim: typing.Tuple[float, float] = (1, None),
     **kwargs: dict,
 ) -> sns.FacetGrid:
@@ -89,7 +91,7 @@ def size_fixation_cliffplot(
     g.figure.text(
         0.02,
         0.97,
-        col.replace(" ", "\n"),
+        opyt.or_value(col_label, col).replace(" ", "\n"),
         ha="left",
         va="top",
     )
