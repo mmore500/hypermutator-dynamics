@@ -18,9 +18,12 @@ def size_fixation_cliffplot(
     hue_order: typing.List[str],
     errorbar: str,
     col_label: typing.Optional[str] = None,
+    palette: typing.Optional[str] = "tab10",
     ylim: typing.Tuple[float, float] = (1, None),
     **kwargs: dict,
 ) -> sns.FacetGrid:
+    palette = sns.color_palette(palette)
+
     g = sns.relplot(
         data=fixprobs_df[fixprobs_df[hue] == hue_order[1]],
         x=x,
@@ -35,6 +38,7 @@ def size_fixation_cliffplot(
         kind="line",
         markers=True,
         orient="y",
+        palette=palette,
         **kwargs,
     )
 
@@ -51,7 +55,7 @@ def size_fixation_cliffplot(
     g.figure.subplots_adjust(wspace=0.12)
 
     for i, ax in enumerate(g.axes.flat):
-        fill_above_linesx(ax, color=sns.color_palette("tab10")[0])
+        fill_above_linesx(ax, color=palette[0])
         fill_under_linesx(ax)
         ax.set_title("")
         if i + 1 != (len(g.axes.flat) + 1) // 2:  # leave one xlabel
