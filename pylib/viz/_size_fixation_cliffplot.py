@@ -19,6 +19,7 @@ def size_fixation_cliffplot(
     errorbar: str,
     col_label: typing.Optional[str] = None,
     palette: typing.Optional[str] = "tab10",
+    seed: int = 1,
     ylim: typing.Tuple[float, float] = (1, None),
     **kwargs: dict,
 ) -> sns.FacetGrid:
@@ -38,6 +39,7 @@ def size_fixation_cliffplot(
         kind="line",
         markers=True,
         orient="y",
+        seed=seed,
         palette=palette,
         **kwargs,
     )
