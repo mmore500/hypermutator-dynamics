@@ -60,7 +60,6 @@ def size_fixation_cliffplot(
         ax.set_xticks([0, 0.5, 1])
         ax.set_xticklabels(["", "0.5", ""])
         ax.set_ylim(ylim)
-        ax.set_facecolor("gainsboro")
 
     # Create a new dummy axis above the plot
     g.figure.subplots_adjust(top=0.85)
