@@ -34,7 +34,7 @@ def size_fixation_cliffplot(
         hue=hue,
         hue_order=hue_order,
         aspect={
-            "skinny": 0.12,
+            "skinny": 0.15,
             "wide": 0.2,
         }[layout],
         errorbar=errorbar,
