@@ -15,6 +15,7 @@ def size_fixation_areaplot(
     hue: str,
     hue_order: typing.List[str],
     palette: typing.Optional[str] = "tab10",
+    seed: int = 1,
     xscale: str = "log",
     **kwargs: dict,
 ) -> sns.FacetGrid:
@@ -30,6 +31,7 @@ def size_fixation_areaplot(
         kind="line",
         orient="x",
         palette=palette,
+        seed=seed,
         **kwargs,
     )
     g.set(xscale=xscale, ylim=(-0.02, 1.02))
