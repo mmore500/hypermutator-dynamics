@@ -18,6 +18,7 @@ def size_fixation_cliffplot(
     hue_order: typing.List[str],
     errorbar: str,
     col_label: typing.Optional[str] = None,
+    layout: typing.Literal["skinny", "wide"] = "wide",
     palette: typing.Optional[str] = "tab10",
     seed: int = 1,
     ylim: typing.Tuple[float, float] = (1, None),
@@ -32,7 +33,10 @@ def size_fixation_cliffplot(
         col=col,
         hue=hue,
         hue_order=hue_order,
-        aspect=0.2,
+        aspect={
+            "skinny": 0.12,
+            "wide": 0.2,
+        }[layout],
         errorbar=errorbar,
         err_kws={"alpha": 0.5},
         height=3,
@@ -44,14 +48,15 @@ def size_fixation_cliffplot(
         **kwargs,
     )
 
-    sns.move_legend(
-        g,
-        "lower center",
-        bbox_to_anchor=(0.4, -0.05),
-        frameon=False,
-        ncol=2,
-        title=None,
-    )
+    if layout == "wide":
+        sns.move_legend(
+            g,
+            "lower center",
+            bbox_to_anchor=(0.4, -0.05),
+            frameon=False,
+            ncol=2,
+            title=None,
+        )
 
     # g.figure.suptitle("n={apn} agents per node", x=0.63, y=1.02)
     g.figure.subplots_adjust(wspace=0.12)
@@ -64,7 +69,12 @@ def size_fixation_cliffplot(
             ax.set_xlabel("")
         ax.axvline(0.5, color="white", lw=1, ls="--")
         ax.set_xticks([0, 0.5, 1])
-        ax.set_xticklabels(["", "0.5", ""])
+        ax.set_xticklabels(
+            {
+                "skinny": ["", "", ""],
+                "wide": ["", "0.5", ""],
+            }[layout],
+        )
         ax.set_ylim(ylim)
 
     # Create a new dummy axis above the plot
