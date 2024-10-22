@@ -7,7 +7,7 @@ def calc_fixprobs_from_traits(traits_df: pd.DataFrame) -> pd.DataFrame:
 
     traits_df["available beneficial mutations"] = (
         traits_df["genomeFlavor"]
-        .str.extract("(\d+)", expand=False)
+        .str.extract(r"(\d+)", expand=False)
         .fillna(1)
         .astype("int8")
     )
