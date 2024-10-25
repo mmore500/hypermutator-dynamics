@@ -5,10 +5,3 @@
 
 - manuscript draft: <https://mmore500.github.io/hypermutator-dynamics/>
 - data via OSF: <https://osf.io/ymaf8/>
-
-To set up locally,
-```bash
-git clone https://github.com/mmore500/hypermutator-dynamics.git --single-branch
-cd hypermutator-dynamics
-./submodules.sh
-```
