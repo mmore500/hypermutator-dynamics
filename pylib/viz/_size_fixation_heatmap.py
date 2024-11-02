@@ -122,6 +122,7 @@ def size_fixation_heatmap(
 
     # Set the x-axis of the dummy axis to logarithmic scale
     new_ax.set_xscale("log")
+    new_ax.set_xlabel("on")
 
     # Assume hmdf.columns are your x-axis values
     xvals = hmdf.columns.astype(float)
