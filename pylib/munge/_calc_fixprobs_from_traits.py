@@ -5,12 +5,9 @@ from tqdm import tqdm
 
 def calc_fixprobs_from_traits(traits_df: pd.DataFrame) -> pd.DataFrame:
 
-    if (
-        "COMPCONFENV_CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS__i16"
-        in traits_df.columns
-    ):
+    if "CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS" in traits_df.columns:
         traits_df["available beneficial mutations"] = traits_df[
-            "COMPCONFENV_CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS__i16"
+            "CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS"
         ].astype("int8")
     else:
         traits_df["available beneficial mutations"] = (
