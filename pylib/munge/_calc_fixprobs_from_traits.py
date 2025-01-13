@@ -5,12 +5,17 @@ from tqdm import tqdm
 
 def calc_fixprobs_from_traits(traits_df: pd.DataFrame) -> pd.DataFrame:
 
-    traits_df["available beneficial mutations"] = (
-        traits_df["genomeFlavor"]
-        .str.extract(r"(\d+)", expand=False)
-        .fillna(1)
-        .astype("int8")
-    )
+    if "CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS" in traits_df.columns:
+        traits_df["available beneficial mutations"] = traits_df[
+            "CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS"
+        ].astype("int8")
+    else:
+        traits_df["available beneficial mutations"] = (
+            traits_df["genomeFlavor"]
+            .str.extract(r"(\d+)", expand=False)
+            .fillna(1)
+            .astype("int8")
+        )
     traits_df.drop(columns=["genomeFlavor"], inplace=True)
 
     df = pl.from_pandas(traits_df)
