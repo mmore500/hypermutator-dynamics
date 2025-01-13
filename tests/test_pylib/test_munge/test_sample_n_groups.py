@@ -1,6 +1,6 @@
-import pytest
 import polars as pl
 import polars.testing as pt
+import pytest
 
 from pylib.munge._sample_n_groups import sample_n_groups
 
