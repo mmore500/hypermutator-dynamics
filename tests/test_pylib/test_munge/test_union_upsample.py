@@ -1,8 +1,7 @@
-from pylib.munge._union_upsample import union_upsample
-
-
 import polars as pl
 from polars.testing import assert_frame_equal
+
+from pylib.munge._union_upsample import union_upsample
 
 
 def test_upsample_union_col():
