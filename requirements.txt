@@ -57,6 +57,8 @@ frozendict==2.4.6
     #   backstrip
 hurry-filesize==0.9
     # via nbmetalog
+imageio==2.36.1
+    # via -r requirements.in
 importlib-metadata==8.5.0
     # via watermark
 iniconfig==2.0.0
@@ -153,6 +155,7 @@ numpy==2.1.2
     #   backstrip
     #   contourpy
     #   downstream
+    #   imageio
     #   matplotlib
     #   pandas
     #   pecking
@@ -191,7 +194,9 @@ pexpect==4.9.0
 pickleshare==0.7.5
     # via ipython
 pillow==11.1.0
-    # via matplotlib
+    # via
+    #   imageio
+    #   matplotlib
 platformdirs==4.3.6
     # via
     #   black
