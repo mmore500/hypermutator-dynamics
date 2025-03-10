@@ -39,5 +39,5 @@ def size_fixation_areaplot(
     for ax in g.axes.flat:
         fill_above_lines(ax, color=palette[0])
         fill_under_lines(ax)
-
+        ax.axhline(0.5, color="black", linestyle="--", linewidth=1)
     return g
