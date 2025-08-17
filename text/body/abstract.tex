@@ -1,13 +1,10 @@
 \begin{abstract}
-Within asexual populations, heritable mutator alleles that globally elevate an organism's mutation rate impose a complex evolutionary trade-off: on one hand, accelerating adaptation but, on the other, increasing mutational load.
-Aspects of existing theory suggest that large asexual populations should generally favor the fixation of mutator alleles due to ``hitch-hiking'' effects associated with beneficial mutation discovery.
-However, this outcome is often not the case in natural populations, and mechanisms preventing mutator allele fixation in such large asexual populations are less completely understood.
-In this study, we investigate how scenarios with few beneficial mutations available (i.e., limited adaptive potential) affect mutator dynamics across continuums of population size and spatial structure.
-Experiments utilizing stochastic agent-based simulations confirm that when adaptive potential is restricted, large population size disfavors mutator allele fixation --- an opposite effect compared to large populations with unlimited adaptive potential.
-Moreover, we find spatial population structure to act synergistically in suppressing mutator fixation within large populations, but only when the mutator allele is initially rare and adaptive potential is limited.
-In contrast, under otherwise-equivalent well-mixed conditions where mutators are initially rare, population size more consistently promotes mutator fixation.
-These findings underscore the critical role of adaptive potential in shaping the evolution of mutation rates in asexual populations, with implications for understanding and managing hypermutation-associated phenomena in both laboratory and real-world contexts.
-We also describe technical aspects of the work in harnessing the 850,000 processor Cerebras Wafer-Scale Engine hardware to enable large-scale agent-based simulations, which allowed up to a $111{,}091\times$ speedup over single-core CPU execution and a $294\times$ speedup over GPU execution.
+Within evolving microbial populations, genes that elevate mutation rate impose a fundamental trade-off: on one hand, increasing harmful mutations among offspring but, on the other, allowing more opportunities for rare beneficial mutations.
+Existing single-CPU agent-based simulation work suggests that increased population size should generally favor the fixation of mutator alleles due to ``hitch-hiking'' effects associated with beneficial mutation discovery.
+However, in contrast to this expectation, this outcome is often not the case in large asexual populations found in nature.
+To address this knowledge gap, we leveraged the 850,000 processor Cerebras Wafer-Scale Engine (WSE) to increase simulation scale up to 1.5-billion-agent populations.
+In benchmarks, WSE provided $294\times$ speedup over GPU and $111{,}091\times$ speedup over single-core CPU execution.
+Among other results, our experiments indicate that limitation of adaptive potential (i.e., few beneficial mutations available) can produce a tertiary regime where fixation of mutator alleles becomes disfavored at very large population sizes.
 \end{abstract}
 
 %%
