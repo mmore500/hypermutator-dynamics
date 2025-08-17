@@ -98,3 +98,7 @@ Of particular note, simulations using a fixed population size of $10^9$ demonstr
 % We also leveraged Wafer-Scale Engine (WSE) technology in this work, a cutting-edge AI/ML-oriented platform that delivers 850,000 processor cores packed together on a single chip.
 % Simulation on WSE achieved a further $294\times$ speedup, resulting in a net $111{,}091\times$ speedup from single-CPU evaluation.
 % These performance gains ultimately benefited the work by allowing us to employ forward-time agent-based simulation at full resolution across genome models and population structures that are difficult to integrate with compartment-based approaches used for simulations of large populations in existing work.
+
+The Cerebras Wafer-Scale Engine platform, in particular, is notable among an emerging class of next-generation AI/ML-oriented hardware accelerators \citep{lauterbach2021path}.
+Explorations are ongoing in establishing applications of these platforms for scientific and high-performance computing (HPC) \citep{rocki2020fast,brown2023exploring,ltaief2023scaling,sai2023massively,brown2022distributed,luow2020using,woo2022distributed,tramm2024efficient,chen2024using,phillips2023solving,chen2024solving}, including agent-based evolution simulations \citep{moreno2024trackable}.
+The CS-2 chip comprises a grid lattice of 850,000 independent processor elements (PEs), networked for low-latency communication among neighboring PEs.

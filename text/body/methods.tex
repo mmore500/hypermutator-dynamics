@@ -99,10 +99,6 @@ To enable the simulation scale necessary for this work, we employed Graphics Pro
 GPU hardware was NVIDIA A100 and WSE hardware was Cerebras CS-2 \citep{choquette2021nvidia,cerebras2021wafer}.
 WSE hardware was hosted by the Neocortex installation at Pittsburgh Supercomputing Center \citep{buitrago2021neocortex,Brashear2025}.
 
-The Cerebras Wafer-Scale Engine platform, in particular, is notable among an emerging class of next-generation AI/ML-oriented hardware accelerators \citep{lauterbach2021path}.
-Explorations are ongoing in establishing applications of these platforms for scientific and high-performance computing (HPC) \citep{rocki2020fast,brown2023exploring,ltaief2023scaling,sai2023massively,brown2022distributed,luow2020using,woo2022distributed,tramm2024efficient,chen2024using,phillips2023solving,chen2024solving}, including agent-based evolution simulations \citep{moreno2024trackable}.
-The CS-2 chip comprises a grid lattice of 850,000 independent processor elements (PEs), networked for low-latency communication among neighboring PEs.
-
 To suit the local lattice structure of the WSE's hardware architecture, all experiments on this platform employed 2D spatial population structure.
 Each PE hosted a single deme, acting as an ``island.''
 Thus, in trials using a per-island population size of 2,048 agents, our largest net population size reached 1.5 billion agents.
