@@ -1,27 +1,47 @@
-\section{Results and Discussion} \label{sec:results}
+\subsection{Major Results}
 
-In this work, we investigate the interactions between population size, adaptive potential, and population structure in influencing selection on mutator traits within asexual populations.
-In our first experiments, we replicate previous work by \citet{raynes2018sign} showing sign-change effects of population size on mutator favorability.
-Subsequent experiments investigate how these dynamics vary based on initial mutator abundance and the availability of beneficial mutations.
-Finally, experiments compare mutator dynamics between well-mixed population structure and spatial segregation into subpopulations connected by migration.
+In our initial experiment, we confirmed that large populations favor mutator fixation, under the assumption of unlimited adaptive potential.
+Consistent with expectations, we found that restricting adaptive potential by capping available adaptive mutations reversed outcomes in large populations to favor nonmutators.
+Investigating the influence of population structure and composition, we found spatial structure to substantially increase the amount of adaptive potential required to fix mutator alleles in large populations.
+However, this effect only occurred when mutator alleles were initially rare within the population.
+We also report qualitative differences between effects of population size on mutator fixation probability under well-mixed versus 2D population structure when mutations are rare.
+In the final part of our investigation, we analyze the spatiotemporal dynamics of our simulations to better understand the mechanisms at play behind these effects.
 
-\subsection{Scaling Population Size}
-\label{sec:scaling-population-size}
+Differing from existing results, we find that in the situation of limited adaptive potential, the effect of population structure on fixation probability is actually opposite to that predicted under the theory.
+Population structure has also been found to influence mutator outcomes, with deviation from well-mixed conditions being linked to a higher probability for hypermutator fixation so long as any connectivity remains between subpopulations \citep{raynes2019migration}.
 
-In a first set of experiments, we tested the capability of our model to reproduce the qualitative regimes of mutator dynamics across population scales identified by \citet{raynes2018sign}.
-In the first regime, where population size is very small, fixation of mutator and nonmutator alleles is nearly equiprobable, owing to the overwhelming influence of stochastic effects.
-Subsequently, in medium-sized populations, mutators become disfavored on account of increased power of selection becoming in penalizing the increased mutational load imposed by mutator allelees.
-Finally, in sufficiently large populations, a sign-change fitness effect occurs and mutator fixation becomes overwhelmingly favored.
-This effect occurs in asexual populations because population size increases the probability of at least one mutator discovering a beneficial mutation, and so ``hitch-hiking'' to sweep out nonmutators.
+Of technical note, the large-scale simulations necessary for this work were made possible by exploiting hardware accelerator platforms --- specialized high-performance computing (HPC) peripherals capable of massive computational workloads.
+In line with existing work applying Graphics Processing Units (GPUs) for agent-based modeling \citep{turpin2021xaevol,kosiachenko2019mass,perumalla2009switching,heinemann2007artificial,richmond2023flame}, we found a substantial performance boost: in our case, $378\times$ speedup over single-core CPU evaluation.
+\footnote{%
+Other notable approaches to large-scale evolution simulations have used more traditional cluster-based CPU modeling \citep{moreno2022best,collier2015large,ray1995proposal,turpin2020paevol}, sampling-based approximations \citep{taddei1997role}, and compartmental representations \citep{tenaillon1999mutators}.}
+We also leveraged Wafer-Scale Engine (WSE) technology in this work, a cutting-edge AI/ML-oriented platform that delivers 850,000 processor cores packed together on a single chip.
+Simulation on WSE achieved a further $294\times$ speedup, resulting in a net $111{,}091\times$ speedup from single-CPU evaluation.
+These performance gains ultimately benefited the work by allowing us to employ forward-time agent-based simulation at full resolution across genome models and population structures that are difficult to integrate with compartment-based approaches used for simulations of large populations in existing work.
 
-\input{fig/wse-inf-one}
+% \section{Results and Discussion} \label{sec:results}
 
-As shown in the left panel of Figure \ref{fig:wse-inf-one:32}, our simulations reproduce the sign-change fitness effect described by \citet{raynes2018sign}.
-Leveraging the capabilities of WSE accelerator hardware, we tested population sizes several orders of magnitude beyond those reported in \citet{raynes2018sign}.
-For these experiments, 2D population structure was used with 50/50 initialization.
-In line with expectations, no further qualitative differences in mutator fixation probability emerged in these larger population sizes, which ranged up to 1 billion agents.
-For the largest-scale trials, shown in the left panel of Figure \ref{fig:wse-inf-one:2048}, an increased subpopulation size of 2,048 agents per deme was used.
-As such, in these trials, note that coarsened spacing between surveyed population sizes obscures the sign-change fitness effect near the lower bound of population size.
+% In this work, we investigate the interactions between population size, adaptive potential, and population structure in influencing selection on mutator traits within asexual populations.
+% In our first experiments, we replicate previous work by \citet{raynes2018sign} showing sign-change effects of population size on mutator favorability.
+% Subsequent experiments investigate how these dynamics vary based on initial mutator abundance and the availability of beneficial mutations.
+% Finally, experiments compare mutator dynamics between well-mixed population structure and spatial segregation into subpopulations connected by migration.
+
+% \subsection{Scaling Population Size}
+% \label{sec:scaling-population-size}
+
+% In a first set of experiments, we tested the capability of our model to reproduce the qualitative regimes of mutator dynamics across population scales identified by \citet{raynes2018sign}.
+% In the first regime, where population size is very small, fixation of mutator and nonmutator alleles is nearly equiprobable, owing to the overwhelming influence of stochastic effects.
+% Subsequently, in medium-sized populations, mutators become disfavored on account of increased power of selection becoming in penalizing the increased mutational load imposed by mutator allelees.
+% Finally, in sufficiently large populations, a sign-change fitness effect occurs and mutator fixation becomes overwhelmingly favored.
+% This effect occurs in asexual populations because population size increases the probability of at least one mutator discovering a beneficial mutation, and so ``hitch-hiking'' to sweep out nonmutators.
+
+% \input{fig/wse-inf-one}
+
+% As shown in the left panel of Figure \ref{fig:wse-inf-one:32}, our simulations reproduce the sign-change fitness effect described by \citet{raynes2018sign}.
+% Leveraging the capabilities of WSE accelerator hardware, we tested population sizes several orders of magnitude beyond those reported in \citet{raynes2018sign}.
+% For these experiments, 2D population structure was used with 50/50 initialization.
+% In line with expectations, no further qualitative differences in mutator fixation probability emerged in these larger population sizes, which ranged up to 1 billion agents.
+% For the largest-scale trials, shown in the left panel of Figure \ref{fig:wse-inf-one:2048}, an increased subpopulation size of 2,048 agents per deme was used.
+% As such, in these trials, note that coarsened spacing between surveyed population sizes obscures the sign-change fitness effect near the lower bound of population size.
 
 \subsection{Restricting Adaptive Potential}
 \label{sec:restricting-adaptive-potential}
@@ -49,38 +69,38 @@ Even with the largest surveyed billion-agent population size, mutators regain se
 Interestingly, this result may help explain an earlier observation by \citet{tenaillon1999mutators} that below a threshold of four beneficial mutations available, mutator alleles never rose from background levels to fix within their compartment-based model of a well-mixed billion-member population.
 Notwithstanding differences in model parameterization and population structure, our findings suggest that this threshold may coincide with the point where the net fitness effect of the mutator allele neutralizes in commensurately scaled populations.
 
-\input{fig/avail-ben-muts-gen}
+% \input{fig/avail-ben-muts-gen}
 
-Given that experiments conducted on the WSE platform all involve 2D spatial structure, we implemented an additional set of GPU-based experiments to compare findings with well-mixed population structure.
-Figure \ref{fig:avail-ben-muts-gen} overviews these results.
-Although experiments ranged up to a smaller maximum population size on the GPU platform, detected regimes of mutator dynamics are consistent with WSE-based experiments.
-Comparing on the basis of spatial structure, we find fixation probabilities to be near-identical between GPU-based trials using 2D and well-mixed structure across surveyed conditions.
-% https://github.com/mmore500/hypermutator-dynamics/blob/484ac79f35baf10e4acc52babee836d10ab50bdb/binder/cupy-5050-traits.ipynb
-We find significant divergence in fixation probability between spatial structure treatments only for population size 20,736 with adaptive potential of one available beneficial mutation (Mann-Whitney U test; $p < 0.0005$; Bonferroni corrected $p < 0.01$).
+% Given that experiments conducted on the WSE platform all involve 2D spatial structure, we implemented an additional set of GPU-based experiments to compare findings with well-mixed population structure.
+% Figure \ref{fig:avail-ben-muts-gen} overviews these results.
+% Although experiments ranged up to a smaller maximum population size on the GPU platform, detected regimes of mutator dynamics are consistent with WSE-based experiments.
+% Comparing on the basis of spatial structure, we find fixation probabilities to be near-identical between GPU-based trials using 2D and well-mixed structure across surveyed conditions.
+% % https://github.com/mmore500/hypermutator-dynamics/blob/484ac79f35baf10e4acc52babee836d10ab50bdb/binder/cupy-5050-traits.ipynb
+% We find significant divergence in fixation probability between spatial structure treatments only for population size 20,736 with adaptive potential of one available beneficial mutation (Mann-Whitney U test; $p < 0.0005$; Bonferroni corrected $p < 0.01$).
 
-\subsection{Effects of Background Mutator Prevalence}
-\label{sec:background-hypermutator-prevalence}
+% \subsection{Effects of Background Mutator Prevalence}
+% \label{sec:background-hypermutator-prevalence}
 
-\input{fig/denovo-5050-conditions-combined}
+% \input{fig/denovo-5050-conditions-combined}
 
-Having observed large population size prevent mutator fixation in competition experiments under conditions of limited adaptive potential, we next sought to assess how such an effect might manifest in more naturalistic conditions.
-For this purpose, we relaxed the initial condition that mutators begin ``50/50'' in equal proportion to nonmutators.
-Instead, we allowed mutators to enter the population at a low background rate \citep{desai2011balance,johnson1999approach}, an experimental design common with several previous simulation studies of hypermutator dynamics \citep{wylie2009fixation,tenaillon1999mutators}.
-To provide a conservative reflection of the impact of mutator allele rarity, we used a mutator allele introduction probability of $10^{-6}$ per replication event.
-Figure \ref{fig:denovo-5050-conditions-combined} compares mutator fixation probabilities between 50/50 and \textit{de novo} conditions.
-Trials were conducted with 2D spatial structure on the WSE platform.
-With 256 agents per deme, population size scaled up to 136 million agents.
+% Having observed large population size prevent mutator fixation in competition experiments under conditions of limited adaptive potential, we next sought to assess how such an effect might manifest in more naturalistic conditions.
+% For this purpose, we relaxed the initial condition that mutators begin ``50/50'' in equal proportion to nonmutators.
+% Instead, we allowed mutators to enter the population at a low background rate \citep{desai2011balance,johnson1999approach}, an experimental design common with several previous simulation studies of hypermutator dynamics \citep{wylie2009fixation,tenaillon1999mutators}.
+% To provide a conservative reflection of the impact of mutator allele rarity, we used a mutator allele introduction probability of $10^{-6}$ per replication event.
+% Figure \ref{fig:denovo-5050-conditions-combined} compares mutator fixation probabilities between 50/50 and \textit{de novo} conditions.
+% Trials were conducted with 2D spatial structure on the WSE platform.
+% With 256 agents per deme, population size scaled up to 136 million agents.
 
-Prior work analyzing conditions with infinite adaptive potential has shown per-capita favorability of mutator traits to be density independent \citep{raynes2019selection}.
-As such, a lower background rate for mutator alleles should be expected to substantially reduce the net probability of mutator fixation.
-In line with expectations, the \textit{de novo} treatment substantially reduces mutator fixation.
-Under \textit{de novo} conditions, nonmutators reliably resist mutator fixation in populations of 136 million through more than 10 beneficial mutations available.
-Under 50/50 conditions, by contrast, mutators begin to fix in these large populations past 2 beneficial mutations available.
+% Prior work analyzing conditions with infinite adaptive potential has shown per-capita favorability of mutator traits to be density independent \citep{raynes2019selection}.
+% As such, a lower background rate for mutator alleles should be expected to substantially reduce the net probability of mutator fixation.
+% In line with expectations, the \textit{de novo} treatment substantially reduces mutator fixation.
+% Under \textit{de novo} conditions, nonmutators reliably resist mutator fixation in populations of 136 million through more than 10 beneficial mutations available.
+% Under 50/50 conditions, by contrast, mutators begin to fix in these large populations past 2 beneficial mutations available.
 
-We performed sensitivity analysis of our findings to the underlying counter-based genome model used.
-For this purpose, we implemented an alternate ``site-explicit'' model where the probability of discovering a beneficial mutation scales proportional to the number available.
-As shown in Supplementary Figure \ref{fig:wse-site-explicit-counter-based}, results were generally consistent between the two genome models.
-Notably, though, under the ``site-explicit'' model, mutator alleles are more frequently fixed within the smallest surveyed population size under 50/50 initialization.
+% We performed sensitivity analysis of our findings to the underlying counter-based genome model used.
+% For this purpose, we implemented an alternate ``site-explicit'' model where the probability of discovering a beneficial mutation scales proportional to the number available.
+% As shown in Supplementary Figure \ref{fig:wse-site-explicit-counter-based}, results were generally consistent between the two genome models.
+% Notably, though, under the ``site-explicit'' model, mutator alleles are more frequently fixed within the smallest surveyed population size under 50/50 initialization.
 
 \subsection{Spatiotemporal Dynamics}
 \label{sec:dynamics}
@@ -103,33 +123,33 @@ Of 16 replicates where we observed mutators fix, we found 2 cases where the fina
 In scenarios where mutators fix, surviving patches of nonmutators dwindle away entirely (panel \ref{fig:dynamics:fixation}).
 Where nonmutators persist, they re-establish via concentric growth from surviving pockets (panel \ref{fig:dynamics:no-fixation}).
 
-\input{fig/peaksweep}
+% \input{fig/peaksweep}
 
-At peak mutator prevalence, we observed nonmutators shrink to less than 0.1\% of the population in experiments with adaptive potential of 14 available beneficial mutations.
-% ^^^ https://github.com/mmore500/hypermutator-dynamics/blob/5e904ac2fbbd4b41a0ad679883fc1a63af71c00c/binder/wse-denovo-spatial2d-explicitsite-timeseries.ipynb
-To assess the magnitude of transient peak mutator concentrations across levels of adaptive potential, we performed an additional set of four-replicate simulations with adaptive potentials ranging from 2 to 10 available beneficial mutations.
-For all replicates with 6 or more available beneficial mutations, mutators peaked beyond 50\% prevalence (Figure \ref{fig:peaksweep}).
+% At peak mutator prevalence, we observed nonmutators shrink to less than 0.1\% of the population in experiments with adaptive potential of 14 available beneficial mutations.
+% % ^^^ https://github.com/mmore500/hypermutator-dynamics/blob/5e904ac2fbbd4b41a0ad679883fc1a63af71c00c/binder/wse-denovo-spatial2d-explicitsite-timeseries.ipynb
+% To assess the magnitude of transient peak mutator concentrations across levels of adaptive potential, we performed an additional set of four-replicate simulations with adaptive potentials ranging from 2 to 10 available beneficial mutations.
+% For all replicates with 6 or more available beneficial mutations, mutators peaked beyond 50\% prevalence (Figure \ref{fig:peaksweep}).
 
-\subsection{Effects of Population Structure}
-\label{sec:population-structure}
+% \subsection{Effects of Population Structure}
+% \label{sec:population-structure}
 
-In a final set of experiments, we extended our earlier trials with 50/50 initialization to assess the impact of spatial structure on mutator dynamics where mutators are initially rare.
-In particular, we were curious whether removal of population structure would negligibly affect mutator fixation probabilities, as was earlier the case with 50/50 initialization.
-Trials conducted in this experiment comparing the 2D deme structure to fully well-mixed conditions were conducted using GPU evaluation.
-As a result, population sizes ranged only up to 15 million.
+% In a final set of experiments, we extended our earlier trials with 50/50 initialization to assess the impact of spatial structure on mutator dynamics where mutators are initially rare.
+% In particular, we were curious whether removal of population structure would negligibly affect mutator fixation probabilities, as was earlier the case with 50/50 initialization.
+% Trials conducted in this experiment comparing the 2D deme structure to fully well-mixed conditions were conducted using GPU evaluation.
+% As a result, population sizes ranged only up to 15 million.
 
-\input{fig/spatial-structure-combined}
+% \input{fig/spatial-structure-combined}
 
-Figure \ref{fig:spatial-structure-combined} plots increase in mutator fixation probability with available adaptive potential across a spectrum of population sizes.
-Interestingly, spatial structure does cause results to differ substantially under \textit{de novo} conditions.
-We find that in large nonmutator populations of 15 million with well-mixed structure, fixation probability of mutator alleles becomes appreciable with adaptive potential of only 5 available beneficial mutations.
-Thisis not the case for large populations with 2D deme structure, where fixation of mutator alleles become appreciable above 10 available beneficial mutations.
-For intermediate population sizes of 186,000 agents, however, an opposite effect occurs: spatial structure raises the probability of mutator fixation across the board of available adaptive potential compared to well-mixed conditions.
+% Figure \ref{fig:spatial-structure-combined} plots increase in mutator fixation probability with available adaptive potential across a spectrum of population sizes.
+% Interestingly, spatial structure does cause results to differ substantially under \textit{de novo} conditions.
+% We find that in large nonmutator populations of 15 million with well-mixed structure, fixation probability of mutator alleles becomes appreciable with adaptive potential of only 5 available beneficial mutations.
+% Thisis not the case for large populations with 2D deme structure, where fixation of mutator alleles become appreciable above 10 available beneficial mutations.
+% For intermediate population sizes of 186,000 agents, however, an opposite effect occurs: spatial structure raises the probability of mutator fixation across the board of available adaptive potential compared to well-mixed conditions.
 
-These findings contrast with previous modeling work assuming unlimited adaptive potential, which predicts that so long as any level of connectivity exists between subpopulations, spatial structure boosts mutator fixation probability \citep{raynes2019migration}.
-One possible explanation for why spatial structure can decrease mutator fixation probability is in extending fixation times, which extends the opportunity for nonmutators to exploit available adaptive potential before being driven to extinction.
-This described effect notably aligns with findings from \textit{in vivo} evolution experiments with \textit{E. coli} that show that migration barriers delaying introduction of mutator strains into nonmutator populations can reduce mutator advantage \citep{lechat2006escherichia}.
+% These findings contrast with previous modeling work assuming unlimited adaptive potential, which predicts that so long as any level of connectivity exists between subpopulations, spatial structure boosts mutator fixation probability \citep{raynes2019migration}.
+% One possible explanation for why spatial structure can decrease mutator fixation probability is in extending fixation times, which extends the opportunity for nonmutators to exploit available adaptive potential before being driven to extinction.
+% This described effect notably aligns with findings from \textit{in vivo} evolution experiments with \textit{E. coli} that show that migration barriers delaying introduction of mutator strains into nonmutator populations can reduce mutator advantage \citep{lechat2006escherichia}.
 
-On a separate front, it is surprising that substantial differences in mutator dynamics between deme-structured and well-mixed conditions only become apparent with low initial mutator frequency, given the established expectation of fitness effects of mutator alleles as a density- and number- independent \citep{raynes2019selection}.
-While one possible explanation may be in part that detectability of fitness effect magnitudes is masked by sensitivity limitations of the 50/50 assay, this result draws into question the extent to which density-independence of mutator fitness effects generalizes to scenarios with limited adaptive potential and spatial structure.
-In future work, it would be informative to test whether the impact of spatial structure where mutators are rare stems from heterogeneity in the spatial distribution of mutator clades or from slowing the spread of beneficial alleles.
+% On a separate front, it is surprising that substantial differences in mutator dynamics between deme-structured and well-mixed conditions only become apparent with low initial mutator frequency, given the established expectation of fitness effects of mutator alleles as a density- and number- independent \citep{raynes2019selection}.
+% While one possible explanation may be in part that detectability of fitness effect magnitudes is masked by sensitivity limitations of the 50/50 assay, this result draws into question the extent to which density-independence of mutator fitness effects generalizes to scenarios with limited adaptive potential and spatial structure.
+% In future work, it would be informative to test whether the impact of spatial structure where mutators are rare stems from heterogeneity in the spatial distribution of mutator clades or from slowing the spread of beneficial alleles.

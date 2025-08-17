@@ -22,25 +22,25 @@ It is well known that large population size, in particular, can drive the probab
 However, questions remain as to conditions that stabilize very large populations \textit{against} mutator fixation \citep{raynes2012contrasting,raynes2019migration,tanaka2003evolution}.
 In this work, we focus on expanding current understanding as to the role of adaptive potential --- the quantity of beneficial novel alleles available to discover via mutation --- in influencing mutator dynamics.
 
-\subsection{Causes and Consequences of Mutator Strains}
+% \subsection{Causes and Consequences of Mutator Strains}
 
-Mutator strains are observed across a wide variety of populations, including both natural systems and laboratory experiments \citep{sniegowski1997evolution,swings2017adaptive,maddamsetti2020divergent,cherry2018methylation,notleymcrobb2002enrichment,shaver2002fitness,voordeckers2015adaptation,leclerc1996high}.
-As such, a substantial body of literature has investigated the conditions under which mutator traits tend to arise.
-As mentioned above, population size has been implicated as a key factor for mutator fixation, as large populations provide more opportunities for the beneficial mutations that drive mutator hitch-hiking \citep{chao1983competition}.
-On the other hand, bottleneck events that suddenly reduce population size can suppress mutator fixation by disrupting propagation of the beneficial alleles that mutators hitchhike off of \citep{raynes2013effect}.
+% Mutator strains are observed across a wide variety of populations, including both natural systems and laboratory experiments \citep{sniegowski1997evolution,swings2017adaptive,maddamsetti2020divergent,cherry2018methylation,notleymcrobb2002enrichment,shaver2002fitness,voordeckers2015adaptation,leclerc1996high}.
+% As such, a substantial body of literature has investigated the conditions under which mutator traits tend to arise.
+% As mentioned above, population size has been implicated as a key factor for mutator fixation, as large populations provide more opportunities for the beneficial mutations that drive mutator hitch-hiking \citep{chao1983competition}.
+% On the other hand, bottleneck events that suddenly reduce population size can suppress mutator fixation by disrupting propagation of the beneficial alleles that mutators hitchhike off of \citep{raynes2013effect}.
 
-A wide variety of computational and mathematical modeling approaches have been applied in studying the evolutionary dynamics of mutator alleles.
-Although tangential to the present work, mathematical and computational investigations have notably treated a broad variety of additional topics, including coevolutionary pressures \citep{pal2007coevolution} and interactions with sexual recombination \citep{johnson1999beneficial}.
-Within the purifying selection regime (i.e., absent positive selection for beneficial traits), modeling work has also investigated the interplay between mutator alleles and Muller's ratchet \citep{soderberg2011kickstarting} and dynamics steering towards evolutionarily stable mutation rates \citep{lynch2008cellular}.
+% A wide variety of computational and mathematical modeling approaches have been applied in studying the evolutionary dynamics of mutator alleles.
+% Although tangential to the present work, mathematical and computational investigations have notably treated a broad variety of additional topics, including coevolutionary pressures \citep{pal2007coevolution} and interactions with sexual recombination \citep{johnson1999beneficial}.
+% Within the purifying selection regime (i.e., absent positive selection for beneficial traits), modeling work has also investigated the interplay between mutator alleles and Muller's ratchet \citep{soderberg2011kickstarting} and dynamics steering towards evolutionarily stable mutation rates \citep{lynch2008cellular}.
 
 Of more direct salience to present work, \citet{desai2011balance} provide a key foundation in understanding transient fluctuations in mutator allele prevalence, who focus on a dynamic (rather than steady-state) framing of the topic.
-For scenarios with positive selection, attention is first paid to the probability for a given \textit{de novo} beneficial mutation to survive drift effects and reach sufficient frequency to be reliably selected upon.
-Principled approximations are applied to suggest parameter regimes where establishment probability for beneficial alleles arising on a mutator background may safely be considered to be essentially zero (i.e., mutator incurs catastrophic mutational load) and where establishment probability is essentially indistinguishable from nonmutators (i.e., mutator incurs negligible mutational load).
-At these extrema, mutator fixation probability is shown to follow easily from establishment probabilities under the condition that fixation time may be assumed sufficiently short to neglect the possibility of competition between more than one established allele.
-However, in scenarios where either (1) fixation times are long (e.g., large population size) or (2) the mutational load incurred by mutators falls within an intermediate parameter range, matters are noted to become substantially more involved.
-At this point, \citet{desai2011balance} conclude their analysis with a heuristic discussion outlining expected qualitative regimes within these remaining regions of parameter space.
-In line with themes explored in present work, \citet{desai2011balance} note that where fixation times for mutator alleles hitch-hiking with a given beneficial mutation are sufficiently long, establishment of a commensurate beneficial mutation among nonmutators prior to fixation becomes inevitable.
-Therefore, successive adaptive mutations become necessary in such cases to fix a mutator allele.
+% For scenarios with positive selection, attention is first paid to the probability for a given \textit{de novo} beneficial mutation to survive drift effects and reach sufficient frequency to be reliably selected upon.
+% Principled approximations are applied to suggest parameter regimes where establishment probability for beneficial alleles arising on a mutator background may safely be considered to be essentially zero (i.e., mutator incurs catastrophic mutational load) and where establishment probability is essentially indistinguishable from nonmutators (i.e., mutator incurs negligible mutational load).
+% At these extrema, mutator fixation probability is shown to follow easily from establishment probabilities under the condition that fixation time may be assumed sufficiently short to neglect the possibility of competition between more than one established allele.
+% However, in scenarios where either (1) fixation times are long (e.g., large population size) or (2) the mutational load incurred by mutators falls within an intermediate parameter range, matters are noted to become substantially more involved.
+% At this point, \citet{desai2011balance} conclude their analysis with a heuristic discussion outlining expected qualitative regimes within these remaining regions of parameter space.
+% In line with themes explored in present work, \citet{desai2011balance} note that where fixation times for mutator alleles hitch-hiking with a given beneficial mutation are sufficiently long, establishment of a commensurate beneficial mutation among nonmutators prior to fixation becomes inevitable.
+% Therefore, successive adaptive mutations become necessary in such cases to fix a mutator allele.
 
 Several earlier works provide further insight into the role of adaptive potential in the evolutionary dynamics of mutator alleles.
 The core dynamic by which successive adaptive mutations can ultimately fix a mutator allele is demonstrated by \citet{tanaka2003evolution}.
@@ -51,50 +51,50 @@ Most pertinently, however, \citet{tenaillon1999mutators} directly demonstrate mu
 In their simulations, time series traces of mutator proliferation from background levels exhibit clear multistep dynamics.
 Of particular note, simulations using a fixed population size of $10^9$ demonstrate the fixation probability of mutators to increase with the number of adaptive mutations available.
 
-Recent \textit{in vivo} experimental work has established direct evidence for connections between adaptive potential and mutator outcomes.
-In this work, \citet{callens2023hypermutator} conducted treatments exposing populations of \textit{E. coli} to either antibiotic or osmotic stressors, calibrated to comparable severities.
-Because the antibiotic agent employed in experiments targeted a pathway involving relatively few genes, fewer loci exhibited adaptive potential compared to the large number of pathways implicated by the osmotic stress condition.
-In line with theoretical expectations, the high-adaptive-potential osmotic stressor induced significantly higher rates of mutator fixation.
-More broadly, existing work has drawn clear connections between elevated mutation rate and long-term environmental, coevolutionary, or ecological fluctuations that introduce a moving evolutionary target \citep{leigh1970natural,travis2002mutator,travis2004mutators,rosenbloom2014frequencydependent,pal2007coevolution,wei2022rapid}.
+% Recent \textit{in vivo} experimental work has established direct evidence for connections between adaptive potential and mutator outcomes.
+% In this work, \citet{callens2023hypermutator} conducted treatments exposing populations of \textit{E. coli} to either antibiotic or osmotic stressors, calibrated to comparable severities.
+% Because the antibiotic agent employed in experiments targeted a pathway involving relatively few genes, fewer loci exhibited adaptive potential compared to the large number of pathways implicated by the osmotic stress condition.
+% In line with theoretical expectations, the high-adaptive-potential osmotic stressor induced significantly higher rates of mutator fixation.
+% More broadly, existing work has drawn clear connections between elevated mutation rate and long-term environmental, coevolutionary, or ecological fluctuations that introduce a moving evolutionary target \citep{leigh1970natural,travis2002mutator,travis2004mutators,rosenbloom2014frequencydependent,pal2007coevolution,wei2022rapid}.
 
-In a separate vein of inquiry, work by \citet{raynes2018sign} is notable in establishing a systematic understanding of the impact of population size on mutator allele favorability.
-Through paired agent-based simulation and yeast-model experiments, a striking sign-change effect is demonstrated to play out along the spectrum of population size.
-A quantitative basis for this effect is provided by synthesizing independent analytical approximations for the probability of mutator fixation by drift and hitchhiking.
-For small population sizes, mutator alleles' selective cost of imposed deleterious load outweighs their selective benefit in facilitating the discovery of beneficial mutations.
-In larger population sizes, the relative magnitude of these effects switches and mutator alleles become favored via indirect selection for generated beneficial mutations.
+% In a separate vein of inquiry, work by \citet{raynes2018sign} is notable in establishing a systematic understanding of the impact of population size on mutator allele favorability.
+% Through paired agent-based simulation and yeast-model experiments, a striking sign-change effect is demonstrated to play out along the spectrum of population size.
+% A quantitative basis for this effect is provided by synthesizing independent analytical approximations for the probability of mutator fixation by drift and hitchhiking.
+% For small population sizes, mutator alleles' selective cost of imposed deleterious load outweighs their selective benefit in facilitating the discovery of beneficial mutations.
+% In larger population sizes, the relative magnitude of these effects switches and mutator alleles become favored via indirect selection for generated beneficial mutations.
 
-Earlier work has also pointed to the role of population size influencing selection on mutators.
-\citet{wylie2009fixation} apply stochastic simulation and diffusion-based analytical methods to study mutator dynamics in asexual populations, partly describing how large population size can favor mutators.
-A similar conclusion is reached by \citet{andre2006evolution}, through analytical models based in game theory.
-Work by \citet{good2016evolution}, notable for extending analytical modeling efforts into the parameter regime where clonal interference between competing beneficial mutations is at play, also predicts population size to increase fixation probability within well-mixed populations.
-This prediction is validated through forward-time Wright-Fisher simulations.
-(Other aspects of this work are notable in considering effects of mutator alleles on population-level adaptation rates and transient overshooting of evolutionarily stable mutation rates.)
+% Earlier work has also pointed to the role of population size influencing selection on mutators.
+% \citet{wylie2009fixation} apply stochastic simulation and diffusion-based analytical methods to study mutator dynamics in asexual populations, partly describing how large population size can favor mutators.
+% A similar conclusion is reached by \citet{andre2006evolution}, through analytical models based in game theory.
+% Work by \citet{good2016evolution}, notable for extending analytical modeling efforts into the parameter regime where clonal interference between competing beneficial mutations is at play, also predicts population size to increase fixation probability within well-mixed populations.
+% This prediction is validated through forward-time Wright-Fisher simulations.
+% (Other aspects of this work are notable in considering effects of mutator alleles on population-level adaptation rates and transient overshooting of evolutionarily stable mutation rates.)
 
-In this work, we seek to extend understanding of how limited adaptive potential interacts with population size and structure to influence mutator dynamics within asexual populations.
-As noted earlier, such knowledge is needed to improve explanation of how nonmutator alleles can be maintained within large populations.
-In \citep{raynes2018sign}, concluding remarks hypothesize that spatial structure may help to explain why mutator alleles do not universally fix within large asexual populations.
-However, in a later set of paired \textit{in vivo}/\textit{in vitro} experiments, deviation from well-mixed conditions is contradictorally linked to \textit{higher} probability for mutator fixation if any level connectivity remains between subpopulations \citep{raynes2019migration}.
-A simple explanation is provided for this result: although mutators are disfavored within the small population size of an isolated deme, a fixed mutator within any single deme will subsequently invade all remaining demes due to outcompeting nonmutator strains in accruing subsequent adaptive potential.
-Thus, long-term nonmutator persistence requires short-term mutator extinction within \textit{all} subpopulations, such mutator extinction becomes increasingly unlikely with high deme counts.
-In this work, we hypothesize that an opposite effect will occur where adaptive potential is limited.
-Under such a scenario, long-term nonmutator persistence requires short-term nonmutator survival within only a single subpopulation, which can successfully invade mutator subpopulations due to lower mutational load once available adaptive potential is exhausted.
+% In this work, we seek to extend understanding of how limited adaptive potential interacts with population size and structure to influence mutator dynamics within asexual populations.
+% As noted earlier, such knowledge is needed to improve explanation of how nonmutator alleles can be maintained within large populations.
+% In \citep{raynes2018sign}, concluding remarks hypothesize that spatial structure may help to explain why mutator alleles do not universally fix within large asexual populations.
+% However, in a later set of paired \textit{in vivo}/\textit{in vitro} experiments, deviation from well-mixed conditions is contradictorally linked to \textit{higher} probability for mutator fixation if any level connectivity remains between subpopulations \citep{raynes2019migration}.
+% A simple explanation is provided for this result: although mutators are disfavored within the small population size of an isolated deme, a fixed mutator within any single deme will subsequently invade all remaining demes due to outcompeting nonmutator strains in accruing subsequent adaptive potential.
+% Thus, long-term nonmutator persistence requires short-term mutator extinction within \textit{all} subpopulations, such mutator extinction becomes increasingly unlikely with high deme counts.
+% In this work, we hypothesize that an opposite effect will occur where adaptive potential is limited.
+% Under such a scenario, long-term nonmutator persistence requires short-term nonmutator survival within only a single subpopulation, which can successfully invade mutator subpopulations due to lower mutational load once available adaptive potential is exhausted.
 
-\subsection{Major Results}
+% \subsection{Major Results}
 
-In our initial experiment, we confirmed that large populations favor mutator fixation, under the assumption of unlimited adaptive potential.
-Consistent with expectations, we found that restricting adaptive potential by capping available adaptive mutations reversed outcomes in large populations to favor nonmutators.
-Investigating the influence of population structure and composition, we found spatial structure to substantially increase the amount of adaptive potential required to fix mutator alleles in large populations.
-However, this effect only occurred when mutator alleles were initially rare within the population.
-We also report qualitative differences between effects of population size on mutator fixation probability under well-mixed versus 2D population structure when mutations are rare.
-In the final part of our investigation, we analyze the spatiotemporal dynamics of our simulations to better understand the mechanisms at play behind these effects.
+% In our initial experiment, we confirmed that large populations favor mutator fixation, under the assumption of unlimited adaptive potential.
+% Consistent with expectations, we found that restricting adaptive potential by capping available adaptive mutations reversed outcomes in large populations to favor nonmutators.
+% Investigating the influence of population structure and composition, we found spatial structure to substantially increase the amount of adaptive potential required to fix mutator alleles in large populations.
+% However, this effect only occurred when mutator alleles were initially rare within the population.
+% We also report qualitative differences between effects of population size on mutator fixation probability under well-mixed versus 2D population structure when mutations are rare.
+% In the final part of our investigation, we analyze the spatiotemporal dynamics of our simulations to better understand the mechanisms at play behind these effects.
 
-Differing from existing results, we find that in the situation of limited adaptive potential, the effect of population structure on fixation probability is actually opposite to that predicted under the theory.
-Population structure has also been found to influence mutator outcomes, with deviation from well-mixed conditions being linked to a higher probability for hypermutator fixation so long as any connectivity remains between subpopulations \citep{raynes2019migration}.
+% Differing from existing results, we find that in the situation of limited adaptive potential, the effect of population structure on fixation probability is actually opposite to that predicted under the theory.
+% Population structure has also been found to influence mutator outcomes, with deviation from well-mixed conditions being linked to a higher probability for hypermutator fixation so long as any connectivity remains between subpopulations \citep{raynes2019migration}.
 
-Of technical note, the large-scale simulations necessary for this work were made possible by exploiting hardware accelerator platforms --- specialized high-performance computing (HPC) peripherals capable of massive computational workloads.
-In line with existing work applying Graphics Processing Units (GPUs) for agent-based modeling \citep{turpin2021xaevol,kosiachenko2019mass,perumalla2009switching,heinemann2007artificial,richmond2023flame}, we found a substantial performance boost: in our case, $378\times$ speedup over single-core CPU evaluation.
-\footnote{%
-Other notable approaches to large-scale evolution simulations have used more traditional cluster-based CPU modeling \citep{moreno2022best,collier2015large,ray1995proposal,turpin2020paevol}, sampling-based approximations \citep{taddei1997role}, and compartmental representations \citep{tenaillon1999mutators}.}
-We also leveraged Wafer-Scale Engine (WSE) technology in this work, a cutting-edge AI/ML-oriented platform that delivers 850,000 processor cores packed together on a single chip.
-Simulation on WSE achieved a further $294\times$ speedup, resulting in a net $111{,}091\times$ speedup from single-CPU evaluation.
-These performance gains ultimately benefited the work by allowing us to employ forward-time agent-based simulation at full resolution across genome models and population structures that are difficult to integrate with compartment-based approaches used for simulations of large populations in existing work.
+% Of technical note, the large-scale simulations necessary for this work were made possible by exploiting hardware accelerator platforms --- specialized high-performance computing (HPC) peripherals capable of massive computational workloads.
+% In line with existing work applying Graphics Processing Units (GPUs) for agent-based modeling \citep{turpin2021xaevol,kosiachenko2019mass,perumalla2009switching,heinemann2007artificial,richmond2023flame}, we found a substantial performance boost: in our case, $378\times$ speedup over single-core CPU evaluation.
+% \footnote{%
+% Other notable approaches to large-scale evolution simulations have used more traditional cluster-based CPU modeling \citep{moreno2022best,collier2015large,ray1995proposal,turpin2020paevol}, sampling-based approximations \citep{taddei1997role}, and compartmental representations \citep{tenaillon1999mutators}.}
+% We also leveraged Wafer-Scale Engine (WSE) technology in this work, a cutting-edge AI/ML-oriented platform that delivers 850,000 processor cores packed together on a single chip.
+% Simulation on WSE achieved a further $294\times$ speedup, resulting in a net $111{,}091\times$ speedup from single-CPU evaluation.
+% These performance gains ultimately benefited the work by allowing us to employ forward-time agent-based simulation at full resolution across genome models and population structures that are difficult to integrate with compartment-based approaches used for simulations of large populations in existing work.

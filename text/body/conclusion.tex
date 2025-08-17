@@ -3,32 +3,32 @@
 
 Mutations are fundamental drivers of evolution, generating the genetic diversity necessary for populations to adapt and survive \citep{hershberg2015mutation}.
 % Developing this understanding is important Understanding the factors that influence selection on mutation rates themselves is therefore key in understanding and managing evolutionary dynamics within asexual populations.
-Ongoing efforts have established an increasingly detailed theoretical basis to explain how selection and drift effects act on alleles modifying mutation rate.
-In particular, existing theory provides a rigorous understanding of how alleles that increase mutation rate can become abundant in asexual populations by way of hitchhiking on discovered of beneficial mutations, particularly when population size is large.
-However, less detailed understanding exists as to factors that suppress mutator alleles within large asexual populations.
+% Ongoing efforts have established an increasingly detailed theoretical basis to explain how selection and drift effects act on alleles modifying mutation rate.
+% In particular, existing theory provides a rigorous understanding of how alleles that increase mutation rate can become abundant in asexual populations by way of hitchhiking on discovered of beneficial mutations, particularly when population size is large.
+% However, less detailed understanding exists as to factors that suppress mutator alleles within large asexual populations.
 In this work, we have applied simulation experiments to investigate how adaptive potential and population structure influence mutator dynamics, including mediation of sign change fitness effects in large populations.
 
 % This work contributes experiments to better characterize factors affecting selection on mutator traits in very large populations.
 % replicated the sign-change effect of population size on mutator fixation probability, and
-In a first set of experiments, we confirmed that, under the assumption of unlimited adaptive potential, increases in population size transition outcomes to a regime where mutators become strongly favored.
-However, we found that restricting adaptive potential reversed outcomes in very large populations, creating a tertiary regime where nonmutators regain selective favor.
-This effect appeared consistently under both a simple counter-based genome model, adapted from \citet{raynes2018sign}, and a more detailed ``site-explicit'' genome model where alleles with potential to experience adaptive mutation were tracked directly.
+% In a first set of experiments, we confirmed that, under the assumption of unlimited adaptive potential, increases in population size transition outcomes to a regime where mutators become strongly favored.
+% However, we found that restricting adaptive potential reversed outcomes in very large populations, creating a tertiary regime where nonmutators regain selective favor.
+% This effect appeared consistently under both a simple counter-based genome model, adapted from \citet{raynes2018sign}, and a more detailed ``site-explicit'' genome model where alleles with potential to experience adaptive mutation were tracked directly.
 
-Subsequent experiments investigated the influence of population structure and composition on adaptation-constrained mutator dynamics.
-We found outcomes to be highly sensitive to baseline frequency of mutators.
-When mutators were initially rare, mutator fixation was suppressed in large populations through substantially more available adaptive mutations.
-Spatial structure further amplified these effects, but only when mutators were initially rare.
+% Subsequent experiments investigated the influence of population structure and composition on adaptation-constrained mutator dynamics.
+% We found outcomes to be highly sensitive to baseline frequency of mutators.
+% When mutators were initially rare, mutator fixation was suppressed in large populations through substantially more available adaptive mutations.
+% Spatial structure further amplified these effects, but only when mutators were initially rare.
 
-Much future work remains.
-One phenomenon in some benchtop evolution experiments \citep{ho2021evolutionary}, but not considered in present work, is mutator reversion.
-In a reversion scenario, gain-of-function mutations restore a mutator strain toward baseline nonmutator rates, either partially or fully.
-Crucially, reversion events introduce the possibility of escape from otherwise permanent mutator fixation \citep{taddei1997role}.
-Even when rare, reversion can significantly influence mutator dynamics.
-For instance, low-frequency recombination processes that facilitate restoration of DNA repair mechanisms can strongly influence the fate of mutators \citep{tenaillon2000mutators}.
+% Much future work remains.
+% One phenomenon in some benchtop evolution experiments \citep{ho2021evolutionary}, but not considered in present work, is mutator reversion.
+% In a reversion scenario, gain-of-function mutations restore a mutator strain toward baseline nonmutator rates, either partially or fully.
+% Crucially, reversion events introduce the possibility of escape from otherwise permanent mutator fixation \citep{taddei1997role}.
+% Even when rare, reversion can significantly influence mutator dynamics.
+% For instance, low-frequency recombination processes that facilitate restoration of DNA repair mechanisms can strongly influence the fate of mutators \citep{tenaillon2000mutators}.
 
-Given experimental evidence highlighting limitations of mutator strategies in facilitating adaptation within complex environments \citep{ho2021evolutionary}, another informative extension would be to explore how mutator dynamics manifest within richer fitness landscapes that capture aspects of pleiotropy, redundancy, and asymmetry.
-Within this framework, it would be possible to study adaptive potential in terms of distortions of fitness landscape topology, rather than artificial caps on available beneficial mutations.
-Models of adaptive potential with an asymptotic, rather than capped, supply of beneficial mutations might also be explored.
+% Given experimental evidence highlighting limitations of mutator strategies in facilitating adaptation within complex environments \citep{ho2021evolutionary}, another informative extension would be to explore how mutator dynamics manifest within richer fitness landscapes that capture aspects of pleiotropy, redundancy, and asymmetry.
+% Within this framework, it would be possible to study adaptive potential in terms of distortions of fitness landscape topology, rather than artificial caps on available beneficial mutations.
+% Models of adaptive potential with an asymptotic, rather than capped, supply of beneficial mutations might also be explored.
 
 Use of hardware accelerator technology for high-performance computing was key in enabling agent-based simulation at the population scales explored in this work.
 However, further work remains in algorithm and software development to leverage these platforms for \textit{in silico} evolution experiments.
@@ -37,10 +37,10 @@ Across all future experiments, insight could be deepened by tracking phylodynami
 Recent work has demonstrated potential for lightweight reconstruction-based strategies for phylogenetic tracking in many-processor evolution simulations \citep{moreno2022hereditary}, important methods development work remains in providing sufficient tree reconstruction throughput to enable large-scale analyses \citep{moreno2024trackable}.
 % Such an approach might ultimately incorporate implementation for runtime sampling of genomes from device to host, to serve as ``fossils'' in revealing intermediate phenotypic characters and fleshing out the lineage structure of extinct clades \citep{moreno2024guide}.
 
-Findings from this work highlight the role of available adaptive potential, in conjunction with spatial structure and background mutator frequency, in influencing the evolution of mutation rates in asexual populations.
-In concert with empirical data from \textit{in vivo} experiments, simulation studies are key in guiding development of formal descriptions explaining relationships among evolutionary dynamics --- as has been accomplished in earlier model-based investigations of mutator dynamics \citep{wylie2009fixation,raynes2018sign}.
+% Findings from this work highlight the role of available adaptive potential, in conjunction with spatial structure and background mutator frequency, in influencing the evolution of mutation rates in asexual populations.
+% In concert with empirical data from \textit{in vivo} experiments, simulation studies are key in guiding development of formal descriptions explaining relationships among evolutionary dynamics --- as has been accomplished in earlier model-based investigations of mutator dynamics \citep{wylie2009fixation,raynes2018sign}.
 % In the case of present work, such formulations seem likely to largely revolve around projections of mutation waiting times and time to fixation for beneficial alleles \citep{ribeck2016competition}.
-Further, in the face of scenarios involving extensive mechanistic complications, agent-based simulations can supplement mathematical approaches as predictive instruments in their own right \citep{an2009agent}.
+% Further, in the face of scenarios involving extensive mechanistic complications, agent-based simulations can supplement mathematical approaches as predictive instruments in their own right \citep{an2009agent}.
 To this end, we see work increasing the feasible scale of simulation by leveraging accelerator hardware as a key contributing step in broader development of more powerful predictive capabilities for the behavior of real-world biological systems.
 % Ultimately, very large-scale simulations may drive so-called ``digital twins'' of evolving populations --- high-fidelity computational models that incorporate real-time feedback to mirror their physical counterpart \citep{dekoning2023digital}.
 % Such digital twins will not only advance our theoretical insights but also provide practical tools for predicting and controlling evolutionary trajectories in natural and artificial populations.
