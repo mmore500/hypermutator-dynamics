@@ -14,14 +14,18 @@
 % \caption{speedup}
 % \label{fig:perf:speedup}
 % \end{subfigure}
+\vspace{-2ex}
 
 \caption{
-  \textbf{CPU, GPU, and WSE simulation performance.}
+  \textbf{Simulation performance on CPU, GPU, and WSE.}
   \footnotesize
-  CPU throughput was measured from NumPy-backed simulation code, GPU throughput was measured from equivalent CuPy-backed simulation code, and WSE throughput was measured from a comparable Cerebras Software Language implementation.
-  CPU experiments were single-core on AMD EPYC 7H12 (2.595 GHz), GPU hardware was NVIDIA A100 hosted by AMD EPYC 7713 (2.0 GHz) or Intel Xeon 8358 (2.6 GHz), and WSE hardware was CS-2 hosted by Intel Xeon Platinum 8280L (2.7-4.0 GHz).
-  Speedup was calculated relative to mean CPU throughput.
+  % CPU throughput was measured from NumPy-backed simulation code, GPU throughput was measured from equivalent CuPy-backed simulation code, and WSE throughput was measured from a comparable Cerebras Software Language implementation.
+  CPU experiments were single-core on AMD EPYC 7H12 (2.595 GHz), GPU hardware was NVIDIA A100, and WSE hardware was Cerebras CS-2.
+  % Speedup was calculated relative to mean CPU throughput.
   % Shaded areas indicate bootstrapped 95\% confidence intervals with sample size $\geq 10$.
 }
 \label{fig:perf}
+
+\vspace{-3ex}
+
 \end{figure}
