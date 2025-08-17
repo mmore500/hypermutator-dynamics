@@ -143,7 +143,7 @@ Notably, this approach constrained memory use to a fixed-size buffer, while allo
 % As such, for this data point, we exclude the originally generated data in favor of the results with added PRNG stepping.
 % We note that on a more general basis, the soundness of our simulation implementations is bolstered by consistency between similar experiments conducted on WSE and GPU.
 % In particular, CuRAND's RNG has been extensively characterized and, although it exhibits statistically detectable flaws of its own, is considered to be of production quality \citep{nvidia2024curand}.
-Given the stochastic nature of agent-based evolution models, our experiments relied heavily on pseudorandom number generators (PRNGs).
+% Given the stochastic nature of agent-based evolution models, our experiments relied heavily on pseudorandom number generators (PRNGs).
 % These algorithms emulate true entropy by producing a sequence of output values that, although deterministic, are statistically independent.
 % Due to performance engineering considerations, vendor-supplied PRNG implementations for the WSE and GPU do not employ cryptographic-quality algorithms.
 % Our WSE simulations relied on Cerebras Software Language's PRNG utilities, which use a Linear-Feedback Shift Register (LFSR) approach with polynomial $3x^2 + 8x + 1$ strided by 128 iterations.
