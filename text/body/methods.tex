@@ -9,7 +9,7 @@ To assess the generality of our findings, we supplemented this simple ``counter-
 %
 % This section reviews the model mechanics used across experiments in this work, as well as aspects of simulation design used to enact treatment conditions.
 % Experimental variables varied between treatments include population size, spatial population structure, background prevalence of mutator traits, and restriction of adaptive potential.
-% Finally, we describe notable implementation-level considerations necessary in harnessing high-performance computing hardware to achieve the simulation of large, heterogenous populations necessary for this work.
+% Finally, we describe notable implementation-level considerations necessary in harnessing high-performance computing hardware to achieve the simulation of large, heterogeneous populations necessary for this work.
 %
 % \subsection{Counter-based Genome Model} \label{sec:poisson}
 %
@@ -180,6 +180,6 @@ Simulation code, configuration files, and batch scripts are available via the Op
 % To enable the simulation scale necessary for this work, we employed Graphics Processing Unit (GPU) and Wafer-Scale Engine (WSE) hardware accelerators, which contain large collections of worker processors specialized for numerical computation.
 CPU hardware was AMD EPYC 7H12, GPU hardware was NVIDIA A100, WSE hardware was Cerebras CS-2 \citep{buitrago2021neocortex,Brashear2025}.
 %\citep{choquette2021nvidia,cerebras2021wafer}.
-% WSE hardware was hosted by the Neocortex at PSC .
+% WSE hardware was hosted by the Neocortex at PSC.
 
 % This project benefited significantly from open-source scientific software \citep{2020SciPy-NMeth,harris2020array,reback2020pandas,mckinney-proc-scipy-2010,waskom2021seaborn,hunter2007matplotlib,moreno2023teeplot}.
