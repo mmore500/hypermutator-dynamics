@@ -22,10 +22,9 @@ For instance, the emergence of mutator strains has been associated with treatmen
 % Spatial structure associated with biofilms, in particular, has been implicated in facilitating the evolution of antibiotic resistance \citep{france2018spatial}.
 % Thus, beyond theoretical interest, studying mutator dynamics has concrete practical applications with real-world potential to benefit both individual health and public well-being.
 
-Existing work has established that large population size, in particular, can drive the probability of mutator traits fixing to near certainty \citep{raynes2018sign,tenaillon1999mutators}.
-However, questions remain as to conditions that stabilize very large populations \textit{against} mutator fixation \citep{raynes2019migration}.
-In reported work, we apply large-scale agent-based simulations to study the role of adaptive potential (i.e., supply of available beneficial mutations) in influencing mutator dynamics at large population sizes.
-Among other findings, simulation experiments TODO (Figure \ref{fig:avail-ben-muts}).
+Existing modeling work has established that large population size, in particular, can drive the probability of mutator traits fixing to near certainty \citep{raynes2018sign,tenaillon1999mutators}.
+However, questions remain as to conditions that stabilize very large asexual populations \textit{against} mutator fixation \citep{raynes2019migration}.
+Among other findings, reported work has allowed exploration of the role of mutational supply in curtailing mutator advantage at large population sizes (Figure \ref{fig:avail-ben-muts}), as well as the sensitivity of this effect to population structure and background rates of mutator allele prevalence.
 
 % \subsection{Causes and Consequences of Mutator Strains}
 
@@ -115,6 +114,10 @@ Notably, however, major challenges exist in adapting simulation codes to the WSE
 At the hardware level, all communication occurs through message passing between directly adjacent processing tiles.
 Additionally, although on-device memory totals nearly 50GB, only 48kb is available per PE.
 We address these constraints by mapping WSE layout to simulation spatial structure and adopting dynamic data coarsening strategies, discussed next.
+In concert with traditional observational and experimental work, harnessing such next-generation hardware accelerator platforms promises to ultimately shed light on biological phenomena across broader scales and levels of organization.
+%The ability to leverage emerging HPC architectures, as shown here, offers a practical step toward addressing such challenges.
+
+
 % A key trade-off encountered in this work is in memory constraints imposed by WSE architecture, which supplies only 48kb of memory per PE.
 
 % Of technical note, the large-scale simulations necessary for this work were made possible by exploiting hardware accelerator platforms --- specialized high-performance computing (HPC) peripherals capable of massive computational workloads.
