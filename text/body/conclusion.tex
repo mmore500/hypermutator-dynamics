@@ -30,18 +30,17 @@
 % Within this framework, it would be possible to study adaptive potential in terms of distortions of fitness landscape topology, rather than artificial caps on available beneficial mutations.
 % Models of adaptive potential with an asymptotic, rather than capped, supply of beneficial mutations might also be explored.
 
-Use of hardware accelerator technology for high-performance computing was key in enabling agent-based simulation at the population scales explored in this work.
-However, further work remains in algorithm and software development to leverage these platforms for \textit{in silico} evolution experiments.
+% Use of hardware accelerator technology for high-performance computing was key in enabling agent-based simulation at the population scales explored in this work.
+Increasing the feasible scale of simulation represents a key contributing step in broader development of more powerful analytical and predictive capabilities for the behavior of real-world biological systems.
+Although promising as means to this end, significant further work remains in algorithm and software development to leverage emerging accelerator platforms hardware for \textit{in silico} evolution experiments.
 For example, although trivial for GPU architecture, implementing well-mixed (or nearly well-mixed) migration on WSE hardware will necessitate densely connected, hierarchical, or fully point-to-point routing structures among processor elements \citep{james2020physical,luczynski2024near}.
-Across all future experiments, insight could be deepened by tracking phylodynamics within simulated populations.
-Recent work has demonstrated potential for lightweight reconstruction-based strategies for phylogenetic tracking in many-processor evolution simulations \citep{moreno2024trackable}.
-%, important methods development work remains in providing sufficient tree reconstruction throughput to enable large-scale analyses \citep{moreno2024trackable}.
+Arranging data collection within memory and bandwidth constraints of lineage histories represents another key challenge \citep{moreno2024trackable}.
 % Such an approach might ultimately incorporate implementation for runtime sampling of genomes from device to host, to serve as ``fossils'' in revealing intermediate phenotypic characters and fleshing out the lineage structure of extinct clades \citep{moreno2024guide}.
 % Findings from this work highlight the role of available adaptive potential, in conjunction with spatial structure and background mutator frequency, in influencing the evolution of mutation rates in asexual populations.
 % In concert with empirical data from \textit{in vivo} experiments, simulation studies are key in guiding development of formal descriptions explaining relationships among evolutionary dynamics --- as has been accomplished in earlier model-based investigations of mutator dynamics \citep{wylie2009fixation,raynes2018sign}.
 % In the case of present work, such formulations seem likely to largely revolve around projections of mutation waiting times and time to fixation for beneficial alleles \citep{ribeck2016competition}.
 % Further, in the face of scenarios involving extensive mechanistic complications, agent-based simulations can supplement mathematical approaches as predictive instruments in their own right \citep{an2009agent}.
-To this end, we see work increasing the feasible scale of simulation by leveraging accelerator hardware as a key contributing step in broader development of more powerful analytical and predictive capabilities for the behavior of real-world biological systems.
+% To this end, we see work increasing the feasible scale of simulation by leveraging accelerator hardware as a key contributing step in broader development of more powerful analytical and predictive capabilities for the behavior of real-world biological systems.
 % Ultimately, very large-scale simulations may drive so-called ``digital twins'' of evolving populations --- high-fidelity computational models that incorporate real-time feedback to mirror their physical counterpart \citep{dekoning2023digital}.
 % Such digital twins will not only advance our theoretical insights but also provide practical tools for predicting and controlling evolutionary trajectories in natural and artificial populations.
 % We expect that developments in this vein will play a role in addressing complex biological challenges in medicine, public health, and natural resources management, as well as enriching our understanding of evolution in an ever-changing world.

@@ -4,11 +4,11 @@
 \section{On-device Data Management}
 \label{sec:dynamics}
 
-Transient dynamics
-% While this scheme allowed maximization of on-device resources, as a consequence the set of sampled time points varied depending on how long nonmutator alleles persisted.
-% As a result, the number of generations elapsed per frame in provided animations varies.
+% Transient dynamics
+% % While this scheme allowed maximization of on-device resources, as a consequence the set of sampled time points varied depending on how long nonmutator alleles persisted.
+% % As a result, the number of generations elapsed per frame in provided animations varies.
 
-To assess how competition between non- and mutator strains unfolds at very large population scales, we performed an additional set of simulations on the WSE using the site-explicit model of adaptation, where mutators originated \textit{de novo} from nonmutator strains.
+% To assess how competition between non- and mutator strains unfolds at very large population scales, we performed an additional set of simulations on the WSE using the site-explicit model of adaptation, where mutators originated \textit{de novo} from nonmutator strains.
 % For these experiments, a subpopulation size of 256 agents per PE was used to preserve on-device memory to record time series data.
 % This configuration yielded a net population size of 191 million agents.
 % In these trials, we probed the critical region where outcomes transition between nonmutator and mutator fixation, configuring adaptive potential between 12 and 16 available beneficial mutations.
@@ -19,17 +19,17 @@ Generation-on-generation, we configured each processor element to sample a genom
 To efficiently curate this single-bit data within per-PE memory limits while allowing a flexible recording duration (as timing of extinction or fixation events is not known \textit{a priori}), we leveraged recently introduced ``DStream'' ring buffer data structures \citep{moreno2024algorithms}.
 Notably, this approach constrained memory use to a fixed-size buffer, while allowing recording to be dynamically halted when nonmutators were determined to be locally extinct (and restarted if they are reintroduced).
 
-Figure \ref{fig:dynamics} arranges sequential population snapshots from two example simulations, both with adaptive potential of 14 beneficial mutations.
-In the first example, mutators fixed; in the second, they did not.
-At outset, panels \ref{fig:dynamics:no-fixation} and \ref{fig:dynamics:fixation} unfold similarly.
-First, mutator strains appear \textit{de novo} across the breadth of simulated populations.
-Then, as patches of mutators expand outwards, the nonmutator population is broken into pockets.
-% Mutator strains continued to stem from nonmutator lineages as they accrued adaptive mutations.
-% Of 16 replicates where we observed mutators fix, we found 2 cases where the final dominant mutator lineage arose from a partially adapted nonmutator lineage --- harboring 1 and 3 beneficial mutations, respectively.
-% https://github.com/mmore500/hypermutator-dynamics/blob/90422b30f2dd9ca29baad273cbcc676dbfeab55f/binder/wse-denovo-spatial2d-explicitsite-genomes.ipynb
-In scenarios where mutators fix, surviving patches of nonmutators dwindle away entirely (panel \ref{fig:dynamics:fixation}).
-Where nonmutators persist, they re-establish via concentric growth from surviving pockets (panel \ref{fig:dynamics:no-fixation}).
-This TODO allowed us to assess the fact that mutators transiently peak at well above the majority of population composition.
+% Figure \ref{fig:dynamics} arranges sequential population snapshots from two example simulations, both with adaptive potential of 14 beneficial mutations.
+% In the first example, mutators fixed; in the second, they did not.
+% At outset, panels \ref{fig:dynamics:no-fixation} and \ref{fig:dynamics:fixation} unfold similarly.
+% First, mutator strains appear \textit{de novo} across the breadth of simulated populations.
+% Then, as patches of mutators expand outwards, the nonmutator population is broken into pockets.
+% % Mutator strains continued to stem from nonmutator lineages as they accrued adaptive mutations.
+% % Of 16 replicates where we observed mutators fix, we found 2 cases where the final dominant mutator lineage arose from a partially adapted nonmutator lineage --- harboring 1 and 3 beneficial mutations, respectively.
+% % https://github.com/mmore500/hypermutator-dynamics/blob/90422b30f2dd9ca29baad273cbcc676dbfeab55f/binder/wse-denovo-spatial2d-explicitsite-genomes.ipynb
+% In scenarios where mutators fix, surviving patches of nonmutators dwindle away entirely (panel \ref{fig:dynamics:fixation}).
+% Where nonmutators persist, they re-establish via concentric growth from surviving pockets (panel \ref{fig:dynamics:no-fixation}).
+% This TODO allowed us to assess the fact that mutators transiently peak at well above the majority of population composition.
 % \input{fig/peaksweep}
 In fact, at peak mutator prevalence, we observed nonmutators shrink to less than 0.1\% of the population in experiments with adaptive potential of 14 available beneficial mutations.
 
@@ -39,13 +39,12 @@ In fact, at peak mutator prevalence, we observed nonmutators shrink to less than
 \input{fig/perf}
 
 To assess the efficacy of hardware accelerator resources in expediting our simulations, we collected timings of runtime duration from our simulation experiments.
-As a baseline comparison point for performance, we also benchmarked simulation on CPU.
+As a baseline comparison point, we also benchmarked corresponding single-core CPU simulation code.
 
-
-Mean throughput was 7.0 (SD 0.5) million AGPS on CPU, 2.7 (SD 0.03) billion AGPS on GPU, and 780 (SD 0.5) billion AGPS on WSE for \textit{de novo} trials using the counter-based model.
-Figure \ref{fig:perf} compares simulation performance between hardware platforms, measured in agent-generations per second (AGPS).
+Mean throughput was 7.0 (SD 0.5) million agent-generations per second (AGPS) on CPU, 2.7 (SD 0.03) billion AGPS on GPU, and 780 (SD 0.5) billion AGPS on WSE for \textit{de novo} trials using the counter-based model.
+We found that WSE provided a speedup of $111,091\times$ (SD 75) over CPU and $294\times$ (SD 0.2) over GPU (Figure \ref{fig:perf}).
 % Net speedup, normalized to mean CPU throughput, was $378\times$ (SD 4) on GPU and $111,091\times$ (SD 75) on WSE.
-Normalized to net GPU performance, WSE provided a speedup of $294\times$ (SD 0.2).
+% Normalized to GPU performance, WSE provided a speedup of $294\times$ (SD 0.2).
 
 % Under the site-explicit model, WSE gave 650 (SD 50) billion AGPS under \textit{de novo} conditions.
 % The site-explicit model was not implemented on GPU.
