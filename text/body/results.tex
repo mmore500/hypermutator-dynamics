@@ -1,22 +1,73 @@
-\subsection{Major Results}
+% \section{Results}
+\input{fig/dynamics}
 
-In our initial experiment, we confirmed that large populations favor mutator fixation, under the assumption of unlimited adaptive potential.
-Consistent with expectations, we found that restricting adaptive potential by capping available adaptive mutations reversed outcomes in large populations to favor nonmutators.
-Investigating the influence of population structure and composition, we found spatial structure to substantially increase the amount of adaptive potential required to fix mutator alleles in large populations.
-However, this effect only occurred when mutator alleles were initially rare within the population.
-We also report qualitative differences between effects of population size on mutator fixation probability under well-mixed versus 2D population structure when mutations are rare.
-In the final part of our investigation, we analyze the spatiotemporal dynamics of our simulations to better understand the mechanisms at play behind these effects.
+\section{On-device Data Management}
+\label{sec:dynamics}
 
-Differing from existing results, we find that in the situation of limited adaptive potential, the effect of population structure on fixation probability is actually opposite to that predicted under the theory.
-Population structure has also been found to influence mutator outcomes, with deviation from well-mixed conditions being linked to a higher probability for hypermutator fixation so long as any connectivity remains between subpopulations \citep{raynes2019migration}.
+Transient dynamics
+% While this scheme allowed maximization of on-device resources, as a consequence the set of sampled time points varied depending on how long nonmutator alleles persisted.
+% As a result, the number of generations elapsed per frame in provided animations varies.
 
-Of technical note, the large-scale simulations necessary for this work were made possible by exploiting hardware accelerator platforms --- specialized high-performance computing (HPC) peripherals capable of massive computational workloads.
-In line with existing work applying Graphics Processing Units (GPUs) for agent-based modeling \citep{turpin2021xaevol,kosiachenko2019mass,perumalla2009switching,heinemann2007artificial,richmond2023flame}, we found a substantial performance boost: in our case, $378\times$ speedup over single-core CPU evaluation.
-\footnote{%
-Other notable approaches to large-scale evolution simulations have used more traditional cluster-based CPU modeling \citep{moreno2022best,collier2015large,ray1995proposal,turpin2020paevol}, sampling-based approximations \citep{taddei1997role}, and compartmental representations \citep{tenaillon1999mutators}.}
-We also leveraged Wafer-Scale Engine (WSE) technology in this work, a cutting-edge AI/ML-oriented platform that delivers 850,000 processor cores packed together on a single chip.
-Simulation on WSE achieved a further $294\times$ speedup, resulting in a net $111{,}091\times$ speedup from single-CPU evaluation.
-These performance gains ultimately benefited the work by allowing us to employ forward-time agent-based simulation at full resolution across genome models and population structures that are difficult to integrate with compartment-based approaches used for simulations of large populations in existing work.
+To assess how competition between non- and mutator strains unfolds at very large population scales, we performed an additional set of simulations on the WSE using the site-explicit model of adaptation, where mutators originated \textit{de novo} from nonmutator strains.
+% For these experiments, a subpopulation size of 256 agents per PE was used to preserve on-device memory to record time series data.
+% This configuration yielded a net population size of 191 million agents.
+% In these trials, we probed the critical region where outcomes transition between nonmutator and mutator fixation, configuring adaptive potential between 12 and 16 available beneficial mutations.
+
+This experiment additional runtime data logging in our simulations to track time series data of mutator allele prevalence.
+Working within the limited per-PE memory capacity of XXkb, however, required careful consideration. TODO
+Generation-on-generation, we configured each processor element to sample a genome from its local population and record its mutator allele status (i.e., a binary value as either a non- or mutator).
+To efficiently curate this single-bit data within per-PE memory limits while allowing a flexible recording duration (as timing of extinction or fixation events is not known \textit{a priori}), we leveraged recently introduced ``DStream'' ring buffer data structures \citep{moreno2024algorithms}.
+Notably, this approach constrained memory use to a fixed-size buffer, while allowing recording to be dynamically halted when nonmutators were determined to be locally extinct (and restarted if they are reintroduced).
+
+Figure \ref{fig:dynamics} arranges sequential population snapshots from two example simulations, both with adaptive potential of 14 beneficial mutations.
+In the first example, mutators fixed; in the second, they did not.
+At outset, panels \ref{fig:dynamics:no-fixation} and \ref{fig:dynamics:fixation} unfold similarly.
+First, mutator strains appear \textit{de novo} across the breadth of simulated populations.
+Then, as patches of mutators expand outwards, the nonmutator population is broken into pockets.
+% Mutator strains continued to stem from nonmutator lineages as they accrued adaptive mutations.
+% Of 16 replicates where we observed mutators fix, we found 2 cases where the final dominant mutator lineage arose from a partially adapted nonmutator lineage --- harboring 1 and 3 beneficial mutations, respectively.
+% https://github.com/mmore500/hypermutator-dynamics/blob/90422b30f2dd9ca29baad273cbcc676dbfeab55f/binder/wse-denovo-spatial2d-explicitsite-genomes.ipynb
+In scenarios where mutators fix, surviving patches of nonmutators dwindle away entirely (panel \ref{fig:dynamics:fixation}).
+Where nonmutators persist, they re-establish via concentric growth from surviving pockets (panel \ref{fig:dynamics:no-fixation}).
+This TODO allowed us to assess the fact that mutators transiently peak at well above the majority of population composition.
+% \input{fig/peaksweep}
+In fact, at peak mutator prevalence, we observed nonmutators shrink to less than 0.1\% of the population in experiments with adaptive potential of 14 available beneficial mutations.
+
+\section{Simulation Performance}
+\label{sec:performance}
+
+\input{fig/perf}
+
+To assess the efficacy of hardware accelerator resources in expediting our simulations, we collected timings of runtime duration from our simulation experiments.
+As a baseline comparison point for performance, we also benchmarked simulation on CPU.
+
+
+Mean throughput was 7.0 (SD 0.5) million AGPS on CPU, 2.7 (SD 0.03) billion AGPS on GPU, and 780 (SD 0.5) billion AGPS on WSE for \textit{de novo} trials using the counter-based model.
+Figure \ref{fig:perf} compares simulation performance between hardware platforms, measured in agent-generations per second (AGPS).
+% Net speedup, normalized to mean CPU throughput, was $378\times$ (SD 4) on GPU and $111,091\times$ (SD 75) on WSE.
+Normalized to net GPU performance, WSE provided a speedup of $294\times$ (SD 0.2).
+
+% Under the site-explicit model, WSE gave 650 (SD 50) billion AGPS under \textit{de novo} conditions.
+% The site-explicit model was not implemented on GPU.
+% For all the above, 50/50 trials gave similar performance to \textit{de novo}.
+
+On WSE, we found agent-generation throughput to be consistent across per-PE population densities.
+%, as shown in Supplementary Figure \ref{fig:perf-tilepop}.
+In contrast, on GPU we encountered an apparent memory-wall effect where mean  throughput dropped $>95\%$ to 121 million AGPS when increasing net population size from 15.1 million to 175 million.
+% For this reason, we only scaled GPU experiments up to 15.1-million-agent populations ($243 \times 243$ demes).
+
+% \subsection{Major Results}
+
+% In our initial experiment, we confirmed that large populations favor mutator fixation, under the assumption of unlimited adaptive potential.
+% Consistent with expectations, we found that restricting adaptive potential by capping available adaptive mutations reversed outcomes in large populations to favor nonmutators.
+% Investigating the influence of population structure and composition, we found spatial structure to substantially increase the amount of adaptive potential required to fix mutator alleles in large populations.
+% However, this effect only occurred when mutator alleles were initially rare within the population.
+% We also report qualitative differences between effects of population size on mutator fixation probability under well-mixed versus 2D population structure when mutations are rare.
+% In the final part of our investigation, we analyze the spatiotemporal dynamics of our simulations to better understand the mechanisms at play behind these effects.
+
+% Differing from existing results, we find that in the situation of limited adaptive potential, the effect of population structure on fixation probability is actually opposite to that predicted under the theory.
+% Population structure has also been found to influence mutator outcomes, with deviation from well-mixed conditions being linked to a higher probability for hypermutator fixation so long as any connectivity remains between subpopulations \citep{raynes2019migration}.
+
 
 % \section{Results and Discussion} \label{sec:results}
 
@@ -43,31 +94,10 @@ These performance gains ultimately benefited the work by allowing us to employ f
 % For the largest-scale trials, shown in the left panel of Figure \ref{fig:wse-inf-one:2048}, an increased subpopulation size of 2,048 agents per deme was used.
 % As such, in these trials, note that coarsened spacing between surveyed population sizes obscures the sign-change fitness effect near the lower bound of population size.
 
-\subsection{Restricting Adaptive Potential}
-\label{sec:restricting-adaptive-potential}
+% \subsection{Restricting Adaptive Potential}
+% \label{sec:restricting-adaptive-potential}
 
-Next, we sought to establish how adaptive potential interacts with current synthesis of the role of population size in mediating mutator dynamics.
-One assumption of existing work by \citet{raynes2018sign} is availability of abundant potential beneficial mutations.
-Existing simulation studies suggest that restricting adaptive potential should disfavor mutator alleles \citep{tenaillon1999mutators}, but understanding of how this effect interacts with other factors is limited.
-
-To investigate this question, we next performed experiments where the supply of possible beneficial mutations was constrained.
-As for the above results, experiments were conducted on the WSE platform using 2D population structure with 50/50 initialization.
-The right panels of \cref{fig:wse-inf-one:32,fig:wse-inf-one:2048} show mutator fixation probabilities where agents could accrue no more than one beneficial mutation for trials using 32 and 2,048 agents per deme, respectively.
-In both cases, a second sign-change fitness effect for mutator traits appears, with nonmutators regaining favor past population sizes of 100,000 agents.
-Beyond population sizes of 1 million agents, nonmutators reliably drive mutators to extinction.
-
-These results substantiate an earlier verbal hypothesis by \citet{desai2011balance} that more than one beneficial mutation should become necessary to fix a mutator allele when fixation time becomes long, as is the case with large population size.
-The rationale behind this expectation is that where fixation time is long, non-mutators are more likely to discover a comparable beneficial allele before being driven to extinction.
-From this point, disadvantage in mutational load dooms the mutator allele.
-
-\input{fig/avail-ben-muts}
-
-Next, we tested sensitivity of the relationship between mutator fixation probability and population size with respect to the amount of adaptive potential available.
-Figure \ref{fig:avail-ben-muts} shows fixation curves where one, two, three, four, and five beneficial mutations are available, conducted with 256 agents per deme.
-Under surveyed conditions, with 2D spatial structure and mutators initially in equal proportion to nonmutators, nonmutator persistence rapidly decays with increases in adaptive potential.
-Even with the largest surveyed billion-agent population size, mutators regain selective parity where four or more beneficial mutations are available.
-Interestingly, this result may help explain an earlier observation by \citet{tenaillon1999mutators} that below a threshold of four beneficial mutations available, mutator alleles never rose from background levels to fix within their compartment-based model of a well-mixed billion-member population.
-Notwithstanding differences in model parameterization and population structure, our findings suggest that this threshold may coincide with the point where the net fitness effect of the mutator allele neutralizes in commensurately scaled populations.
+% \subsection{Major Results}
 
 % \input{fig/avail-ben-muts-gen}
 
@@ -102,30 +132,6 @@ Notwithstanding differences in model parameterization and population structure, 
 % As shown in Supplementary Figure \ref{fig:wse-site-explicit-counter-based}, results were generally consistent between the two genome models.
 % Notably, though, under the ``site-explicit'' model, mutator alleles are more frequently fixed within the smallest surveyed population size under 50/50 initialization.
 
-\subsection{Spatiotemporal Dynamics}
-\label{sec:dynamics}
-
-To assess how competition between non- and mutator strains unfolds at very large population scales, we performed an additional set of simulations on the WSE using the site-explicit model of adaptation, where mutators originated \textit{de novo} from nonmutator strains.
-For these experiments, a subpopulation size of 256 agents per PE was used to preserve on-device memory to record time series data.
-This configuration yielded a net population size of 191 million agents.
-In these trials, we probed the critical region where outcomes transition between nonmutator and mutator fixation, configuring adaptive potential between 12 and 16 available beneficial mutations.
-
-\input{fig/dynamics}
-
-Figure \ref{fig:dynamics} arranges sequential population snapshots from two example simulations, both with adaptive potential of 14 beneficial mutations.
-In the first example, mutators fixed; in the second, they did not.
-At outset, panels \ref{fig:dynamics:no-fixation} and \ref{fig:dynamics:fixation} unfold similarly.
-First, mutator strains appear \textit{de novo} across the breadth of simulated populations.
-Then, as patches of mutators expand outwards, the nonmutator population is broken into pockets.
-Mutator strains continued to stem from nonmutator lineages as they accrued adaptive mutations.
-Of 16 replicates where we observed mutators fix, we found 2 cases where the final dominant mutator lineage arose from a partially adapted nonmutator lineage --- harboring 1 and 3 beneficial mutations, respectively.
-% https://github.com/mmore500/hypermutator-dynamics/blob/90422b30f2dd9ca29baad273cbcc676dbfeab55f/binder/wse-denovo-spatial2d-explicitsite-genomes.ipynb
-In scenarios where mutators fix, surviving patches of nonmutators dwindle away entirely (panel \ref{fig:dynamics:fixation}).
-Where nonmutators persist, they re-establish via concentric growth from surviving pockets (panel \ref{fig:dynamics:no-fixation}).
-
-% \input{fig/peaksweep}
-
-% At peak mutator prevalence, we observed nonmutators shrink to less than 0.1\% of the population in experiments with adaptive potential of 14 available beneficial mutations.
 % % ^^^ https://github.com/mmore500/hypermutator-dynamics/blob/5e904ac2fbbd4b41a0ad679883fc1a63af71c00c/binder/wse-denovo-spatial2d-explicitsite-timeseries.ipynb
 % To assess the magnitude of transient peak mutator concentrations across levels of adaptive potential, we performed an additional set of four-replicate simulations with adaptive potentials ranging from 2 to 10 available beneficial mutations.
 % For all replicates with 6 or more available beneficial mutations, mutators peaked beyond 50\% prevalence (Figure \ref{fig:peaksweep}).
