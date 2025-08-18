@@ -15,7 +15,7 @@
 
 A key challenge in this work was balancing limited on-device memory between simulation content and data recording.
 For example, some experiments required time series measurements of mutator prevalence in PE subpopulations (Figure \ref{fig:dynamics}).
-To economize memory use, we applied recently-developed algorithms that generalize ring buffer storage to efficiently perform systematic temporal downsampling \citep{moreno2024algorithms,gunther2014algorithm}.
+To economize memory use, we applied recently developed algorithms that generalize ring buffer storage to efficiently perform systematic temporal downsampling \citep{moreno2024algorithms,gunther2014algorithm}.
 Successive local samples are recorded as single bits within a flat, fixed-size buffer --- with no bookkeeping overhead.
 Crucially, because recording duration (i.e., until extinction) is unknown \textit{a priori}, this approach dynamically coarsens recording density via overwrites once storage capacity is reached --- strictly bounding memory use.
 
@@ -67,7 +67,7 @@ We found that WSE provided a speedup of $111,091\times$ (SD 75) over CPU and $29
 
 On WSE, we found agent-generation throughput to be consistent across per-PE population densities.
 %, as shown in Supplementary Figure \ref{fig:perf-tilepop}.
-In contrast, on GPU we encountered an apparent memory-wall effect where mean  throughput dropped $>95\%$ to 121 million AGPS when increasing net population size from 15.1 million to 175 million.
+In contrast, on GPU we encountered an apparent memory-wall effect where mean throughput dropped $>95\%$ to 121 million AGPS when increasing net population size from 15.1 million to 175 million.
 % For this reason, we only scaled GPU experiments up to 15.1-million-agent populations ($243 \times 243$ demes).
 
 % \subsection{Major Results}
@@ -95,7 +95,7 @@ In contrast, on GPU we encountered an apparent memory-wall effect where mean  th
 
 % In a first set of experiments, we tested the capability of our model to reproduce the qualitative regimes of mutator dynamics across population scales identified by \citet{raynes2018sign}.
 % In the first regime, where population size is very small, fixation of mutator and nonmutator alleles is nearly equiprobable, owing to the overwhelming influence of stochastic effects.
-% Subsequently, in medium-sized populations, mutators become disfavored on account of increased power of selection becoming in penalizing the increased mutational load imposed by mutator allelees.
+% Subsequently, in medium-sized populations, mutators become disfavored on account of increased power of selection becoming in penalizing the increased mutational load imposed by mutator alleles.
 % Finally, in sufficiently large populations, a sign-change fitness effect occurs and mutator fixation becomes overwhelmingly favored.
 % This effect occurs in asexual populations because population size increases the probability of at least one mutator discovering a beneficial mutation, and so ``hitch-hiking'' to sweep out nonmutators.
 
@@ -142,7 +142,7 @@ In contrast, on GPU we encountered an apparent memory-wall effect where mean  th
 % Under 50/50 conditions, by contrast, mutators begin to fix in these large populations past 2 beneficial mutations available.
 
 % We performed sensitivity analysis of our findings to the underlying counter-based genome model used.
-% For this purpose, we implemented an alternate ``site-explicit'' model where the probability of discovering a beneficial mutation scales proportional to the number available.
+% For this purpose, we implemented an alternate ``site-explicit'' model where the probability of discovering a beneficial mutation scales proportionally to the number available.
 % As shown in Supplementary Figure \ref{fig:wse-site-explicit-counter-based}, results were generally consistent between the two genome models.
 % Notably, though, under the ``site-explicit'' model, mutator alleles are more frequently fixed within the smallest surveyed population size under 50/50 initialization.
 
@@ -163,13 +163,13 @@ In contrast, on GPU we encountered an apparent memory-wall effect where mean  th
 % Figure \ref{fig:spatial-structure-combined} plots increase in mutator fixation probability with available adaptive potential across a spectrum of population sizes.
 % Interestingly, spatial structure does cause results to differ substantially under \textit{de novo} conditions.
 % We find that in large nonmutator populations of 15 million with well-mixed structure, fixation probability of mutator alleles becomes appreciable with adaptive potential of only 5 available beneficial mutations.
-% Thisis not the case for large populations with 2D deme structure, where fixation of mutator alleles become appreciable above 10 available beneficial mutations.
+% This is not the case for large populations with 2D deme structure, where fixation of mutator alleles become appreciable above 10 available beneficial mutations.
 % For intermediate population sizes of 186,000 agents, however, an opposite effect occurs: spatial structure raises the probability of mutator fixation across the board of available adaptive potential compared to well-mixed conditions.
 
 % These findings contrast with previous modeling work assuming unlimited adaptive potential, which predicts that so long as any level of connectivity exists between subpopulations, spatial structure boosts mutator fixation probability \citep{raynes2019migration}.
 % One possible explanation for why spatial structure can decrease mutator fixation probability is in extending fixation times, which extends the opportunity for nonmutators to exploit available adaptive potential before being driven to extinction.
 % This described effect notably aligns with findings from \textit{in vivo} evolution experiments with \textit{E. coli} that show that migration barriers delaying introduction of mutator strains into nonmutator populations can reduce mutator advantage \citep{lechat2006escherichia}.
 
-% On a separate front, it is surprising that substantial differences in mutator dynamics between deme-structured and well-mixed conditions only become apparent with low initial mutator frequency, given the established expectation of fitness effects of mutator alleles as a density- and number- independent \citep{raynes2019selection}.
+% On a separate front, it is surprising that substantial differences in mutator dynamics between deme-structured and well-mixed conditions only become apparent with low initial mutator frequency, given the established expectation of fitness effects of mutator alleles as a density- and number-independent \citep{raynes2019selection}.
 % While one possible explanation may be in part that detectability of fitness effect magnitudes is masked by sensitivity limitations of the 50/50 assay, this result draws into question the extent to which density-independence of mutator fitness effects generalizes to scenarios with limited adaptive potential and spatial structure.
 % In future work, it would be informative to test whether the impact of spatial structure where mutators are rare stems from heterogeneity in the spatial distribution of mutator clades or from slowing the spread of beneficial alleles.
