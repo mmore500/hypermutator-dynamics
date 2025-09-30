@@ -1,5 +1,6 @@
 import typing
 
+import matplotlib.patches as mpl_patches
 import pandas as pd
 import seaborn as sns
 
@@ -29,6 +30,7 @@ def size_fixation_areaplot(
         hue_order=hue_order,
         err_kws={"alpha": 0.5},
         kind="line",
+        legend=False,
         orient="x",
         palette=palette,
         seed=seed,
@@ -40,4 +42,12 @@ def size_fixation_areaplot(
         fill_above_lines(ax, color=palette[0])
         fill_under_lines(ax)
         ax.axhline(0.5, color="white", linestyle="--", linewidth=1)
+
+    # create legend with filled boxes
+    handles = [
+        mpl_patches.Patch(color=color, label=label, alpha=0.5)
+        for color, label in zip(palette, hue_order)
+    ]
+    g.add_legend(handles=handles, title=hue)
+
     return g
