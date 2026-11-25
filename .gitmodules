@@ -1,7 +1,7 @@
-[submodule "tex"]
-	path = tex
+[submodule "paper"]
+	path = paper
 	url = https://github.com/mmore500/hypermutator-dynamics.git
-	branch = tex
+	branch = paper
 [submodule "wse-sketches"]
 	path = wse-sketches
 	url = https://github.com/mmore500/wse-sketches.git
