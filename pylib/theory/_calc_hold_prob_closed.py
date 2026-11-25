@@ -24,17 +24,15 @@ def calc_hold_prob_closed(
 
     1. Share law. Equal-fitness mutators and nonmutators compete on equal
        terms, so each new fitness class is divided between them in
-       proportion to the rates at which they found it. Mutators that escape
-       found class 1 at the per-capita rate x0 supply_mut / P_hitch, their
-       supply conditioned on escape, against (1 - x0) supply_non for
-       nonmutators. Nonmutators' odds in class k >= 1 are thus
-           o_k = (1 - x0) / x0 * P_hitch * (supply_non / supply_mut)^k,
-       falling by the supply ratio with each class, and their share is
-       a_k = o_k / (1 + o_k). In class 0, a_0 = 1 - x0.
+       proportion to the rates at which they found it. Each class founded
+       multiplies nonmutators' odds against mutators by the supply ratio,
+       and conditioning on mutators' escape discounts them by P_hitch:
+           o_k = (1 - x0) / x0 * P_hitch * (supply_non / supply_mut)^k.
+       Nonmutators' share of class k is a_k = o_k / (1 + o_k).
 
     2. Exposure. Nonmutators one step below the peak can reach it until
-       mutators' final sweep arrives, a time T from `calc_sweep_time` with
-       mutators' supply into the peak class.
+       mutators' final sweep arrives, a time T from `calc_sweep_time` at
+       mutators' supply into the peak class, (1 - a_{K-1}) supply_mut.
 
     3. Count. The expected number of nonmutator lineages established at the
        peak is N supply_non a_{K-1} T, so
@@ -52,13 +50,10 @@ def calc_hold_prob_closed(
     Ub = kwargs.get("Ub", 1e-6)
     p = calc_load_params(**kwargs)
     hitch = calc_hitchhike_prob_closed(N, x0, **kwargs)
-    if K == 1:
-        share_non, supply = 1.0 - x0, x0 * p["supply_mut"] / hitch
-    else:
-        ratio = p["supply_non"] / p["supply_mut"]
-        odds = (1.0 - x0) / x0 * hitch * ratio ** (K - 1)
-        share_non = odds / (1.0 + odds)
-        supply = (1.0 - share_non) * p["supply_mut"]
+    ratio = p["supply_non"] / p["supply_mut"]
+    odds = (1.0 - x0) / x0 * hitch * ratio ** (K - 1)
+    share_non = odds / (1.0 + odds)
+    supply = (1.0 - share_non) * p["supply_mut"]
     sweep_time = calc_sweep_time(
         supply, p["growth_mut"], p["pi_mut"], deme_size
     )
