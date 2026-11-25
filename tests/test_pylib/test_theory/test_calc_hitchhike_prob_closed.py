@@ -1,8 +1,6 @@
 import pytest
 
-from pylib.theory._calc_hitchhike_prob_closed import (
-    calc_hitchhike_prob_closed,
-)
+from pylib.theory._calc_hitchhike_prob_closed import calc_hitchhike_prob_closed
 from pylib.theory._calc_load_params import calc_load_params
 
 

@@ -4,19 +4,21 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     import itertools as it
 
     from IPython.display import display
+    import marimo as mo
     from matplotlib import ticker as mpl_ticker
     import pandas as pd
     import polars as pl
     import seaborn as sns
     from teeplot import teeplot as tp
+    from watermark import watermark
 
-    from pylib.munge._calc_fixprobs_from_traits import calc_fixprobs_from_traits
+    from pylib._osf_fetch import osf_fetch
+    from pylib.munge._calc_fixprobs_from_traits import (
+        calc_fixprobs_from_traits,
+    )
     from pylib.theory._calc_denovo_fixprob import calc_denovo_fixprob
     from pylib.theory._calc_denovo_fixprob_demes2d import (
         calc_denovo_fixprob_demes2d,
@@ -29,7 +31,8 @@ with app.setup:
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -41,7 +44,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -54,9 +58,11 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
-    """)
+    """
+    )
     return
 
 
@@ -66,7 +72,9 @@ def _():
         [
             pl.from_pandas(
                 calc_fixprobs_from_traits(
-                    pd.read_parquet("https://osf.io/s67d2/download"),
+                    pd.read_parquet(
+                        osf_fetch("https://osf.io/s67d2/download")
+                    ),
                 ),
             ).with_columns(
                 pl.lit("50/50").alias("initial conditions"),
@@ -74,7 +82,9 @@ def _():
             ),
             pl.from_pandas(
                 calc_fixprobs_from_traits(
-                    pd.read_parquet("https://osf.io/8q5v6/download"),
+                    pd.read_parquet(
+                        osf_fetch("https://osf.io/8q5v6/download")
+                    ),
                 ),
             ).with_columns(
                 pl.lit("50/50").alias("initial conditions"),
@@ -82,7 +92,9 @@ def _():
             ),
             pl.from_pandas(
                 calc_fixprobs_from_traits(
-                    pd.read_parquet("https://osf.io/duam2/download"),
+                    pd.read_parquet(
+                        osf_fetch("https://osf.io/duam2/download")
+                    ),
                 ),
             ).with_columns(
                 pl.lit("50/50").alias("initial conditions"),
@@ -90,7 +102,9 @@ def _():
             ),
             pl.from_pandas(
                 calc_fixprobs_from_traits(
-                    pd.read_parquet("https://osf.io/seuyf/download"),
+                    pd.read_parquet(
+                        osf_fetch("https://osf.io/seuyf/download")
+                    ),
                 ),
             ).with_columns(
                 pl.lit("de novo").alias("initial conditions"),
@@ -98,7 +112,9 @@ def _():
             ),
             pl.from_pandas(
                 calc_fixprobs_from_traits(
-                    pd.read_parquet("https://osf.io/ag4ur/download"),
+                    pd.read_parquet(
+                        osf_fetch("https://osf.io/ag4ur/download")
+                    ),
                 ),
             ).with_columns(
                 pl.lit("de novo").alias("initial conditions"),
@@ -106,7 +122,9 @@ def _():
             ),
             pl.from_pandas(
                 calc_fixprobs_from_traits(
-                    pd.read_parquet("https://osf.io/edwbu/download"),
+                    pd.read_parquet(
+                        osf_fetch("https://osf.io/edwbu/download")
+                    ),
                 ),
             ).with_columns(
                 pl.lit("de novo").alias("initial conditions"),
@@ -115,15 +133,17 @@ def _():
         ],
     )
 
-    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail());
+    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail())
     return (dfxs,)
 
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Size Fixation Cliffplot
-    """)
+    """
+    )
     return
 
 
@@ -192,9 +212,7 @@ def _(dfxs, model_xy, teeplot_subdir):
             x="available beneficial mutations",
             y="fix\nprob",
             row=row,
-            row_order=sorted(
-                data[row].to_pandas().unique(), reverse=True
-            ),
+            row_order=sorted(data[row].to_pandas().unique(), reverse=True),
             hue="population\nstructure",
             hue_order=[
                 *filter(
@@ -221,7 +239,9 @@ def _(dfxs, model_xy, teeplot_subdir):
         ) as teed:
             for _model_N, _model_ax in teed.axes_dict.items():
                 for _model_curve in model_xy.get(_model_N, []):
-                    _model_ax.plot(*_model_curve, color="black", linestyle="--")
+                    _model_ax.plot(
+                        *_model_curve, color="black", linestyle="--"
+                    )
             teed.set_titles(
                 col_template="",
                 row_template="",
@@ -251,7 +271,8 @@ def _(dfxs, model_xy, teeplot_subdir):
             dummy_ax = ax.figure.add_axes(
                 [
                     pos.x0 + pos.width * 1.05,
-                    pos.y0 - pos.height * data[row].to_pandas().nunique() * 1.16,
+                    pos.y0
+                    - pos.height * data[row].to_pandas().nunique() * 1.16,
                     delta,
                     pos.height * data[row].to_pandas().nunique() * 1.58,
                 ],
@@ -278,9 +299,11 @@ def _(dfxs, model_xy, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ### Log-scaled x axis
-    """)
+    """
+    )
     return
 
 
@@ -318,9 +341,7 @@ def _(dfxs, model_xy, teeplot_subdir):
             x="available beneficial mutations",
             y="fix\nprob",
             row=_row,
-            row_order=sorted(
-                _data[_row].to_pandas().unique(), reverse=True
-            ),
+            row_order=sorted(_data[_row].to_pandas().unique(), reverse=True),
             hue="population\nstructure",
             hue_order=[
                 *filter(
@@ -350,7 +371,9 @@ def _(dfxs, model_xy, teeplot_subdir):
         ) as _teed:
             for _model_N, _model_ax in _teed.axes_dict.items():
                 for _model_curve in model_xy.get(_model_N, []):
-                    _model_ax.plot(*_model_curve, color="black", linestyle="--")
+                    _model_ax.plot(
+                        *_model_curve, color="black", linestyle="--"
+                    )
             _teed.set_titles(
                 col_template="",
                 row_template="",
@@ -385,7 +408,8 @@ def _(dfxs, model_xy, teeplot_subdir):
             _dummy_ax = _ax.figure.add_axes(
                 [
                     _pos.x0 + _pos.width * 1.05,
-                    _pos.y0 - _pos.height * _data[_row].to_pandas().nunique() * 1.16,
+                    _pos.y0
+                    - _pos.height * _data[_row].to_pandas().nunique() * 1.16,
                     _delta,
                     _pos.height * _data[_row].to_pandas().nunique() * 1.58,
                 ],

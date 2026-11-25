@@ -4,15 +4,16 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     from IPython.display import display
+    import marimo as mo
     from matplotlib import ticker as mpl_ticker
     import pandas as pd
     import seaborn as sns
     from teeplot import teeplot as tp
     from tqdm import tqdm
+    from watermark import watermark
+
+    from pylib._osf_fetch import osf_fetch
     from pylib.theory._calc_denovo_fixprob import calc_denovo_fixprob
     from pylib.theory._calc_denovo_fixprob_demes2d import (
         calc_denovo_fixprob_demes2d,
@@ -25,7 +26,8 @@ with app.setup:
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -37,7 +39,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -50,9 +53,11 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
-    """)
+    """
+    )
     return
 
 
@@ -60,29 +65,31 @@ def _():
 def _():
     dfxs_list = []
 
-    for _data in tqdm([
-        {
-            "url": "https://osf.io/x6uvs/download",
-            "initial conditions": "50/50",
-            "genome model": "site-explicit",
-        },
-        {
-            "url": "https://osf.io/bhk27/download",
-            "initial conditions": "50/50",
-            "genome model": "counter-based",
-        },
-        {
-            "url": "https://osf.io/4mdws/download",
-            "initial conditions": "de novo",
-            "genome model": "site-explicit",
-        },
-        {
-            "url": "https://osf.io/eacvu/download",
-            "initial conditions": "de novo",
-            "genome model": "counter-based",
-        },
-    ]):
-        dfx = pd.read_parquet(_data["url"])
+    for _data in tqdm(
+        [
+            {
+                "url": "https://osf.io/x6uvs/download",
+                "initial conditions": "50/50",
+                "genome model": "site-explicit",
+            },
+            {
+                "url": "https://osf.io/bhk27/download",
+                "initial conditions": "50/50",
+                "genome model": "counter-based",
+            },
+            {
+                "url": "https://osf.io/4mdws/download",
+                "initial conditions": "de novo",
+                "genome model": "site-explicit",
+            },
+            {
+                "url": "https://osf.io/eacvu/download",
+                "initial conditions": "de novo",
+                "genome model": "counter-based",
+            },
+        ]
+    ):
+        dfx = pd.read_parquet(osf_fetch(_data["url"]))
         dfx["initial conditions"] = _data["initial conditions"]
         dfx["genome model"] = _data["genome model"]
         print("apn", dfx["population size"].min())
@@ -98,16 +105,14 @@ def _(dfxs_list):
         ignore_index=True,
         sort=False,
     )
-    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail());
+    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail())
     return (dfxs,)
 
 
 @app.cell
 def _(dfxs):
     # filter to population sizes shared in all data
-    dfxs_1 = dfxs[
-        dfxs["population size"] != 190848000
-    ].reset_index(drop=True)
+    dfxs_1 = dfxs[dfxs["population size"] != 190848000].reset_index(drop=True)
     return (dfxs_1,)
 
 
@@ -128,9 +133,11 @@ def _(dfxs_1):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## initial conditions
-    """)
+    """
+    )
     return
 
 
@@ -164,15 +171,11 @@ def _(dfxs_1, model_xy, teeplot_subdir):
         for _what, _data in dfxs_1.groupby("genome model"):
             with tp.teed(
                 sns.relplot,
-                data=_data[
-                    _data["genotype"] == "hypermutator"
-                ],
+                data=_data[_data["genotype"] == "hypermutator"],
                 x="available beneficial mutations",
                 y="fix\nprob",
                 row=_row,
-                row_order=sorted(
-                    _data[_row].unique(), reverse=True
-                ),
+                row_order=sorted(_data[_row].unique(), reverse=True),
                 hue="initial\nconditions",
                 hue_order=["de novo", "50/50"],
                 style="initial\nconditions",
@@ -193,7 +196,11 @@ def _(dfxs_1, model_xy, teeplot_subdir):
                 if _what == "counter-based":
                     for _N, _ax in _teed.axes_dict.items():
                         for _init in "de novo", "50/50":
-                            _ax.plot(*model_xy.get((_init, _N), ([], [])), color="black", linestyle="--")
+                            _ax.plot(
+                                *model_xy.get((_init, _N), ([], [])),
+                                color="black",
+                                linestyle="--",
+                            )
                 _teed.set_titles(
                     col_template="",
                     row_template="",
@@ -253,9 +260,11 @@ def _(dfxs_1, model_xy, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ### Log-scaled x axis
-    """)
+    """
+    )
     return
 
 
@@ -266,15 +275,11 @@ def _(dfxs_1, model_xy, teeplot_subdir):
         for _what, _data in dfxs_1.groupby("genome model"):
             with tp.teed(
                 sns.relplot,
-                data=_data[
-                    _data["genotype"] == "hypermutator"
-                ],
+                data=_data[_data["genotype"] == "hypermutator"],
                 x="available beneficial mutations",
                 y="fix\nprob",
                 row=_row,
-                row_order=sorted(
-                    _data[_row].unique(), reverse=True
-                ),
+                row_order=sorted(_data[_row].unique(), reverse=True),
                 hue="initial\nconditions",
                 hue_order=["de novo", "50/50"],
                 style="initial\nconditions",
@@ -290,13 +295,17 @@ def _(dfxs_1, model_xy, teeplot_subdir):
                 teeplot_subdir=teeplot_subdir,
                 teeplot_outattrs={
                     "what": _what.replace(" ", "-").replace("/", "-"),
-                        "xscale": "log",
+                    "xscale": "log",
                 },
             ) as _teed:
                 if _what == "counter-based":
                     for _N, _ax in _teed.axes_dict.items():
                         for _init in "de novo", "50/50":
-                            _ax.plot(*model_xy.get((_init, _N), ([], [])), color="black", linestyle="--")
+                            _ax.plot(
+                                *model_xy.get((_init, _N), ([], [])),
+                                color="black",
+                                linestyle="--",
+                            )
                 _teed.set_titles(
                     col_template="",
                     row_template="",
@@ -361,9 +370,11 @@ def _(dfxs_1, model_xy, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## genome model
-    """)
+    """
+    )
     return
 
 
@@ -374,15 +385,11 @@ def _(dfxs_1, teeplot_subdir):
         for _what, _data in dfxs_1.groupby("initial conditions"):
             with tp.teed(
                 sns.relplot,
-                data=_data[
-                    _data["genotype"] == "hypermutator"
-                ],
+                data=_data[_data["genotype"] == "hypermutator"],
                 x="available beneficial mutations",
                 y="fix\nprob",
                 row=_row,
-                row_order=sorted(
-                    _data[_row].unique(), reverse=True
-                ),
+                row_order=sorted(_data[_row].unique(), reverse=True),
                 hue="genome\nmodel",
                 hue_order=["site-explicit", "counter-based"],
                 style="genome\nmodel",

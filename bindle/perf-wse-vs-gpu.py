@@ -4,19 +4,21 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     from IPython.display import display
     from backstrip import backplot
+    import marimo as mo
     import polars as pl
     import seaborn as sns
     from teeplot import teeplot as tp
+    from watermark import watermark
+
+    from pylib._osf_fetch import osf_fetch
 
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -28,15 +30,18 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
-    """)
+    """
+    )
     return
 
 
@@ -46,7 +51,7 @@ def _():
         pl.concat(
             [
                 pl.read_parquet(
-                    "https://osf.io/z65g3/download",
+                    osf_fetch("https://osf.io/z65g3/download"),
                     use_pyarrow=True,
                 ).with_columns(
                     pl.lit("CPU").alias("hardware"),
@@ -54,7 +59,7 @@ def _():
                     pl.lit(256 * 81 * 81).alias("net population size"),
                 ),
                 pl.read_parquet(
-                    "https://osf.io/tcv9q/download",
+                    osf_fetch("https://osf.io/tcv9q/download"),
                     use_pyarrow=True,
                 ).with_columns(
                     pl.lit("CPU").alias("hardware"),
@@ -81,7 +86,7 @@ def _():
         pl.concat(
             [
                 pl.read_parquet(
-                    "https://osf.io/jz3eq/download",
+                    osf_fetch("https://osf.io/jz3eq/download"),
                     use_pyarrow=True,
                 ).with_columns(
                     pl.lit("GPU").alias("hardware"),
@@ -89,7 +94,7 @@ def _():
                     pl.lit(256 * 243 * 243).alias("net population size"),
                 ),
                 pl.read_parquet(
-                    "https://osf.io/ya29p/download",
+                    osf_fetch("https://osf.io/ya29p/download"),
                     use_pyarrow=True,
                 ).with_columns(
                     pl.lit("GPU").alias("hardware"),
@@ -115,7 +120,7 @@ def _():
     wse_perf = pl.concat(
         [
             pl.read_parquet(
-                "https://osf.io/h3tu4/download",
+                osf_fetch("https://osf.io/h3tu4/download"),
                 use_pyarrow=True,
             )
             .filter(pl.col("tile") == 749 * 993 - 1)
@@ -125,7 +130,7 @@ def _():
                 pl.lit(256 * 750 * 994).alias("net population size"),
             ),
             pl.read_parquet(
-                "https://osf.io/w97nx/download",
+                osf_fetch("https://osf.io/w97nx/download"),
                 use_pyarrow=True,
             )
             .filter(pl.col("tile") == 749 * 993 - 1)
@@ -135,7 +140,7 @@ def _():
                 pl.lit(256 * 750 * 994).alias("net population size"),
             ),
             pl.read_parquet(
-                "https://osf.io/vh9pb/download",
+                osf_fetch("https://osf.io/vh9pb/download"),
                 use_pyarrow=True,
             )
             .filter(pl.col("tile") == 749 * 993 - 1)
@@ -145,7 +150,7 @@ def _():
                 pl.lit(256 * 750 * 994).alias("net population size"),
             ),
             pl.read_parquet(
-                "https://osf.io/zp9gt/download",
+                osf_fetch("https://osf.io/zp9gt/download"),
                 use_pyarrow=True,
             )
             .filter(pl.col("tile") == 749 * 993 - 1)
@@ -156,9 +161,9 @@ def _():
             ),
         ],
     ).with_columns(
-        (pl.col("net population size") / pl.col("tsc seconds per cycle")).alias(
-            "throughput (agent-generations/sec)"
-        ),
+        (
+            pl.col("net population size") / pl.col("tsc seconds per cycle")
+        ).alias("throughput (agent-generations/sec)"),
     )
     return (wse_perf,)
 
@@ -173,9 +178,11 @@ def _(cpu_perf, cupy_perf, wse_perf):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Absolute performance
-    """)
+    """
+    )
     return
 
 
@@ -208,7 +215,9 @@ def _(df):
         pl.col("throughput (agent-generations/sec)")
         .mean()
         .alias("mean_throughput"),
-        pl.col("throughput (agent-generations/sec)").std().alias("std_throughput"),
+        pl.col("throughput (agent-generations/sec)")
+        .std()
+        .alias("std_throughput"),
         pl.col("tsc cycle hertz").mean().alias("mean_speed"),
         pl.col("tsc cycle hertz").std().alias("std_speed"),
     )
@@ -217,9 +226,11 @@ def _(df):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Relative Performance
-    """)
+    """
+    )
     return
 
 
@@ -238,9 +249,9 @@ def _(df):
 
     # Step 3: Calculate the speedup by dividing throughput by the GPU mean
     df_with_speedup = df_with_mean.with_columns(
-        (pl.col("throughput (agent-generations/sec)") / pl.col("cpu_mean")).alias(
-            "speedup"
-        )
+        (
+            pl.col("throughput (agent-generations/sec)") / pl.col("cpu_mean")
+        ).alias("speedup")
     )
 
     # Show the resulting DataFrame with speedup

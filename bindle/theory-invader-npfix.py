@@ -46,7 +46,8 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     # A single invading mutator under limited adaptive potential
 
     Figure 1 of [Raynes et al. (2018)](https://doi.org/10.1073/pnas.1715996115) plots normalized fixation probability $N P_\mathrm{fix}$ of a single mutator lineage against population size $N$.
@@ -60,7 +61,8 @@ def _():
     Limited adaptive potential leaves small populations untouched but disfavors mutators again in large ones.
 
     These curves are closed-form predictions; they have not been checked against simulations started from a single mutator.
-    """)
+    """
+    )
     return
 
 

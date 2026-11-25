@@ -11,7 +11,9 @@ def test_calc_disc_fraction_limits():
 
 
 def test_calc_disc_fraction_small_radius():
-    assert calc_disc_fraction(0.05) == pytest.approx(np.pi * 0.05**2, rel=0.15)
+    assert calc_disc_fraction(0.05) == pytest.approx(
+        np.pi * 0.05**2, rel=0.15
+    )
 
 
 def test_calc_disc_fraction_monotonic():
