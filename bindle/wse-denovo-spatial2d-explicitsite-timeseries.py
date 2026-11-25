@@ -4,29 +4,30 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     import os
 
+    from IPython.display import display
     import downstream
     import imageio
-    from IPython.display import display
+    import marimo as mo
     import numpy as np
     import pandas as pd
     import polars as pl
     import seaborn as sns
     from teeplot import teeplot as tp
     from tqdm import tqdm
+    from watermark import watermark
 
+    from pylib._osf_fetch import osf_fetch
     from pylib.munge._addend_groups import addend_groups
-    from pylib.munge._union_upsample import union_upsample
     from pylib.munge._squeeze import squeeze_int
+    from pylib.munge._union_upsample import union_upsample
 
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -38,7 +39,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -51,20 +53,22 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _():
     dfxs = pl.from_pandas(
-        pd.read_parquet("https://osf.io/fm8dt/download"),
+        pd.read_parquet(osf_fetch("https://osf.io/fm8dt/download")),
     ).with_row_index(
         "dstream_data_id",
     )
-    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail());
+    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail())
     return (dfxs,)
 
 
@@ -156,9 +160,11 @@ def _(dfxs):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Plot Data
-    """)
+    """
+    )
     return
 
 
@@ -220,9 +226,11 @@ def _(df_mean, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Animate Data
-    """)
+    """
+    )
     return
 
 
@@ -247,17 +255,23 @@ def _(df, teeplot_subdir):
             num_cols = dff["col_rank"].max() + 1
 
             frame = np.empty((num_rows, num_cols), dtype=np.uint8)
-            frame[dff["row_rank"], dff["col_rank"]] = dff["dstream_value"] * 255
+            frame[dff["row_rank"], dff["col_rank"]] = (
+                dff["dstream_value"] * 255
+            )
             frame = np.kron(frame, np.ones((4, 4), dtype=frame.dtype))
             frames.append(frame)
 
-            outdir = f"{teeplot_subdir}/a=traitframes+nmut={nmut}+rep={replicate}"
+            outdir = (
+                f"{teeplot_subdir}/a=traitframes+nmut={nmut}+rep={replicate}"
+            )
             os.makedirs(outdir, exist_ok=True)
             outpath = f"{outdir}/dstream_Tbar={dstream_Tbar:06}+ext=.png"
             imageio.imwrite(outpath, frame.T)
 
         print(len(frames))
-        outpath = f"{teeplot_subdir}/a=traits+nmut={nmut}+rep={replicate}+ext=.gif"
+        outpath = (
+            f"{teeplot_subdir}/a=traits+nmut={nmut}+rep={replicate}+ext=.gif"
+        )
         imageio.mimsave(outpath, frames, duration=0.2)
     return
 

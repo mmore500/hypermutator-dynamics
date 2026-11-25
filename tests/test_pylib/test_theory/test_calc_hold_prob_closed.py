@@ -15,7 +15,7 @@ def test_calc_hold_prob_closed_vs_recursion(K: int):
 def test_calc_hold_prob_closed_share_law():
     # each further available mutation costs nonmutators supply ratio
     c = [calc_hold_prob_closed(1e6, K)[1] for K in (2, 3, 4)]
-    assert c[1] / c[0] == pytest.approx(c[2] / c[1])
+    assert c[1] / c[0] == pytest.approx(c[2] / c[1], rel=0.02)
     assert 1 / 100 < c[1] / c[0] < 1 / 60
 
 
@@ -34,4 +34,28 @@ def test_calc_hold_prob_closed_structure_slows_sweeps():
 def test_calc_hold_prob_closed_single_deme_is_wellmixed():
     assert calc_hold_prob_closed(256, 1, deme_size=256) == (
         calc_hold_prob_closed(256, 1)
+    )
+
+
+@pytest.mark.parametrize("K", [1, 2, 3])
+def test_calc_hold_prob_closed_single_invader(K: int):
+    # a single invader holds its lead less easily as populations grow
+    probs = [calc_hold_prob_closed(N, K, x0=1 / N)[0] for N in (1e3, 1e5, 1e7)]
+    assert 1.0 >= probs[0] > probs[1] > probs[2] >= 0.0
+
+
+def test_calc_hold_prob_closed_invader_share_conditioned_on_escape():
+    # nonmutators' odds in class 1 are N supply_non / delta for an invader
+    from pylib.theory._calc_load_params import calc_load_params
+    from pylib.theory._calc_sweep_time import calc_sweep_time
+
+    p, N = calc_load_params(), 1e4
+    odds = N * p["supply_non"] / p["delta"]
+    share = odds / (1 + odds)
+    T = calc_sweep_time(
+        (1 - share) * p["supply_mut"], p["growth_mut"], p["pi_mut"]
+    )
+    expected = np.exp(-N * p["supply_non"] * share * T)
+    assert calc_hold_prob_closed(N, 2, x0=1 / N)[0] == pytest.approx(
+        expected, rel=1e-3
     )

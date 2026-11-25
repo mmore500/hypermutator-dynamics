@@ -4,28 +4,29 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     from IPython.display import display
+    import marimo as mo
+    import numpy as np
     import pandas as pd
     import polars as pl
     from scipy import stats as scipy_stats
     import seaborn as sns
     from teeplot import teeplot as tp
     from tqdm import tqdm
+    from watermark import watermark
 
-    from pylib.viz._add_legend_entry import add_legend_entry
-    from pylib.viz._size_fixation_areaplot import size_fixation_areaplot
-    import numpy as np
+    from pylib._osf_fetch import osf_fetch
     from pylib.theory._calc_mutator_fixprob_closed import (
         calc_mutator_fixprob_closed,
     )
+    from pylib.viz._add_legend_entry import add_legend_entry
+    from pylib.viz._size_fixation_areaplot import size_fixation_areaplot
 
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -37,7 +38,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -53,7 +55,7 @@ def _():
     data = [
         {
             "url": "https://osf.io/duam2/download",
-            "population structure": "well-mixed"
+            "population structure": "well-mixed",
         },
         {
             "url": "https://osf.io/8q5v6/download",
@@ -66,7 +68,7 @@ def _():
     ]
     dfs = []
     for item in tqdm(data):
-        df = pd.read_parquet(item["url"])
+        df = pd.read_parquet(osf_fetch(item["url"]))
         df["population structure"] = item["population structure"]
         df["available beneficial mutations"] = df["nBen"]
         df = pl.from_pandas(df)
@@ -143,7 +145,9 @@ def _(dfs):
     dfxs = pl.concat(dfs, how="vertical_relaxed").to_pandas()
     dfxs["fixation\nprobability"] = dfxs["fixation probability"]
     dfxs["population\nstructure"] = dfxs["population structure"]
-    dfxs["available\nbeneficial\nmutations"] = dfxs["available beneficial mutations"]
+    dfxs["available\nbeneficial\nmutations"] = dfxs[
+        "available beneficial mutations"
+    ]
 
     display(dfxs.describe())
     display(dfxs.head())
@@ -187,9 +191,7 @@ def _(dfxs, teeplot_subdir):
     for _errorbar in "sd", "se", "ci", None:
         with tp.teed(
             size_fixation_areaplot,
-            fixprobs_df=dfxs[
-                dfxs["available beneficial mutations"] <= 4
-            ],
+            fixprobs_df=dfxs[dfxs["available beneficial mutations"] <= 4],
             x="population size",
             y="fixation probability",
             hue="genotype",

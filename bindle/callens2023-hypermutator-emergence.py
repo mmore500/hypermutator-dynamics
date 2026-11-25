@@ -25,7 +25,8 @@ with app.setup:
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -37,7 +38,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -50,7 +52,8 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     # Applying the *de novo* mutator model to Callens et al. (2023)
 
     [Callens et al. (2023)](https://doi.org/10.1093/evlett/qrad019) evolved 95 *E. coli* populations for ~1,000 generations under antibiotic stress, osmotic stress, or no stress, and tracked emergence of hypermutators.
@@ -73,17 +76,20 @@ def _():
 
     Rates of beneficial and deleterious mutation and the 100-fold mutator strength are not constrained by these data.
     We report how conclusions change under alternative choices, below.
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
 
     Tables are derived from the public-domain Dryad deposit, <https://doi.org/10.5061/dryad.hqbzkh1mr>; see `data/callens2023/README.md`.
-    """)
+    """
+    )
     return
 
 
@@ -116,11 +122,13 @@ def _(df_od):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Observed Outcomes
 
     A population is counted as having a hypermutator "emerged" if a non-synonymous, indel, or insertion sequence mutation in a known mutator gene was detected at generation 1,000 (frequency of at least 0.05), and "fixed" if it reached frequency 0.9.
-    """)
+    """
+    )
     return
 
 
@@ -157,7 +165,9 @@ def _(df_populations):
     )
     for _outcome in outcomes:
         _cis = [
-            scipy_stats.binomtest(int(k), int(n)).proportion_ci(method="wilson")
+            scipy_stats.binomtest(int(k), int(n)).proportion_ci(
+                method="wilson"
+            )
             for k, n in zip(
                 df_observed[f"num {_outcome}"], df_observed["num populations"]
             )
@@ -173,7 +183,8 @@ def _(df_populations):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Model Inputs and Fit
 
     Because hypermutators arrive independently, the model's probability is exactly $1 - e^{-\mu c}$, where $c$ collects everything except the supply rate $\mu$.
@@ -184,7 +195,8 @@ def _():
     - *baseline*: this repository's default mutation rates ($U_b = 10^{-6}$, $U_d = 10^{-4}$); sweeps counted as all fixed mutations.
     - *sweeps excluding IS*: as baseline, but insertion sequence mutations are not counted as sweeps. IS10 is about three times more active under osmotic stress, which could inflate the osmotic sweep count.
     - *E. coli rates*: literature estimates for *E. coli*, $U_b = 10^{-5}$ (Perfeito et al. 2007) and $U_d = 2 \times 10^{-4}$ (Kibota & Lynch 1996); sweeps counted as all fixed mutations.
-    """)
+    """
+    )
     return
 
 
@@ -205,9 +217,13 @@ def _(df_observed, df_od, outcomes):
         "E. coli rates": {"Ub": 1e-5, "Ud": 2e-4, "sweeps": "num sweeps"},
     }
 
-    _od = df_od.assign(
-        weighted=df_od["OD600 mean"] * df_od["OD600 count"],
-    ).groupby("stress")[["weighted", "OD600 count"]].sum()
+    _od = (
+        df_od.assign(
+            weighted=df_od["OD600 mean"] * df_od["OD600 count"],
+        )
+        .groupby("stress")[["weighted", "OD600 count"]]
+        .sum()
+    )
     _records = []
     for _scenario, _params in scenarios.items():
         for __, _row in df_observed.iterrows():
@@ -224,7 +240,11 @@ def _(df_observed, df_od, outcomes):
             # not reported for control, so taken to be not limiting
             _K = {"antibiotic": 23, "osmotic": 43}.get(_stress, 60)
             _s = calc_selection_from_num_sweeps(
-                _N, n_gen, _row[_params["sweeps"]], _params["Ub"], _params["Ud"]
+                _N,
+                n_gen,
+                _row[_params["sweeps"]],
+                _params["Ub"],
+                _params["Ud"],
             )
             for _outcome in outcomes:
                 _lag = calc_sweep_lag(
@@ -282,7 +302,6 @@ def _(df_inputs):
         k, n = group["num observed"], group["num populations"]
         return -float(np.sum(k * np.log(p) + (n - k) * np.log(1 - p)))
 
-
     def fit_supply_rate(group: pd.DataFrame) -> tuple:
         if not (group["supply coefficient"] > 0).any():
             return np.nan, np.nan
@@ -294,14 +313,14 @@ def _(df_inputs):
         )
         return 10**res.x, res.fun
 
-
     _records = []
     for (_scenario, _outcome), _group in df_inputs.groupby(
         ["scenario", "outcome"], sort=False
     ):
         _mu, _nll = fit_supply_rate(_group)
         _separate = {
-            stress: fit_supply_rate(g) for stress, g in _group.groupby("stress")
+            stress: fit_supply_rate(g)
+            for stress, g in _group.groupby("stress")
         }
         _lr = 2 * (_nll - sum(nll for __, nll in _separate.values()))
         _records.append(
@@ -329,7 +348,8 @@ def _(df_fit, df_inputs):
         df_predicted["num observed"] / df_predicted["num populations"]
     )
     df_predicted["fraction predicted"] = -np.expm1(
-        -df_predicted["shared supply rate"] * df_predicted["supply coefficient"]
+        -df_predicted["shared supply rate"]
+        * df_predicted["supply coefficient"]
     )
     df_predicted[
         [
@@ -350,17 +370,21 @@ def _(df_fit, df_inputs):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Observed vs. Predicted Hypermutator Takeover
 
     Dashed lines show the model with a single fitted supply rate shared by all treatments.
     Where the model sits at zero for a treatment, it predicts that hypermutators cannot become detectable within the experiment at any supply rate, because their deleterious load cancels most of their advantage.
-    """)
+    """
+    )
     return
 
 
 @app.cell
-def _(df_observed, df_predicted, outcomes, scenarios, stresses, teeplot_subdir):
+def _(
+    df_observed, df_predicted, outcomes, scenarios, stresses, teeplot_subdir
+):
     def plot_takeover_by_stress(
         df_observed: pd.DataFrame, df_predicted: pd.DataFrame
     ) -> plt.Figure:
@@ -426,7 +450,6 @@ def _(df_observed, df_predicted, outcomes, scenarios, stresses, teeplot_subdir):
         fig.tight_layout()
         return fig
 
-
     tp.tee(
         plot_takeover_by_stress,
         df_observed=df_observed,
@@ -438,13 +461,15 @@ def _(df_observed, df_predicted, outcomes, scenarios, stresses, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Timing of Emergence
 
     Observed: transfer at which an IS10 insertion in *mutS* or *mutL* was first detected by PCR, among insertions still present at the end of the experiment.
     Model: probability that a hypermutator lineage has reached 5% by a given transfer, under the baseline scenario with supply rate fitted to emergence at generation 1,000.
     IS10 insertion is only one route to hypermutation, so the observed curve should fall at or below the model.
-    """)
+    """
+    )
     return
 
 
@@ -490,7 +515,8 @@ def _(df_fit, df_inputs, df_is10, n_gen):
                         - _inputs.loc[stress, "detection lag"]
                     ),
                 )
-                if transfer * n_gen / 148 > _inputs.loc[stress, "detection lag"] + 1
+                if transfer * n_gen / 148
+                > _inputs.loc[stress, "detection lag"] + 1
                 else 0.0,
             }
             for stress in ("antibiotic", "osmotic")
@@ -506,7 +532,9 @@ def _(df_timing_model, df_timing_observed, teeplot_subdir):
     def plot_emergence_timing(
         df_timing_observed: pd.DataFrame, df_timing_model: pd.DataFrame
     ) -> plt.Figure:
-        fig, axs = plt.subplots(1, 2, figsize=(6.5, 2.8), sharex=True, sharey=True)
+        fig, axs = plt.subplots(
+            1, 2, figsize=(6.5, 2.8), sharex=True, sharey=True
+        )
         palette = sns.color_palette("colorblind")
         for ax, stress, color in zip(
             axs, ("antibiotic", "osmotic"), palette[1:]
@@ -542,7 +570,6 @@ def _(df_timing_model, df_timing_observed, teeplot_subdir):
         sns.despine(fig)
         fig.tight_layout()
         return fig
-
 
     tp.tee(
         plot_emergence_timing,
