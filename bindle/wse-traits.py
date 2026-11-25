@@ -63,7 +63,7 @@ def _():
 
 @app.cell
 def _():
-    dfxs_list = []
+    _dfxs_list = []
 
     for _data in tqdm(
         [
@@ -94,25 +94,18 @@ def _():
         dfx["genome model"] = _data["genome model"]
         print("apn", dfx["population size"].min())
         print(dfx["population size"].unique())
-        dfxs_list.append(dfx)
-    return (dfxs_list,)
-
-
-@app.cell
-def _(dfxs_list):
-    dfxs = pd.concat(
-        dfxs_list,
+        _dfxs_list.append(dfx)
+    # intermediates are cell-local so that they are freed (limits memory)
+    _dfxs = pd.concat(
+        _dfxs_list,
         ignore_index=True,
         sort=False,
     )
-    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail())
-    return (dfxs,)
-
-
-@app.cell
-def _(dfxs):
+    display(_dfxs.describe()), display(_dfxs.head()), display(_dfxs.tail())
     # filter to population sizes shared in all data
-    dfxs_1 = dfxs[dfxs["population size"] != 190848000].reset_index(drop=True)
+    dfxs_1 = _dfxs[_dfxs["population size"] != 190848000].reset_index(
+        drop=True
+    )
     return (dfxs_1,)
 
 
