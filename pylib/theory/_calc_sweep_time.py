@@ -13,18 +13,31 @@ def calc_sweep_time(
     deme_size: typing.Optional[int] = None,
 ) -> float:
     """Mean generations until a given location is reached by a sweeping
-    fitness class: the integral over time of `calc_unswept_prob`,
-        T = integral_0^inf S(t) dt.
+    fitness class, when clones of that class are founded at rate `supply`
+    per individual per generation, each establishing with probability
+    `establishment` and then growing at per-generation rate `growth`.
 
-    Well-mixed (`deme_size` None):
+    Founding events are Poisson in space and time, and a location stays
+    unswept so long as no clone founded earlier has reached it (Kolmogorov
+    1937; Johnson & Mehl 1939; Avrami 1939). Population structure enters
+    only through how fast a clone's reach grows.
+
+    Well-mixed (`deme_size` None): an established clone holds fraction
+    exp(growth t) / (establishment N) of the population, giving
+
         T = [ln(establishment growth / supply) - gamma] / growth,
-    with gamma the Euler-Mascheroni constant, for supply << growth.
 
-    2D lattice of demes:
+    with gamma the Euler-Mascheroni constant.
+
+    2D lattice of demes: a clone takes ln(deme_size establishment) / growth
+    generations to take over its founding deme, then spreads as a disc at
+    speed v from `calc_wave_speed`, giving
+
         T = Gamma(4/3) [3 / (pi supply deme_size v^2)]^(1/3)
-            + ln(deme_size establishment) / growth,
-    with wave speed v from `calc_wave_speed`. In d dimensions the first term
-    scales as (supply v^d)^(-1/(d+1)) (cf. Ralph & Coop 2010).
+            + ln(deme_size establishment) / growth.
+
+    In d dimensions the first term scales as (supply v^d)^(-1/(d+1)) (cf.
+    Ralph & Coop 2010).
     """
     if deme_size is None:
         return (
