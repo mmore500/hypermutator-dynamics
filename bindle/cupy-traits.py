@@ -18,6 +18,9 @@ with app.setup:
 
     from pylib.munge._calc_fixprobs_from_traits import calc_fixprobs_from_traits
     from pylib.theory._calc_denovo_fixprob import calc_denovo_fixprob
+    from pylib.theory._calc_denovo_fixprob_demes2d import (
+        calc_denovo_fixprob_demes2d,
+    )
     from pylib.theory._calc_mutator_fixprob import calc_mutator_fixprob
 
 
@@ -123,16 +126,31 @@ def _():
 
 @app.cell
 def calc_model(dfxs):
-    # math model predictions for well-mixed populations (see pylib/theory)
-    model_K = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40]
-    model_xy = {
-        (init, N): (model_K, [calc(int(N), K) for K in model_K])
-        for init, calc in (
-            ("50/50", calc_mutator_fixprob),
-            ("de novo", calc_denovo_fixprob),
+    # math model predictions (see pylib/theory): well-mixed models for both
+    # initial conditions, plus 2D deme model for de novo
+    model_grid = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40]
+    data_K = (
+        dfxs.filter(pl.col("population structure") != "1D demes")
+        .to_pandas()
+        .groupby(
+            ["initial conditions", "population structure", "population size"]
+        )["available beneficial mutations"]
+        .agg(["min", "max"])
+    )
+    # predictions extend only as far along the x axis as the data do
+    model_xy = {}
+    for (_init, _structure, _N), _range in data_K.iterrows():
+        _calc = {
+            ("50/50", "well-mixed"): calc_mutator_fixprob,
+            ("de novo", "well-mixed"): calc_denovo_fixprob,
+            ("de novo", "2D demes"): calc_denovo_fixprob_demes2d,
+        }.get((_init, _structure))
+        if _calc is None:  # no model for 50/50 in 2D demes at large K
+            continue
+        _Ks = [K for K in model_grid if _range["min"] <= K <= _range["max"]]
+        model_xy.setdefault(_N, []).append(
+            (_Ks, [_calc(int(_N), K) for K in _Ks]),
         )
-        for N in sorted(dfxs["population size"].unique().to_list())
-    }
     return (model_xy,)
 
 
@@ -198,8 +216,8 @@ def _(dfxs, model_xy, teeplot_subdir):
             ),
         ) as teed:
             for _model_N, _model_ax in teed.axes_dict.items():
-                for _model_init in "de novo", "50/50":
-                    _model_ax.plot(*model_xy[_model_init, _model_N], color="black", linestyle="--")
+                for _model_curve in model_xy.get(_model_N, []):
+                    _model_ax.plot(*_model_curve, color="black", linestyle="--")
             teed.set_titles(
                 col_template="",
                 row_template="",
@@ -326,8 +344,8 @@ def _(dfxs, model_xy, teeplot_subdir):
             },
         ) as _teed:
             for _model_N, _model_ax in _teed.axes_dict.items():
-                for _model_init in "de novo", "50/50":
-                    _model_ax.plot(*model_xy[_model_init, _model_N], color="black", linestyle="--")
+                for _model_curve in model_xy.get(_model_N, []):
+                    _model_ax.plot(*_model_curve, color="black", linestyle="--")
             _teed.set_titles(
                 col_template="",
                 row_template="",
