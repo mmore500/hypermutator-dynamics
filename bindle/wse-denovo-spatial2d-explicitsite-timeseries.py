@@ -68,85 +68,83 @@ def _():
     return (dfxs,)
 
 
-@app.cell
-def _():
-    def unpack_logger_timeseries_data(df: pl.DataFrame) -> pl.DataFrame:
+@app.function
+def unpack_logger_timeseries_data(df: pl.DataFrame) -> pl.DataFrame:
 
-        # sample every 64th tile
-        df = df.filter((pl.col("col") % 8 == 0) & (pl.col("row") % 8 == 0))
+    # sample every 64th tile
+    df = df.filter((pl.col("col") % 8 == 0) & (pl.col("row") % 8 == 0))
 
-        # unpack dstream data items from logger hex strings
-        dfu = downstream.dataframe.unpack_data_packed(df)
-        df = downstream.dataframe.explode_lookup_unpacked(
-            dfu.with_columns(
-                # fast forward loggers to at least dstream_S entries
-                # (i.e., buffer filled)
-                # these will be semantically-correct zero values
-                dstream_T=pl.max_horizontal(
-                    pl.col("dstream_T"), pl.col("dstream_S")
-                ),
+    # unpack dstream data items from logger hex strings
+    dfu = downstream.dataframe.unpack_data_packed(df)
+    df = downstream.dataframe.explode_lookup_unpacked(
+        dfu.with_columns(
+            # fast forward loggers to at least dstream_S entries
+            # (i.e., buffer filled)
+            # these will be semantically-correct zero values
+            dstream_T=pl.max_horizontal(
+                pl.col("dstream_T"), pl.col("dstream_S")
             ),
-            value_type="uint8",
-        )
+        ),
+        value_type="uint8",
+    )
 
-        # join metadata onto unpacked data
-        df = df.join(
-            dfu.select(
-                "dstream_data_id",
-                "CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS",
-                "CEREBRASLIB_TRAITLOGGER_DILATION",
-                "col",
-                "replicate",
-                "row",
-                "tile",
-            ),
-            on="dstream_data_id",
-        )
+    # join metadata onto unpacked data
+    df = df.join(
+        dfu.select(
+            "dstream_data_id",
+            "CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS",
+            "CEREBRASLIB_TRAITLOGGER_DILATION",
+            "col",
+            "replicate",
+            "row",
+            "tile",
+        ),
+        on="dstream_data_id",
+    )
 
-        # apply dilation to dstream_T and dstream_Tbar
-        df = df.with_columns(
-            dstream_T=pl.col("dstream_T")
-            * pl.col("CEREBRASLIB_TRAITLOGGER_DILATION"),
-            dstream_Tbar=pl.col("dstream_Tbar")
-            * pl.col("CEREBRASLIB_TRAITLOGGER_DILATION"),
-        )
+    # apply dilation to dstream_T and dstream_Tbar
+    df = df.with_columns(
+        dstream_T=pl.col("dstream_T")
+        * pl.col("CEREBRASLIB_TRAITLOGGER_DILATION"),
+        dstream_Tbar=pl.col("dstream_Tbar")
+        * pl.col("CEREBRASLIB_TRAITLOGGER_DILATION"),
+    )
 
-        # addend time time series groups with final zero value entry
-        df = addend_groups(
-            df,
-            group_by=["replicate", "tile"],
-            aggs=(
-                pl.col("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
-                .unique()
-                .pipe(squeeze_int),
-                pl.col("col").unique().pipe(squeeze_int),
-                (pl.col("dstream_Tbar") + 1).max().alias("dstream_Tbar"),
-                pl.lit(0).alias("dstream_value"),
-                pl.col("row").unique().pipe(squeeze_int),
-            ),
-            inner_only=True,
-        )
+    # addend time time series groups with final zero value entry
+    df = addend_groups(
+        df,
+        group_by=["replicate", "tile"],
+        aggs=(
+            pl.col("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
+            .unique()
+            .pipe(squeeze_int),
+            pl.col("col").unique().pipe(squeeze_int),
+            (pl.col("dstream_Tbar") + 1).max().alias("dstream_Tbar"),
+            pl.lit(0).alias("dstream_value"),
+            pl.col("row").unique().pipe(squeeze_int),
+        ),
+        inner_only=True,
+    )
 
-        # upsample to fill in dstream_Tbar dropped by some loggers
-        # prevents ampling biases from longer-running vs shorter-running loggers
-        df = union_upsample(
-            df,
-            upsample="dstream_Tbar",
-            group_by="tile",
-            fill_null_ops=[
-                (pl.all(), {"strategy": "forward"}),
-                (pl.col("dstream_Tbar", "dstream_value"), {"strategy": "zero"}),
-                (pl.all(), {"strategy": "backward"}),
-            ],
-        )
-        assert len(df["dstream_Tbar"].value_counts()["count"].unique()) == 1
+    # upsample to fill in dstream_Tbar dropped by some loggers
+    # prevents ampling biases from longer-running vs shorter-running loggers
+    df = union_upsample(
+        df,
+        upsample="dstream_Tbar",
+        group_by="tile",
+        fill_null_ops=[
+            (pl.all(), {"strategy": "forward"}),
+            (pl.col("dstream_Tbar", "dstream_value"), {"strategy": "zero"}),
+            (pl.all(), {"strategy": "backward"}),
+        ],
+    )
+    assert len(df["dstream_Tbar"].value_counts()["count"].unique()) == 1
 
-        return df
-    return (unpack_logger_timeseries_data,)
+    return df
 
 
 @app.cell
-def _(dfxs, unpack_logger_timeseries_data):
+def _(dfxs):
     res = []
     for _, df in tqdm(dfxs.group_by("replicate")):
         df = unpack_logger_timeseries_data(df)
@@ -262,7 +260,6 @@ def _(df, teeplot_subdir):
         outpath = f"{teeplot_subdir}/a=traits+nmut={nmut}+rep={replicate}+ext=.gif"
         imageio.mimsave(outpath, frames, duration=0.2)
     return
-
 
 
 if __name__ == "__main__":
