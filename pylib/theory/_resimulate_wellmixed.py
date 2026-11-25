@@ -12,13 +12,18 @@ def resimulate_wellmixed(
     Ub: float = 1e-6,
     Ud: float = 1e-4,
     M: float = 100.0,
+    mu: float = 0.0,
     max_del: int = 4,
     max_gen: int = 500000,
     seed: typing.Optional[int] = None,
 ) -> np.ndarray:
-    """Exact-in-distribution resimulation of the well-mixed 50/50 model,
-    tracking counts per (mutator, n ben, n del) class instead of individuals,
-    so cost is independent of population size N.
+    """Exact-in-distribution resimulation of the well-mixed model, tracking
+    counts per (mutator, n ben, n del) class instead of individuals, so cost
+    is independent of population size N.
+
+    Mutators begin at frequency `x0` and thereafter arise de novo from
+    nonmutators with per-generation probability `mu`. Use x0=0.5, mu=0 for
+    the 50/50 treatment and x0=0, mu=1e-6 for the de novo treatment.
 
     Returns boolean array over replicates: did mutators win?
 
@@ -26,7 +31,8 @@ def resimulate_wellmixed(
     per genome per generation; genomes with more than `max_del` deleterious
     mutations are lumped. A replicate is called for nonmutators once >= 1000
     unloaded nonmutators sit at the fitness peak (their loss is then
-    vanishingly unlikely); otherwise replicates run until one type is extinct.
+    vanishingly unlikely for N >~ 1000); otherwise replicates run until
+    mutators fix or, absent de novo mutators, go extinct.
     """
     rng = np.random.default_rng(seed)
     shape = (2, K + 1, max_del + 1)
@@ -43,6 +49,8 @@ def resimulate_wellmixed(
     p_ben = -np.expm1(-Ub * np.array([1.0, M]))
     p_del = -np.expm1(-Ud * np.array([1.0, M]))
 
+    p_mu = -np.expm1(-mu)
+
     res = np.zeros(n_rep, dtype=bool)
     active = np.arange(n_rep)
     for __ in range(max_gen):
@@ -54,6 +62,10 @@ def resimulate_wellmixed(
             k = rng.binomial(counts[:, :, :, d], p_del[None, :, None])
             counts[:, :, :, d] -= k
             counts[:, :, :, d + 1] += k
+        if mu:
+            k = rng.binomial(counts[:, 0], p_mu)
+            counts[:, 0] -= k
+            counts[:, 1] += k
 
         flat = counts.reshape(len(active), -1) / N
         totals = flat @ is_score
@@ -66,7 +78,7 @@ def resimulate_wellmixed(
 
         n_mut = flat @ is_mut
         mut_won = n_mut == N
-        non_won = (n_mut == 0) | (counts[:, 0, K, 0] >= 1000)
+        non_won = (counts[:, 0, K, 0] >= 1000) | ((n_mut == 0) & (mu == 0))
         res[active[mut_won]] = True
         keep = ~(mut_won | non_won)
         if not keep.all():
