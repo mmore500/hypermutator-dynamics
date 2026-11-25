@@ -64,20 +64,32 @@ With unlimited adaptive potential, $P_\mathrm{fix} = P_\mathrm{escape}$.]
 
 \subsection{Sweep Time} \label{sec:model:sweep}
 
-[Sentence: the time $T$ for a fitness class to sweep, when lineages of that class are founded at per-capita rate $u$ and grow at rate $r$, is where population structure enters the model, and the only place it does.
-Lineages are founded as a Poisson process in space and time and a location stays unswept so long as no earlier-founded lineage has reached it: Kolmogorov--Johnson--Mehl--Avrami kinetics \citep{kolmogorov1937statistical,avrami1939kinetics}, applied to spatial sweeps by \citet{ralph2010parallel,martens2011interfering}.]
+[Sentence: how long a fitness class takes to sweep, when lineages of that class are founded at per-capita rate $u$, is where population structure enters the model, and the only place it does.
+Lineages are founded as a Poisson process in space and time and a location stays unswept so long as no earlier-founded lineage has reached it: Kolmogorov--Johnson--Mehl--Avrami kinetics \citep{kolmogorov1937statistical,avrami1939kinetics}, applied to spatial sweeps by \citet{ralph2010parallel,martens2011interfering}.
+The probability $S$ that a location is still unswept at time $t$, and the mean sweep time $T$, are]
+
+\begin{equation}
+  S(t; u) = \exp\!\left[-u \int_0^t V(\tau)\, d\tau\right],
+  \qquad
+  T(u) = \int_0^\infty S(t; u)\, dt, \label{eq:unswept}
+\end{equation}
+
+[Sentence: where $V(\tau)$ is the number of individuals a lineage has reached at age $\tau$. Structure sets $V$:]
 
 \begin{align}
-  T_\mathrm{mixed}(u) &= \frac{\ln(p_m\, r / u) - \gamma}{r}, \label{eq:sweep-mixed} \\
-  T_\mathrm{2D}(u) &= \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, n\, v^2}\right)^{1/3} + \frac{\ln(n\, p_m)}{r},
-  \qquad v = \frac{r}{\ln(n\, r)}. \label{eq:sweep-2d}
+  V_\mathrm{mixed}(\tau) &= \frac{e^{r \tau}}{p_m},
+  & T_\mathrm{mixed}(u) &= \frac{\ln(p_m\, r / u) - \gamma}{r}, \label{eq:sweep-mixed} \\
+  V_\mathrm{2D}(\tau) &= n\, \pi\, v^2\, (\tau - \tau_0)^2 \quad (\tau > \tau_0),
+  & T_\mathrm{2D}(u) &= \tau_0 + \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, n\, v^2}\right)^{1/3}, \label{eq:sweep-2d} \\
+  \tau_0 &= \frac{\ln(n\, p_m)}{r},
+  & v &= \frac{r}{\ln(n\, r / m)}. \label{eq:wave-speed}
 \end{align}
 
 [Explain: $\gamma$ is the Euler--Mascheroni constant and $\Gamma$ the gamma function.
-In a well-mixed population an established lineage grows exponentially, giving the logarithm in \cref{eq:sweep-mixed}.
-On a 2D lattice of demes exchanging one migrant per neighbor per generation, a lineage first takes over its founding deme, then spreads as a disc at wave speed $v$ (demes per generation) \citep{fisher1937wave}; \cref{eq:sweep-2d} assumes strong selection within demes, $n r \gg 1$.
+In a well-mixed population an established lineage grows exponentially, giving the logarithm in \cref{eq:sweep-mixed} (valid for $u \ll r$).
+On a 2D lattice of demes exchanging $m$ migrants per neighbor per generation ($m = 1$ here), a lineage takes $\tau_0$ generations to take over its founding deme, then spreads as a disc at wave speed $v$ (demes per generation) \citep{fisher1937wave}; \cref{eq:wave-speed} assumes strong selection within demes, $n r \gg m$.
 Note that establishment probability itself is unaffected by this form of population structure \citep{maruyama1970fixation}, so structure does not enter $P_\mathrm{escape}$.
-In $d$ dimensions the first term of \cref{eq:sweep-2d} scales as $(u v^d)^{-1/(d+1)}$.]
+Other structures need only their own $V$; in $d$ dimensions $V \propto (v \tau)^d$ and $T$ scales as $(u v^d)^{-1/(d+1)}$.]
 
 \subsection{Hold} \label{sec:model:hold}
 
@@ -121,7 +133,7 @@ Give predicted values under simulation parameters for a 50/50 start, well-mixed:
 \end{equation}
 
 [Sentence: small populations, where sweeps do not overlap. Each mutator hitchhikes with probability $u_m / \delta$ before its load removes it, so mutators found sweeps at per-capita rate $\mu\, u_m / \delta$, against $u_n$ for nonmutators.
-The probability that a given sweep is a mutator's, and from it fixation probability, are independent of population size:]
+The probability that a given sweep is a mutator's is the share law at frequency $\mu / \delta$ (sweeps are rare, so $\bar{x} \to \mu / \delta$); it and fixation probability are independent of population size:]
 
 \begin{equation}
   \rho = \frac{\mu\, u_m}{\delta\, u_n + \mu\, u_m},
@@ -131,17 +143,19 @@ The probability that a given sweep is a mutator's, and from it fixation probabil
 
 [Sentence: large populations. Fixation probability switches from near zero to near one over a narrow range of adaptive potential; $K^*$ denotes the number of available beneficial mutations at which mutators fix half the time.
 Well-mixed: this is \cref{eq:share,eq:hold} at start frequency $\bar{x}$; mutators' odds multiply by $u_m / u_n$ with each class until nonmutators' share below the peak is too small to catch up, $P_\mathrm{hold} = 1/2$.
-2D lattice: a mutator lineage that gets ahead adapts faster than its surroundings but spreads no faster, so mutators fix only if their domains, founded at rate $J = n\, \bar{x}\, u_m$ per deme per generation, cover all $N / n$ demes before nonmutators climb $K$ steps at one sweep time $T_n$ each.]
+2D lattice: a mutator lineage that gets ahead adapts faster than its surroundings but spreads no faster, so mutators fix only if their domains, founded at per-capita rate $\bar{x}\, u_m$, cover all $N / n$ demes before nonmutators climb $K$ steps at one sweep time $T_n$ each; both results below are evaluations of \cref{eq:unswept}.]
 
 \begin{align}
   K^*_\mathrm{mixed} &= 1 + \frac{\ln\!\left[N\, u_n\, T_\mathrm{mixed}(u_m) / (\bar{x} \ln 2)\right]}{\ln(u_m / u_n)}, \label{eq:kstar-mixed} \\
-  K^*_\mathrm{2D} &= \frac{1}{T_n} \left\{\frac{3 \ln\!\left[N / (n \ln 2)\right]}{\pi\, J\, v^2}\right\}^{1/3}, \label{eq:kstar-2d} \\
-  \text{peak prevalence} &= 1 - \exp\!\left[-\frac{\pi}{3}\, J\, v^2\, (K\, T_n)^3\right]. \label{eq:peak-prevalence}
+  K^*_\mathrm{2D} &: \; \frac{N}{n}\, S\!\left(K^* T_n;\, \bar{x}\, u_m\right) = \ln 2
+  \;\; \Rightarrow \;\;
+  K^*_\mathrm{2D} = \frac{1}{T_n} \left[\tau_0 + \left\{\frac{3 \ln\!\left[N / (n \ln 2)\right]}{\pi\, \bar{x}\, u_m\, n\, v^2}\right\}^{1/3}\right], \label{eq:kstar-2d} \\
+  \text{peak prevalence} &= 1 - S\!\left(K\, T_n;\, \bar{x}\, u_m\right). \label{eq:peak-prevalence}
 \end{align}
 
 [Explain: $T_n$ is \cref{eq:sweep-mixed} or \cref{eq:sweep-2d} evaluated for nonmutators (supply $u_n$, growth $s$, establishment $p_n$).
 $K^*$ depends only logarithmically on $N$ and $\mu$, and is far larger under spatial structure.
-\Cref{eq:peak-prevalence} gives the fraction of the lattice reached by mutator domains when nonmutators reach the fitness peak.
+\Cref{eq:peak-prevalence} gives the fraction of the lattice reached by mutator domains when nonmutators reach the fitness peak, and \cref{eq:kstar-2d} the adaptive potential at which $\ln 2$ demes are expected to remain unreached.
 Note regimes of validity: \cref{eq:kstar-mixed,eq:kstar-2d} assume overlapping sweeps (large $N$); \cref{eq:denovo-small} assumes sequential sweeps (small $N$).]
 
 [Closing paragraph on scope and limitations: closed forms are approximations intended as scaling laws; numerical refinements (diffusion with killing for escape; branching-process recursion for hold; nucleation-and-growth with renewal sweeps for 2D \textit{de novo}) are provided in the supplement/software.
