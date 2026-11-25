@@ -1,6 +1,4 @@
-import numpy as np
-
-from ._calc_establishment_prob import calc_establishment_prob
+from ._calc_load_params import calc_load_params
 
 
 def calc_denovo_step_prob(
@@ -13,14 +11,15 @@ def calc_denovo_step_prob(
     """Closed-form small-N limit: probability that a given beneficial
     mutation is swept by a mutator rather than a nonmutator.
 
-    rho = mu Phh / (Ub pi + mu Phh), with Phh the single-mutant hitchhiking
-    probability (Raynes et al. eq. 1c). Then Pfix = 1 - (1 - rho)^K.
+    Each mutator hitchhikes with probability supply_mut / delta before its
+    load removes it (Raynes et al. 2018, eq. 1c), so mutators found sweeps at
+    rate mu supply_mut / delta per individual, against supply_non for
+    nonmutators:
+
+        rho = mu supply_mut / (delta supply_non + mu supply_mut).
+
+    Then Pfix = 1 - (1 - rho)^K, independent of population size.
     """
-    Udm = M * Ud
-    delta = np.exp(-Ud) - np.exp(-Udm)
-    q0 = 1.0 - (1.0 - np.exp(-Udm)) / s
-    pi_mut = calc_establishment_prob((1.0 + s) * np.exp(-Udm))
-    pi_non = calc_establishment_prob((1.0 + s) * np.exp(-Ud))
-    t_lag = 1.0 / (s - Udm)
-    p_hitch = M * Ub * q0 * pi_mut * (1.0 / delta + t_lag)
-    return float(mu * p_hitch / (Ub * pi_non + mu * p_hitch))
+    p = calc_load_params(s=s, Ub=Ub, Ud=Ud, M=M)
+    hitch = mu * p["supply_mut"] / p["delta"]
+    return float(hitch / (p["supply_non"] + hitch))

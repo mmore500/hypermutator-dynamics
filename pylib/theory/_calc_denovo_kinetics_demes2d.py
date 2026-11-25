@@ -39,8 +39,7 @@ def calc_denovo_kinetics_demes2d(
 
     # (1) nucleation rates, per deme per generation
     rate_non = deme_size * Ub * pi_non
-    t_lag = 1.0 / (s - M * Ud)  # as in calc_hitchhike_prob_closed
-    rate_lead = deme_size * mu * (1.0 / delta + t_lag) * M * Ub * q0 * pi_mut
+    rate_lead = deme_size * (mu / delta) * M * Ub * q0 * pi_mut
 
     # (2) spread: demes reached by a clone founded tau generations ago
     def calc_reach(tau: np.ndarray, r: float, pi: float) -> np.ndarray:

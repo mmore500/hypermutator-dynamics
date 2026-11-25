@@ -21,7 +21,9 @@ with app.setup:
     from pylib.viz._get_nben_hue_norm import get_nben_hue_norm
     from pylib.viz._size_fixation_areaplot import size_fixation_areaplot
     from pylib.viz._size_fixation_heatmap import size_fixation_heatmap
-    from pylib.theory._calc_mutator_fixprob import calc_mutator_fixprob
+    from pylib.theory._calc_mutator_fixprob_closed import (
+        calc_mutator_fixprob_closed,
+    )
 
 
 @app.cell(hide_code=True)
@@ -160,14 +162,19 @@ def _(dfxs):
 
 @app.cell
 def calc_model(dfxs):
-    # math model predictions for well-mixed populations (see pylib/theory)
+    # math model predictions (see pylib/theory), for a 2D lattice of demes;
+    # the smallest population surveyed is a single deme
+    deme_size = int(dfxs["population size"].min())
     model_N = np.geomspace(
         dfxs["population size"].min(), dfxs["population size"].max(), 60
     )
     model_xy = {
         float(K): (
             model_N.tolist(),
-            [calc_mutator_fixprob(N, K) for N in model_N],
+            [
+                calc_mutator_fixprob_closed(N, K, deme_size=deme_size)
+                for N in model_N
+            ],
         )
         for K in sorted(dfxs["available beneficial mutations"].unique())
     }

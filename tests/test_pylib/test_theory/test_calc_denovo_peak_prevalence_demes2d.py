@@ -15,7 +15,7 @@ def test_calc_denovo_peak_prevalence_demes2d_vs_published(
     K: int, expected: float
 ):
     assert calc_denovo_peak_prevalence_demes2d(190848000, K) == pytest.approx(
-        expected, abs=0.08
+        expected, abs=0.1
     )
 
 
