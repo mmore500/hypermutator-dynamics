@@ -49,6 +49,10 @@ With unlimited adaptive potential $P_\mathrm{hold} = 1$, recovering \citet{rayne
   && \text{growth rate of an established mutator lineage.} \label{eq:growth}
 \end{align}
 
+[Rank-based selection: $q_0$, $p_n$, $p_m$ and $r$ take these forms because a lineage's advantage is $s$ whatever the size of its fitness lead, and a loaded individual loses to any unloaded rival of its class.
+With additive or multiplicative fitness, $q_0$ becomes the classical $e^{-M \lambda_d / s_d}$ for deleterious effect $s_d$ \citep{haigh1978accumulation}, and establishment probability and growth rate scale with the lineage's lead over the population mean rather than being fixed at one step's worth.
+$\delta$ and the definitions of $u_n$, $u_m$ are unchanged.]
+
 [Explain briefly, citing precedent.
 $\delta$: mutators' excess rate of producing loaded offspring \citep{johnson1999approach}.
 $p_n$, $p_m$: establishment probabilities of a beneficial mutation arising in a nonmutator or a load-free mutator, the survival probability $p$ of a branching process with Poisson offspring, $1 - p = e^{-W p}$ at mean offspring number $W = (1 + s) e^{-\lambda}$; approximately $2 (s - \lambda)$ \citep{haldane1927mathematical}.
@@ -67,6 +71,8 @@ Numerical values under simulation parameters: $\delta \approx 0.0099$, $q_0 \app
   \qquad N_\mathrm{crit}^{-} = \frac{\delta}{u_m}, \label{eq:hitch} \\
   P_\mathrm{escape} &= P_\mathrm{drift} + (1 - P_\mathrm{drift})\, P_\mathrm{hitch}. \label{eq:escape}
 \end{align}
+
+[Rank-based selection: \cref{eq:drift,eq:hitch,eq:escape} keep their form under other selection schemes, changing only through the values of $u_m$ (via $q_0$ and $p_m$).]
 
 [Explain: \cref{eq:drift} is the diffusion-approximation fixation probability of an allele with disadvantage $\delta$ \citep{kimura1962probability}.
 \Cref{eq:hitch} is the probability that at least one mutator founds an established beneficial lineage while loaded mutators decline at rate $\delta$; for $x_0 = 1/N$ it reduces to eq.\ 1c of \citet{raynes2018sign}.
@@ -93,6 +99,9 @@ These are Kolmogorov--Johnson--Mehl--Avrami kinetics \citep{kolmogorov1937statis
   & T(u) &= \tau_0 + \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, \sigma\, v^2}\right)^{1/3}. \label{eq:sweep-2d}
 \end{align}
 
+[Rank-based selection: the kernel \cref{eq:unswept} is general, but the growth law $V$ is not. Here every sweeping lineage grows at the same rate $r$, so every sweep takes the same form.
+With additive or multiplicative fitness, a lineage $j$ steps ahead grows $j$ times faster, so $r$ in \cref{eq:sweep-mixed}, and through $v$ and $\tau_0$ in \cref{eq:sweep-2d}, depends on the lead; sweeps by lineages further ahead are faster.]
+
 [Explain: $\gamma$ is the Euler--Mascheroni constant and $\Gamma$ the gamma function.
 Well-mixed, an established lineage grows exponentially \citep{desai2007beneficial}.
 In two dimensions a lineage, after a local delay $\tau_0$, spreads as a disc at wave speed $v$ through a population of density $\sigma$ individuals per unit area \citep{fisher1937wave}; the resulting $T$ is the characteristic time of \citet{ralph2010parallel}.
@@ -111,6 +120,9 @@ Nonmutators' odds $o_k$ and share $a_k$ in fitness class $k$ are]
   \qquad a_k = \frac{o_k}{1 + o_k}. \label{eq:share}
 \end{equation}
 
+[Rank-based selection: \cref{eq:share} relies on it most. The constant factor $u_n / u_m$ per class holds because being further ahead confers no extra advantage, so each class is contested afresh on equal terms.
+With additive or multiplicative fitness, mutators' lead compounds: a lineage several steps ahead outgrows one a single step ahead, as in traveling-wave theory \citep{desai2007beneficial}, so nonmutators' odds fall faster than geometrically with $k$.]
+
 [Sentence: each further class cuts nonmutators' odds by the supply ratio $u_n / u_m$; the factor $P_\mathrm{hitch}$ conditions on mutators having escaped (it is one for a start at appreciable frequency in a large population).
 Nonmutators one step below the peak can reach it until mutators' final sweep arrives.
 As in evolutionary rescue \citep{orr2008population}, the probability that they fail to is the zero term of a Poisson distribution whose mean is the expected number of nonmutator lineages established at the peak in that time:]
@@ -121,6 +133,9 @@ As in evolutionary rescue \citep{orr2008population}, the probability that they f
   T_K = T\!\left((1 - a_{K-1})\, u_m\right). \label{eq:hold}
 \end{equation}
 
+[Rank-based selection: the Poisson form of \cref{eq:hold} is general; $a_{K-1}$ and $T_K$ inherit the changes noted for \cref{eq:share} and \cref{eq:sweep-mixed,eq:sweep-2d}.
+That nonmutators established at the peak always displace stalled mutators, at rate $\delta$, does not depend on the selection scheme.]
+
 [Explain: $(1 - a_{K-1})\, u_m$ is mutators' supply into the peak class.
 This formalizes the verbal argument of \citet{desai2011balance} and the multi-step dynamics shown by \citet{tanaka2003evolution,tenaillon1999mutators}.
 Normalized fixation probability, as plotted by \citet{raynes2018sign}, is $P_\mathrm{fix} / x_0$; see Figure \ref{fig:invader-npfix}.]
@@ -130,6 +145,8 @@ Normalized fixation probability, as plotted by \citet{raynes2018sign}, is $P_\ma
 \begin{equation}
   N_\mathrm{crit}^{+}(K) = \frac{\ln(1 / x_0)}{u_n\, a_{K-1}\, T_K}, \label{eq:ncrit-upper}
 \end{equation}
+
+[Rank-based selection: under other schemes $N_\mathrm{crit}^{+}$ is expected to be larger and to rise by more than $u_m / u_n$ per available mutation; a resimulation with additive fitness raised it 6-fold at $K = 2$ and 15-fold at $K = 3$.]
 
 [Explain: mutators are favored only for $N_\mathrm{crit}^{-} < N < N_\mathrm{crit}^{+}(K)$.
 Each further available beneficial mutation raises $N_\mathrm{crit}^{+}$ by the factor $u_m / u_n$, roughly the mutator strength $M$.
@@ -161,6 +178,8 @@ Well-mixed: $K^*$ is where \cref{eq:hold} at start frequency $\bar{x}$ gives $P_
   \text{2D:} \quad K^* &= \frac{1}{T_n} \left[\tau_0 + \left\{\frac{3 \ln\!\left[N / (n \ln 2)\right]}{\pi\, \bar{x}\, u_m\, \sigma\, v^2}\right\}^{1/3}\right], \label{eq:kstar-2d} \\
   \text{peak prevalence} &= 1 - S\!\left(K\, T_n;\, \bar{x}\, u_m\right). \label{eq:peak-prevalence}
 \end{align}
+
+[Rank-based selection: \cref{eq:xbar,eq:denovo-small} are unchanged in form. \Cref{eq:kstar-mixed} inherits the share law's dependence, and \cref{eq:kstar-2d,eq:peak-prevalence} assume nonmutators climb at a constant $T_n$ per step and mutator domains spread at a constant $v$, both of which would vary with fitness lead under other schemes.]
 
 [Explain: $T_n$ is \cref{eq:sweep-mixed} or \cref{eq:sweep-2d} evaluated for nonmutators (supply $u_n$, growth $s$, establishment $p_n$).
 $K^*$ depends only logarithmically on $N$ and $\mu$, and is far larger under spatial structure.
