@@ -8,7 +8,10 @@ def test_calc_load_params_defaults():
     assert res["delta"] == pytest.approx(0.0099, rel=0.01)
     assert res["q0"] == pytest.approx(0.9, rel=0.01)
     assert 0.15 < res["pi_mut"] < res["pi_non"] < 0.18
-    assert res["t_lag"] == pytest.approx(11.1, rel=0.01)
+    assert res["growth_mut"] == pytest.approx(0.09, rel=0.02)
+    assert res["supply_non"] / res["supply_mut"] == pytest.approx(
+        1 / 81, rel=0.05
+    )
     assert 600 < res["N_hitch"] < 750
 
 

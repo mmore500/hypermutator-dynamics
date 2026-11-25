@@ -9,23 +9,35 @@ def calc_load_params(
     Ud: float = 1e-4,
     M: float = 100.0,
 ) -> dict:
-    """Derived quantities shared by the closed-form and numeric results."""
+    """Derived quantities from which all results are built.
+
+    - delta: indirect selection against mutators, their excess rate of
+      deleterious mutation.
+    - q0: fraction of mutators free of deleterious mutations at
+      mutation-selection balance.
+    - pi_non, pi_mut: probability that a beneficial mutation establishes,
+      arising in a nonmutator or an unloaded mutator.
+    - growth_non, growth_mut: per-generation growth rate of an established
+      beneficial clone; mutators' is net of their load.
+    - supply_non, supply_mut: rate per individual per generation at which
+      nonmutators and mutators found established beneficial clones.
+    - N_hitch: lower critical population size, delta / supply_mut; cf.
+      N_crit of Raynes et al. (2018).
+    """
     Udm, Ubm = M * Ud, M * Ub
-    # indirect selection against mutator due to excess deleterious load
     delta = np.exp(-Ud) - np.exp(-Udm)
-    # fraction of mutators that are unloaded at mutation-selection balance
     q0 = 1.0 - (1.0 - np.exp(-Udm)) / s
-    # establishment probability of a beneficial mutation, by background
     pi_mut = calc_establishment_prob((1.0 + s) * np.exp(-Udm))
     pi_non = calc_establishment_prob((1.0 + s) * np.exp(-Ud))
-    # generations before load-driven decline of mutators sets in
-    t_lag = 1.0 / (s - Udm)
+    supply_mut = Ubm * q0 * pi_mut
     return {
         "delta": delta,
         "q0": q0,
         "pi_mut": pi_mut,
         "pi_non": pi_non,
-        "t_lag": t_lag,
-        # lower critical population size; cf. Raynes et al. N_crit
-        "N_hitch": delta / (Ubm * q0 * pi_mut),
+        "growth_non": s,
+        "growth_mut": s - delta,
+        "supply_non": Ub * pi_non,
+        "supply_mut": supply_mut,
+        "N_hitch": delta / supply_mut,
     }
