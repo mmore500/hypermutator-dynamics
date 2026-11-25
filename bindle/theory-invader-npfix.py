@@ -53,7 +53,7 @@ def _():
     Mutators are disfavored ($N P_\mathrm{fix} < 1$) in small populations and favored in large ones.
 
     Here we redraw that figure for this project's simulation parameters and add curves for limited adaptive potential, where only one or two beneficial mutations are available.
-    Each limited curve is the unlimited curve times the probability that mutators hold their lead until nonmutators are gone (`calc_invader_hold_prob_closed`),
+    Each limited curve is the unlimited curve times the probability that mutators hold their lead until nonmutators are gone (`calc_hold_prob_closed`, at start frequency $x_0 = 1/N$),
 
     $$N P_\mathrm{fix} = N \, P_\mathrm{escape}(N) \, P_\mathrm{hold}(N, K).$$
 
