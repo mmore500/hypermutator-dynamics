@@ -22,6 +22,9 @@ with app.setup:
     from pylib.munge._addend_groups import addend_groups
     from pylib.munge._union_upsample import union_upsample
     from pylib.munge._squeeze import squeeze_int
+    from pylib.theory._calc_denovo_peak_prevalence_demes2d import (
+        calc_denovo_peak_prevalence_demes2d,
+    )
 
 
 @app.cell(hide_code=True)
@@ -273,6 +276,18 @@ def _(df_min_mean, teeplot_subdir):
             row_template="{row_name} Avail\nBen Muts",
         )
         _g.set_axis_labels(x_var="Avail Ben Muts", y_var="Max\nMutator\nPrevalence")
+        # math model prediction (see pylib/theory), for the 750 x 994 grid
+        # of 256-agent demes simulated here
+        _model_K = [*range(2, 11)]
+        _g.ax.plot(
+            _model_K,
+            [
+                calc_denovo_peak_prevalence_demes2d(750 * 994 * 256, K)
+                for K in _model_K
+            ],
+            color="black",
+            linestyle="--",
+        )
         for _ax in _g.axes.flat:
             _ax.axhline(1, ls="--", color="black", linewidth=1, zorder=-20)
             _ax.axhline(0.5, ls=":", color="black", linewidth=1, zorder=-20)
