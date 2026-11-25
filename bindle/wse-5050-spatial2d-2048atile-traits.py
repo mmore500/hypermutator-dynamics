@@ -276,7 +276,9 @@ def _(dfxs, model_xy, teeplot_subdir):
         {[model_xy[K] for K in sorted(model_xy)]!r},
     ):
         ax.plot(*xy, color="black", linestyle="--")
-    """,
+    """
+            + 'from pylib.viz._add_legend_entry import add_legend_entry\n'
+            + '    add_legend_entry(teed, "analytic\\napprox")\n    ',
         )
     return
 
