@@ -10,6 +10,7 @@ with app.setup:
     from matplotlib import pyplot as plt
     import numpy as np
     import pandas as pd
+    from scipy import optimize as sp_optimize
     from scipy import stats as scipy_stats
     import seaborn as sns
     from teeplot import teeplot as tp
@@ -19,6 +20,7 @@ with app.setup:
     from pylib.theory._calc_selection_from_num_sweeps import (
         calc_selection_from_num_sweeps,
     )
+    from pylib.theory._calc_sweep_lag import calc_sweep_lag
 
 
 @app.cell(hide_code=True)
@@ -54,20 +56,23 @@ def _():
     [Callens et al. (2023)](https://doi.org/10.1093/evlett/qrad019) evolved 95 *E. coli* populations for ~1,000 generations under antibiotic stress, osmotic stress, or no stress, and tracked emergence of hypermutators.
     Hypermutators emerged more often under osmotic stress, where more loci contribute to adaptation (43, versus 23 under antibiotic stress).
 
-    Here we ask what the well-mixed *de novo* model (`calc_denovo_fixprob`) predicts for the probability that a hypermutator has fixed by the end of that experiment.
+    Here we ask what the well-mixed *de novo* model (`calc_denovo_fixprob`) predicts for how many populations hypermutators take over by the end of that experiment.
 
     ## Approach
 
-    The model's parameters were chosen for the simulations in this repository, not for this experiment, so we set as many as possible from the experiment itself.
+    The model's parameters were chosen for the simulations in this repository, not for this experiment, so we set what we can from the experiment itself.
 
-    - **Population size** $N$: bottleneck size from optical density, times generations per transfer, times $\ln 2$.
-    - **Duration**: 148 transfers at $\log_2 100 \approx 6.64$ generations each.
+    - **Population size** $N$: bottleneck size (10 µL of a 1 mL culture) from optical density, times generations per transfer, times $\ln 2$.
+    - **Duration**: 148 daily transfers at $\log_2 100 \approx 6.64$ generations each.
     - **Adaptive potential** $K$: number of loci inferred to contribute to adaptation (Callens et al. Figure 2D). None is reported for the control, so it is treated as not limiting.
     - **Model clock** $s$: the model's selection strength is set so that nonmutators complete as many selective sweeps as the median number of mutations observed to fix in populations that stayed nonmutator (`calc_selection_from_num_sweeps`).
+    - **Detection lag**: the model counts a hypermutator lineage from the generation it takes the lead. The experiment sees it only once it is common, so the model is evaluated at the experiment's duration less the time for a leading lineage to reach 5% ("emerged") or 90% ("fixed") (`calc_sweep_lag`).
 
     That leaves the supply rate of hypermutators $\mu$, which the experiment does not measure.
-    We show predictions across three orders of magnitude of $\mu$ rather than fit it.
-    Remaining parameters keep their defaults: beneficial mutation rate $U_b = 10^{-6}$, deleterious mutation rate $U_d = 10^{-4}$, and 100-fold mutator strength.
+    We fit it by maximum likelihood, as one rate shared by all treatments and as one rate per treatment.
+
+    Rates of beneficial and deleterious mutation and the 100-fold mutator strength are not constrained by these data.
+    We report how conclusions change under alternative choices, below.
     """)
     return
 
@@ -114,7 +119,7 @@ def _():
     mo.md(r"""
     ## Observed Outcomes
 
-    A population is counted as hypermutator-fixed if a non-synonymous, indel, or insertion sequence mutation in a known mutator gene reached frequency 0.9 by generation 1,000.
+    A population is counted as having a hypermutator "emerged" if a non-synonymous, indel, or insertion sequence mutation in a known mutator gene was detected at generation 1,000 (frequency of at least 0.05), and "fixed" if it reached frequency 0.9.
     """)
     return
 
@@ -122,267 +127,310 @@ def _():
 @app.cell
 def _(df_populations):
     stresses = ["control", "antibiotic", "osmotic"]
-    df_populations["is hypermutator"] = (
-        df_populations["mutator allele frequency"] > 0
-    )
-    df_populations["is hypermutator fixed"] = (
-        df_populations["mutator allele frequency"] >= 0.9
-    )
+    outcomes = ["emerged", "fixed"]
+    df_populations["emerged"] = df_populations["mutator allele frequency"] > 0
+    df_populations["fixed"] = df_populations["mutator allele frequency"] >= 0.9
+    _nonmutators = df_populations[~df_populations["emerged"]].groupby("stress")
     df_observed = (
         df_populations.groupby("stress")
         .agg(
             **{
                 "num populations": ("population", "size"),
-                "num emerged": ("is hypermutator", "sum"),
-                "num fixed": ("is hypermutator fixed", "sum"),
+                "num emerged": ("emerged", "sum"),
+                "num fixed": ("fixed", "sum"),
+            },
+        )
+        .assign(
+            **{
+                # among populations that stayed nonmutator ...
+                "num sweeps": _nonmutators["num fixed mutations"].median(),
+                "num sweeps excluding IS": _nonmutators[
+                    "num fixed mutations excluding IS"
+                ].median(),
+                "num IS10 insertions": _nonmutators[
+                    "num IS10 insertions"
+                ].median(),
             },
         )
         .loc[stresses]
         .reset_index()
     )
-    _cis = [
-        scipy_stats.binomtest(int(k), int(n)).proportion_ci(method="wilson")
-        for k, n in zip(df_observed["num fixed"], df_observed["num populations"])
-    ]
-    df_observed["fraction fixed"] = (
-        df_observed["num fixed"] / df_observed["num populations"]
-    )
-    df_observed["ci lo"] = [ci.low for ci in _cis]
-    df_observed["ci hi"] = [ci.high for ci in _cis]
-    # sweeps completed, among populations that stayed nonmutator
-    df_observed["num sweeps"] = (
-        df_populations[~df_populations["is hypermutator"]]
-        .groupby("stress")["num fixed mutations"]
-        .median()
-        .loc[stresses]
-        .to_numpy()
-    )
+    for _outcome in outcomes:
+        _cis = [
+            scipy_stats.binomtest(int(k), int(n)).proportion_ci(method="wilson")
+            for k, n in zip(
+                df_observed[f"num {_outcome}"], df_observed["num populations"]
+            )
+        ]
+        df_observed[f"fraction {_outcome}"] = (
+            df_observed[f"num {_outcome}"] / df_observed["num populations"]
+        )
+        df_observed[f"fraction {_outcome} lo"] = [ci.low for ci in _cis]
+        df_observed[f"fraction {_outcome} hi"] = [ci.high for ci in _cis]
     df_observed
-    return df_observed, stresses
+    return df_observed, outcomes, stresses
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## Model Inputs
+    ## Model Inputs and Fit
+
+    Because hypermutators arrive independently, the model's probability is exactly $1 - e^{-\mu c}$, where $c$ collects everything except the supply rate $\mu$.
+    We compute $c$ per treatment and outcome, then fit $\mu$ to the observed counts.
+
+    Scenarios differ in mutation rates and in how sweeps are counted.
+
+    - *baseline*: this repository's default mutation rates ($U_b = 10^{-6}$, $U_d = 10^{-4}$); sweeps counted as all fixed mutations.
+    - *sweeps excluding IS*: as baseline, but insertion sequence mutations are not counted as sweeps. IS10 is about three times more active under osmotic stress, which could inflate the osmotic sweep count.
+    - *E. coli rates*: literature estimates for *E. coli*, $U_b = 10^{-5}$ (Perfeito et al. 2007) and $U_d = 2 \times 10^{-4}$ (Kibota & Lynch 1996); sweeps counted as all fixed mutations.
     """)
     return
 
 
 @app.cell
-def _(df_observed, df_od):
+def _(df_observed, df_od, outcomes):
     n_gen = int(round(148 * np.log2(100)))
     cells_per_ml_per_od = 8e8  # typical for E. coli in rich medium
     transfer_volume_ml = 0.01
-    od = df_od.assign(
+    mutator_strength = 100.0
+    detection_frequencies = {"emerged": 0.05, "fixed": 0.9}
+    scenarios = {
+        "baseline": {"Ub": 1e-6, "Ud": 1e-4, "sweeps": "num sweeps"},
+        "sweeps excluding IS": {
+            "Ub": 1e-6,
+            "Ud": 1e-4,
+            "sweeps": "num sweeps excluding IS",
+        },
+        "E. coli rates": {"Ub": 1e-5, "Ud": 2e-4, "sweeps": "num sweeps"},
+    }
+
+    _od = df_od.assign(
         weighted=df_od["OD600 mean"] * df_od["OD600 count"],
     ).groupby("stress")[["weighted", "OD600 count"]].sum()
-    df_inputs = df_observed[["stress", "num sweeps"]].copy()
-    df_inputs["OD600"] = (
-        (od["weighted"] / od["OD600 count"]).loc[df_inputs["stress"]].to_numpy()
-    )
-    df_inputs["bottleneck size"] = (
-        df_inputs["OD600"] * cells_per_ml_per_od * transfer_volume_ml
-    )
-    df_inputs["population size"] = (
-        df_inputs["bottleneck size"] * np.log2(100) * np.log(2)
-    )
-    # loci contributing to adaptation, per Callens et al. Figure 2D;
-    # not reported for control, so taken to be not limiting
-    df_inputs["available beneficial mutations"] = (
-        df_inputs["stress"].map({"antibiotic": 23, "osmotic": 43}).fillna(60)
-    ).astype(int)
-    df_inputs["selection strength"] = [
-        calc_selection_from_num_sweeps(N, n_gen, num_sweeps)
-        for N, num_sweeps in zip(
-            df_inputs["population size"], df_inputs["num sweeps"]
-        )
-    ]
-    df_inputs
-    return df_inputs, n_gen
-
-
-@app.cell(hide_code=True)
-def _():
-    mo.md(r"""
-    ## Model Predictions
-    """)
-    return
-
-
-@app.cell
-def _(df_inputs, n_gen):
-    mutator_supply_rates = [1e-8, 1e-7, 1e-6]
-    df_model = pd.DataFrame(
-        [
-            {
-                "stress": row["stress"],
-                "mutator supply rate": mu,
-                "fraction fixed": calc_denovo_fixprob(
-                    row["population size"],
-                    row["available beneficial mutations"],
-                    s=row["selection strength"],
-                    mu=mu,
-                    n_gen=n_gen,
-                ),
-            }
-            for __, row in df_inputs.iterrows()
-            for mu in mutator_supply_rates
-        ],
-    )
-    df_model.pivot(
-        index="stress", columns="mutator supply rate", values="fraction fixed"
-    )
-    return df_model, mutator_supply_rates
-
-
-@app.cell
-def _(df_inputs, mutator_supply_rates, n_gen):
-    # how prediction depends on number of sweeps completed, all else equal
-    _N = df_inputs["population size"].mean()
-    df_curve = pd.DataFrame(
-        [
-            {
-                "num sweeps": num_sweeps,
-                "mutator supply rate": mu,
-                "fraction fixed": calc_denovo_fixprob(
+    _records = []
+    for _scenario, _params in scenarios.items():
+        for __, _row in df_observed.iterrows():
+            _stress = _row["stress"]
+            _N = (
+                _od.loc[_stress, "weighted"]
+                / _od.loc[_stress, "OD600 count"]
+                * cells_per_ml_per_od
+                * transfer_volume_ml
+                * np.log2(100)
+                * np.log(2)
+            )
+            # loci contributing to adaptation, per Callens et al. Figure 2D;
+            # not reported for control, so taken to be not limiting
+            _K = {"antibiotic": 23, "osmotic": 43}.get(_stress, 60)
+            _s = calc_selection_from_num_sweeps(
+                _N, n_gen, _row[_params["sweeps"]], _params["Ub"], _params["Ud"]
+            )
+            for _outcome in outcomes:
+                _lag = calc_sweep_lag(
                     _N,
-                    60,
-                    s=calc_selection_from_num_sweeps(_N, n_gen, num_sweeps),
-                    mu=mu,
-                    n_gen=n_gen,
-                ),
-            }
-            for num_sweeps in np.arange(2.0, 12.1, 1.0)
-            for mu in mutator_supply_rates
-        ],
+                    detection_frequencies[_outcome],
+                    _s,
+                    _params["Ud"],
+                    mutator_strength,
+                )
+                _n_gen = n_gen - _lag
+                _p = (
+                    calc_denovo_fixprob(
+                        _N,
+                        _K,
+                        s=_s,
+                        Ub=_params["Ub"],
+                        Ud=_params["Ud"],
+                        M=mutator_strength,
+                        mu=1e-8,
+                        n_gen=int(_n_gen),
+                    )
+                    if _n_gen >= 1
+                    else 0.0
+                )
+                _records.append(
+                    {
+                        "scenario": _scenario,
+                        "stress": _stress,
+                        "outcome": _outcome,
+                        "population size": _N,
+                        "available beneficial mutations": _K,
+                        "num sweeps": _row[_params["sweeps"]],
+                        "selection strength": _s,
+                        "mutator net advantage": _s
+                        - mutator_strength * _params["Ud"],
+                        "detection lag": _lag,
+                        "supply coefficient": -np.log1p(-_p) / 1e-8,
+                        "num populations": _row["num populations"],
+                        "num observed": _row[f"num {_outcome}"],
+                    },
+                )
+    df_inputs = pd.DataFrame(_records)
+    df_inputs
+    return df_inputs, n_gen, scenarios
+
+
+@app.cell
+def _(df_inputs):
+    def calc_neg_log_likelihood(log10_mu: float, group: pd.DataFrame) -> float:
+        p = np.clip(
+            -np.expm1(-(10**log10_mu) * group["supply coefficient"]),
+            1e-12,
+            1 - 1e-12,
+        )
+        k, n = group["num observed"], group["num populations"]
+        return -float(np.sum(k * np.log(p) + (n - k) * np.log(1 - p)))
+
+
+    def fit_supply_rate(group: pd.DataFrame) -> tuple:
+        if not (group["supply coefficient"] > 0).any():
+            return np.nan, np.nan
+        res = sp_optimize.minimize_scalar(
+            calc_neg_log_likelihood,
+            args=(group,),
+            bounds=(-12, -2),
+            method="bounded",
+        )
+        return 10**res.x, res.fun
+
+
+    _records = []
+    for (_scenario, _outcome), _group in df_inputs.groupby(
+        ["scenario", "outcome"], sort=False
+    ):
+        _mu, _nll = fit_supply_rate(_group)
+        _separate = {
+            stress: fit_supply_rate(g) for stress, g in _group.groupby("stress")
+        }
+        _lr = 2 * (_nll - sum(nll for __, nll in _separate.values()))
+        _records.append(
+            {
+                "scenario": _scenario,
+                "outcome": _outcome,
+                "shared supply rate": _mu,
+                **{
+                    f"{stress} supply rate": mu
+                    for stress, (mu, __) in _separate.items()
+                },
+                "likelihood ratio": _lr,
+                "p shared vs. separate": scipy_stats.chi2.sf(_lr, df=2),
+            },
+        )
+    df_fit = pd.DataFrame(_records)
+    df_fit
+    return (df_fit,)
+
+
+@app.cell
+def _(df_fit, df_inputs):
+    df_predicted = df_inputs.merge(df_fit, on=["scenario", "outcome"])
+    df_predicted["fraction observed"] = (
+        df_predicted["num observed"] / df_predicted["num populations"]
     )
-    df_curve
-    return (df_curve,)
+    df_predicted["fraction predicted"] = -np.expm1(
+        -df_predicted["shared supply rate"] * df_predicted["supply coefficient"]
+    )
+    df_predicted[
+        [
+            "scenario",
+            "outcome",
+            "stress",
+            "num sweeps",
+            "selection strength",
+            "mutator net advantage",
+            "detection lag",
+            "shared supply rate",
+            "fraction observed",
+            "fraction predicted",
+        ]
+    ]
+    return (df_predicted,)
 
 
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
-    ## Observed vs. Predicted Hypermutator Fixation
+    ## Observed vs. Predicted Hypermutator Takeover
+
+    Dashed lines show the model with a single fitted supply rate shared by all treatments.
+    Where the model sits at zero for a treatment, it predicts that hypermutators cannot become detectable within the experiment at any supply rate, because their deleterious load cancels most of their advantage.
     """)
     return
 
 
 @app.cell
-def _(df_model, df_observed, mutator_supply_rates, stresses, teeplot_subdir):
-    def plot_fixation_by_stress(
-        df_observed: pd.DataFrame, df_model: pd.DataFrame
+def _(df_observed, df_predicted, outcomes, scenarios, stresses, teeplot_subdir):
+    def plot_takeover_by_stress(
+        df_observed: pd.DataFrame, df_predicted: pd.DataFrame
     ) -> plt.Figure:
-        fig, ax = plt.subplots(figsize=(4.5, 3))
-        xs = np.arange(len(stresses))
-        ax.errorbar(
-            xs,
-            df_observed["fraction fixed"],
-            yerr=[
-                df_observed["fraction fixed"] - df_observed["ci lo"],
-                df_observed["ci hi"] - df_observed["fraction fixed"],
-            ],
-            color=sns.color_palette("colorblind")[0],
-            marker="o",
-            ls="none",
-            label="observed (Callens et al. 2023)",
-            zorder=3,
+        fig, axs = plt.subplots(
+            len(outcomes),
+            len(scenarios),
+            figsize=(2.6 * len(scenarios), 2.1 * len(outcomes) + 0.5),
+            sharex=True,
+            sharey=True,
+            squeeze=False,
         )
-        for mu in mutator_supply_rates:
-            ys = (
-                df_model[df_model["mutator supply rate"] == mu]
-                .set_index("stress")
-                .loc[stresses, "fraction fixed"]
-            )
-            ax.plot(
-                xs,
-                ys,
-                color="black",
-                linestyle="--",
-                label="model" if mu == mutator_supply_rates[0] else None,
-            )
-            ax.annotate(
-                rf"$\mu = 10^{{{np.log10(mu):.0f}}}$",
-                xy=(xs[-1], ys.iloc[-1]),
-                xytext=(6, 0),
-                textcoords="offset points",
-                va="center",
-                fontsize=8,
-            )
-        ax.set_xticks(xs)
-        ax.set_xticklabels(stresses)
-        ax.set_xlim(-0.4, len(stresses) - 0.2)
-        ax.set_ylim(-0.03, 1.03)
-        ax.set_xlabel("stress")
-        ax.set_ylabel("fraction populations\nhypermutator fixed")
-        ax.legend(frameon=False, fontsize=8, loc="center left", bbox_to_anchor=(0.0, 0.72))
+        xs = np.arange(len(stresses))
+        color = sns.color_palette("colorblind")[0]
+        for row, outcome in zip(axs, outcomes):
+            for ax, scenario in zip(row, scenarios):
+                ax.errorbar(
+                    xs,
+                    df_observed[f"fraction {outcome}"],
+                    yerr=[
+                        df_observed[f"fraction {outcome}"]
+                        - df_observed[f"fraction {outcome} lo"],
+                        df_observed[f"fraction {outcome} hi"]
+                        - df_observed[f"fraction {outcome}"],
+                    ],
+                    color=color,
+                    marker="o",
+                    ls="none",
+                    label="observed",
+                    zorder=3,
+                )
+                predicted = (
+                    df_predicted[
+                        (df_predicted["scenario"] == scenario)
+                        & (df_predicted["outcome"] == outcome)
+                    ]
+                    .set_index("stress")
+                    .loc[stresses]
+                )
+                ys = predicted["fraction predicted"].where(
+                    np.isfinite(predicted["detection lag"]),
+                )
+                ax.plot(
+                    xs,
+                    ys,
+                    color="black",
+                    linestyle="--",
+                    marker="_",
+                    label="model",
+                )
+                mu = predicted["shared supply rate"].iloc[0]
+                ax.set_title(
+                    f"{scenario}\n"
+                    + (rf"$\mu$ = {mu:.1e}" if np.isfinite(mu) else ""),
+                    fontsize=8,
+                )
+                ax.set_xticks(xs)
+                ax.set_xticklabels(stresses, fontsize=8)
+                ax.set_xlim(-0.5, len(stresses) - 0.5)
+                ax.set_ylim(-0.03, 0.75)
+            row[0].set_ylabel(f"fraction populations\nhypermutator {outcome}")
+        axs[0, 0].legend(frameon=False, fontsize=8, loc="upper left")
         sns.despine(fig)
         fig.tight_layout()
         return fig
 
-    tp.tee(
-        plot_fixation_by_stress,
-        df_observed=df_observed,
-        df_model=df_model,
-        teeplot_subdir=teeplot_subdir,
-    )
-    return
-
-
-@app.cell
-def _(df_curve, df_observed, mutator_supply_rates, teeplot_subdir):
-    def plot_fixation_by_sweeps(
-        df_observed: pd.DataFrame, df_curve: pd.DataFrame
-    ) -> plt.Figure:
-        fig, ax = plt.subplots(figsize=(4.5, 3))
-        for mu in mutator_supply_rates:
-            curve = df_curve[df_curve["mutator supply rate"] == mu]
-            ax.plot(
-                curve["num sweeps"],
-                curve["fraction fixed"],
-                color="black",
-                linestyle="--",
-                label="model" if mu == mutator_supply_rates[0] else None,
-            )
-            ax.annotate(
-                rf"$\mu = 10^{{{np.log10(mu):.0f}}}$",
-                xy=(curve["num sweeps"].iloc[-1], curve["fraction fixed"].iloc[-1]),
-                xytext=(6, 0),
-                textcoords="offset points",
-                va="center",
-                fontsize=8,
-            )
-        palette = sns.color_palette("colorblind")
-        for (__, row), color, marker in zip(
-            df_observed.iterrows(), palette, "osD"
-        ):
-            ax.errorbar(
-                [row["num sweeps"]],
-                [row["fraction fixed"]],
-                yerr=[
-                    [row["fraction fixed"] - row["ci lo"]],
-                    [row["ci hi"] - row["fraction fixed"]],
-                ],
-                color=color,
-                marker=marker,
-                ls="none",
-                label=f"observed, {row['stress']}",
-                zorder=3,
-            )
-        ax.set_xlim(1.5, 13.5)
-        ax.set_ylim(-0.03, 1.03)
-        ax.set_xlabel("selective sweeps completed by nonmutators")
-        ax.set_ylabel("fraction populations\nhypermutator fixed")
-        ax.legend(frameon=False, fontsize=8, loc="upper left")
-        sns.despine(fig)
-        fig.tight_layout()
-        return fig
 
     tp.tee(
-        plot_fixation_by_sweeps,
+        plot_takeover_by_stress,
         df_observed=df_observed,
-        df_curve=df_curve,
+        df_predicted=df_predicted,
         teeplot_subdir=teeplot_subdir,
     )
     return
@@ -394,14 +442,14 @@ def _():
     ## Timing of Emergence
 
     Observed: transfer at which an IS10 insertion in *mutS* or *mutL* was first detected by PCR, among insertions still present at the end of the experiment.
-    Model: probability that a hypermutator lineage bound for fixation has taken the lead by a given transfer.
-    Detection by PCR lags the lead, and IS10 insertion is only one route to hypermutation, so only the shapes are comparable.
+    Model: probability that a hypermutator lineage has reached 5% by a given transfer, under the baseline scenario with supply rate fitted to emergence at generation 1,000.
+    IS10 insertion is only one route to hypermutation, so the observed curve should fall at or below the model.
     """)
     return
 
 
 @app.cell
-def _(df_inputs, df_is10, mutator_supply_rates, n_gen):
+def _(df_fit, df_inputs, df_is10, n_gen):
     _persisting = df_is10[
         df_is10["first detected transfer"].notna()
         & df_is10["final status"].str.contains("IS")
@@ -420,24 +468,33 @@ def _(df_inputs, df_is10, mutator_supply_rates, n_gen):
             for stress, group in _persisting.groupby("stress")
         ],
     )
-    _inputs = df_inputs.set_index("stress")
+    _mu = df_fit.set_index(["scenario", "outcome"]).loc[
+        ("baseline", "emerged"), "shared supply rate"
+    ]
+    _inputs = df_inputs[
+        (df_inputs["scenario"] == "baseline")
+        & (df_inputs["outcome"] == "emerged")
+    ].set_index("stress")
     df_timing_model = pd.DataFrame(
         [
             {
                 "stress": stress,
-                "mutator supply rate": mu,
                 "transfer": transfer,
                 "fraction populations": calc_denovo_fixprob(
                     _inputs.loc[stress, "population size"],
                     _inputs.loc[stress, "available beneficial mutations"],
                     s=_inputs.loc[stress, "selection strength"],
-                    mu=mu,
-                    n_gen=int(transfer * n_gen / 148),
-                ),
+                    mu=_mu,
+                    n_gen=int(
+                        transfer * n_gen / 148
+                        - _inputs.loc[stress, "detection lag"]
+                    ),
+                )
+                if transfer * n_gen / 148 > _inputs.loc[stress, "detection lag"] + 1
+                else 0.0,
             }
             for stress in ("antibiotic", "osmotic")
-            for mu in mutator_supply_rates
-            for transfer in range(20, 149, 16)
+            for transfer in range(4, 149, 12)
         ],
     )
     df_timing_model
@@ -445,38 +502,23 @@ def _(df_inputs, df_is10, mutator_supply_rates, n_gen):
 
 
 @app.cell
-def _(df_timing_model, df_timing_observed, mutator_supply_rates, teeplot_subdir):
+def _(df_timing_model, df_timing_observed, teeplot_subdir):
     def plot_emergence_timing(
         df_timing_observed: pd.DataFrame, df_timing_model: pd.DataFrame
     ) -> plt.Figure:
-        fig, axs = plt.subplots(1, 2, figsize=(7, 2.8), sharex=True, sharey=True)
+        fig, axs = plt.subplots(1, 2, figsize=(6.5, 2.8), sharex=True, sharey=True)
         palette = sns.color_palette("colorblind")
         for ax, stress, color in zip(
             axs, ("antibiotic", "osmotic"), palette[1:]
         ):
-            for mu in mutator_supply_rates:
-                model = df_timing_model[
-                    (df_timing_model["stress"] == stress)
-                    & (df_timing_model["mutator supply rate"] == mu)
-                ]
-                ax.plot(
-                    model["transfer"],
-                    model["fraction populations"],
-                    color="black",
-                    linestyle="--",
-                    label="model" if mu == mutator_supply_rates[0] else None,
-                )
-                ax.annotate(
-                    rf"$\mu = 10^{{{np.log10(mu):.0f}}}$",
-                    xy=(
-                        model["transfer"].iloc[-1],
-                        model["fraction populations"].iloc[-1],
-                    ),
-                    xytext=(4, 0),
-                    textcoords="offset points",
-                    va="center",
-                    fontsize=7,
-                )
+            model = df_timing_model[df_timing_model["stress"] == stress]
+            ax.plot(
+                model["transfer"],
+                model["fraction populations"],
+                color="black",
+                linestyle="--",
+                label="model",
+            )
             observed = df_timing_observed[
                 df_timing_observed["stress"] == stress
             ]
@@ -493,13 +535,14 @@ def _(df_timing_model, df_timing_observed, mutator_supply_rates, teeplot_subdir)
             )
             ax.set_title(f"{stress} stress", fontsize=9)
             ax.set_xlabel("transfer")
-            ax.set_xlim(0, 175)
-            ax.set_ylim(-0.03, 1.03)
+            ax.set_xlim(0, 150)
+            ax.set_ylim(-0.03, 0.75)
         axs[0].set_ylabel("fraction populations\nhypermutator emerged")
         axs[0].legend(frameon=False, fontsize=8, loc="upper left")
         sns.despine(fig)
         fig.tight_layout()
         return fig
+
 
     tp.tee(
         plot_emergence_timing,

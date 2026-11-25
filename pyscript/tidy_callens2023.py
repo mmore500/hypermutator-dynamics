@@ -127,6 +127,8 @@ def tidy_populations(path: str) -> pd.DataFrame:
         df["gene"].astype(str).str.strip().isin(mutator_genes)
         & ~df["is synonymous"]
     )
+    df["is IS"] = df["mutation"].astype(str).str.startswith("IS")
+    df["is IS10"] = df["mutation"].astype(str).str.startswith("IS10")
     records = []
     for population, group in df.groupby("population"):
         # antibiotic stress levels are labeled A400 (20%), A40 (40%), A60 (60%)
@@ -142,6 +144,13 @@ def tidy_populations(path: str) -> pd.DataFrame:
                 "stress level": level,
                 "num mutations": len(group),
                 "num fixed mutations": int((group["freq"] >= 0.95).sum()),
+                "num fixed mutations excluding IS": int(
+                    ((group["freq"] >= 0.95) & ~group["is IS"]).sum()
+                ),
+                # as a gauge of IS10 activity, apart from mutator genes
+                "num IS10 insertions": int(
+                    (group["is IS10"] & ~group["is mutator allele"]).sum()
+                ),
                 "mutator allele frequency": (
                     mutator["freq"].max() if len(mutator) else 0.0
                 ),
