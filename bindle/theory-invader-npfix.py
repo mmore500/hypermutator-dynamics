@@ -120,6 +120,7 @@ def _(model_N, model_npfix, teeplot_subdir):
                 label=label,
                 linestyle=linestyle,
                 linewidth=2,
+                zorder=3 if linestyle == "-" else 2,
             )
         ax.axhline(1, color="black", linestyle=":", linewidth=0.8)
         ax.set(
