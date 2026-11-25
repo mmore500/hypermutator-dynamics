@@ -17,7 +17,9 @@ with app.setup:
 
     from pylib.viz._size_fixation_areaplot import size_fixation_areaplot
     import numpy as np
-    from pylib.theory._calc_mutator_fixprob import calc_mutator_fixprob
+    from pylib.theory._calc_mutator_fixprob_closed import (
+        calc_mutator_fixprob_closed,
+    )
 
 
 @app.cell(hide_code=True)
@@ -157,15 +159,22 @@ def _(dfxs):
 
 @app.cell
 def calc_model(dfxs):
-    # math model predictions for well-mixed populations (see pylib/theory)
+    # math model predictions (see pylib/theory), for well-mixed populations
+    # and for a 2D lattice of 256-agent demes
     model_N = np.geomspace(
         dfxs["population size"].min(), dfxs["population size"].max(), 60
     )
     model_xy = {
-        float(K): (
-            model_N.tolist(),
-            [calc_mutator_fixprob(N, K) for N in model_N],
-        )
+        float(K): [
+            (
+                model_N.tolist(),
+                [
+                    calc_mutator_fixprob_closed(N, K, deme_size=deme_size)
+                    for N in model_N
+                ],
+            )
+            for deme_size in (None, 256)
+        ]
         for K in sorted(dfxs["available beneficial mutations"].unique())
         if K <= 4
     }
@@ -239,7 +248,8 @@ def _(dfxs, model_xy, teeplot_subdir):
             _teed.set(xscale="log")
             _teed.set(ylim=(0, 1))
             for _K, _ax in _teed.axes_dict.items():
-                _ax.plot(*model_xy[_K], color="black", linestyle="--")
+                for _curve in model_xy[_K]:
+                    _ax.plot(*_curve, color="black", linestyle="--")
             _teed.set_titles(col_template="{col_var} = {col_name:.0f}")
             _teed.set_titles(row_template="{row_name}")
             _teed.set_ylabels("mutator\nfixation\nprobability")

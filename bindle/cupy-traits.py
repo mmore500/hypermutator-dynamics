@@ -21,7 +21,9 @@ with app.setup:
     from pylib.theory._calc_denovo_fixprob_demes2d import (
         calc_denovo_fixprob_demes2d,
     )
-    from pylib.theory._calc_mutator_fixprob import calc_mutator_fixprob
+    from pylib.theory._calc_mutator_fixprob_closed import (
+        calc_mutator_fixprob_closed,
+    )
 
 
 @app.cell(hide_code=True)
@@ -126,8 +128,8 @@ def _():
 
 @app.cell
 def calc_model(dfxs):
-    # math model predictions (see pylib/theory): well-mixed models for both
-    # initial conditions, plus 2D deme model for de novo
+    # math model predictions (see pylib/theory), for well-mixed populations
+    # and for a 2D lattice of 256-agent demes
     model_grid = [1, 2, 3, 4, 6, 8, 10, 12, 14, 16, 20, 24, 32, 40]
     data_K = (
         dfxs.filter(pl.col("population structure") != "1D demes")
@@ -141,12 +143,13 @@ def calc_model(dfxs):
     model_xy = {}
     for (_init, _structure, _N), _range in data_K.iterrows():
         _calc = {
-            ("50/50", "well-mixed"): calc_mutator_fixprob,
+            ("50/50", "well-mixed"): calc_mutator_fixprob_closed,
+            ("50/50", "2D demes"): lambda N, K: calc_mutator_fixprob_closed(
+                N, K, deme_size=256
+            ),
             ("de novo", "well-mixed"): calc_denovo_fixprob,
             ("de novo", "2D demes"): calc_denovo_fixprob_demes2d,
-        }.get((_init, _structure))
-        if _calc is None:  # no model for 50/50 in 2D demes at large K
-            continue
+        }[_init, _structure]
         _Ks = [K for K in model_grid if _range["min"] <= K <= _range["max"]]
         model_xy.setdefault(_N, []).append(
             (_Ks, [_calc(int(_N), K) for K in _Ks]),
