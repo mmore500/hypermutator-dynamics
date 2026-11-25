@@ -163,3 +163,7 @@
 	url = https://github.com/mmore500/hypermutator-dynamics.git
 	branch = binder-wse-traits.ipynb
 	shallow = true
+[submodule "tex"]
+	path = tex
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = tex
