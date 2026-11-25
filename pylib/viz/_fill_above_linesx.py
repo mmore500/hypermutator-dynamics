@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 
 # adapted from https://github.com/mwaskom/seaborn/issues/2410#issuecomment-753474050
 def fill_above_linesx(
-    ax: mpl_axes.Axes=None,
-    alpha: float=0.2,
-    fill_to: float=1.0,
+    ax: mpl_axes.Axes = None,
+    alpha: float = 0.2,
+    fill_to: float = 1.0,
     **kwargs,
 ) -> None:
     if ax is None:
