@@ -11,18 +11,11 @@ on:
 jobs:
 
   latex:
-    name: Latex Build and Deploy
-    runs-on: ubuntu-22.04
+    name: Latex Build
+    runs-on: ubuntu-24.04
     container:
       image: ghcr.io/mmore500/teximage:sha-77b8179
       options: --user root
-    permissions:
-      contents: write
-      id-token: write
-      pages: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -41,10 +34,27 @@ jobs:
         with:
           name: manuscript
           path: ${{ github.event.repository.name }}-draft.pdf
-      - name: Upload artifact
+      - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: deploy
+
+  latex-deploy:
+    name: Latex Deploy
+    needs: latex
+    if: github.event_name == 'push' && github.ref == 'refs/heads/paper'
+    runs-on: ubuntu-24.04
+    # serialize Pages deploys to avoid concurrent runs timing out
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    permissions:
+      id-token: write
+      pages: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
