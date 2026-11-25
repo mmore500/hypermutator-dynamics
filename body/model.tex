@@ -1,0 +1,152 @@
+\section{Analytical Model} \label{sec:model}
+
+[One-paragraph overview: we extend the heuristic of \citet{raynes2018sign}, which gives mutator fixation probability as the sum of drift and hitchhiking terms under unlimited adaptive potential, to account for a finite number $K$ of available beneficial mutations.
+The extension rests on one observation: once mutators reach the fitness peak they stall, still carrying their deleterious load, so any nonmutator lineage that also establishes at the peak displaces them.
+Mutators therefore fix only if they (1) escape their load and (2) hold their lead until nonmutators are gone.
+State up front that the model has no fitted parameters.]
+
+\subsection{Parameters and Derived Quantities} \label{sec:model:parameters}
+
+[Sentence introducing notation; refer to \cref{sec:poisson,sec:evolution} for the simulation model the quantities below describe.]
+
+\begin{itemize}
+  \item $N$, population size;
+  \item $n$, deme size, for populations structured as a 2D lattice of demes;
+  \item $x_0$, initial mutator frequency ($x_0 = 1/2$ for 50/50 competitions; $x_0 = 1/N$ for a single invading mutator);
+  \item $K$, number of available beneficial mutations (adaptive potential);
+  \item $s$, fitness advantage conferred by a one-step higher fitness score ($s = 0.1$);
+  \item $\lambda_b$, $\lambda_d$, expected beneficial and deleterious mutations per generation for nonmutators;
+  \item $M$, fold increase in mutation rates conferred by the mutator allele ($M = 100$);
+  \item $\mu$, per-replication probability that the mutator allele arises \textit{de novo} ($\mu = 10^{-6}$).
+\end{itemize}
+
+[Sentence: from these we derive the quantities below. Note that selection in the simulations is rank-based within a tournament of two, so a fitter lineage gains advantage $s$ regardless of the size of its fitness score lead; flag that predictions would differ quantitatively under additive or multiplicative fitness.]
+
+\begin{align}
+  \delta &= e^{-\lambda_d} - e^{-M \lambda_d}
+  && \text{indirect selection against mutators,} \label{eq:delta} \\
+  q_0 &= 1 - \frac{1 - e^{-M \lambda_d}}{s}
+  && \text{fraction of mutators free of deleterious mutations,} \label{eq:q0} \\
+  p(W) &: \; 1 - p = e^{-W p}
+  && \text{establishment probability at mean offspring number } W, \label{eq:establishment} \\
+  p_n &= p\big((1 + s)\, e^{-\lambda_d}\big), \quad
+  p_m = p\big((1 + s)\, e^{-M \lambda_d}\big)
+  && \text{for nonmutators and mutators,} \label{eq:pnpm} \\
+  u_n &= \lambda_b\, p_n, \quad
+  u_m = M \lambda_b\, q_0\, p_m
+  && \text{per-capita supply of established beneficial lineages,} \label{eq:supply} \\
+  r &= s - \delta
+  && \text{growth rate of an established mutator lineage.} \label{eq:growth}
+\end{align}
+
+[Brief justification of each line.
+\Cref{eq:delta}: mutators' excess rate of producing loaded offspring, approximately $(M - 1) \lambda_d$.
+\Cref{eq:q0}: mutation-selection balance under rank-based selection.
+\Cref{eq:establishment}: survival probability of a branching process with Poisson offspring \citep{haldane1927mathematical}, approximately $2 (W - 1)$ for $W$ near one.
+\Cref{eq:supply}: only load-free mutators found lasting beneficial lineages; cf.\ \citet{johnson1999beneficial,desai2011balance}.
+Give numerical values under simulation parameters: $\delta \approx 0.0099$, $q_0 \approx 0.90$, $p_n \approx 0.176$, $p_m \approx 0.159$, $u_n / u_m \approx 1/81$.]
+
+\subsection{Escape} \label{sec:model:escape}
+
+[Sentence: following \citet{raynes2018sign}, mutators escape their load either by drift or by hitchhiking; we generalize both terms from a single invader to arbitrary start frequency $x_0$.]
+
+\begin{align}
+  P_\mathrm{drift} &= \frac{e^{2 N \delta x_0} - 1}{e^{2 N \delta} - 1}, \label{eq:drift} \\
+  P_\mathrm{hitch} &= 1 - (1 - x_0)^{N / N_\downarrow},
+  \qquad N_\downarrow = \frac{\delta}{u_m}, \label{eq:hitch} \\
+  P_\mathrm{escape} &= P_\mathrm{drift} + (1 - P_\mathrm{drift})\, P_\mathrm{hitch}. \label{eq:escape}
+\end{align}
+
+[Explain: \cref{eq:drift} is the fixation probability of a deleterious allele under the diffusion approximation \citep{kimura1962probability}.
+\Cref{eq:hitch} is the probability that at least one mutator founds an established beneficial lineage while loaded mutators decline at rate $\delta$; for $x_0 = 1/N$ it reduces to eq.\ 1c of \citet{raynes2018sign}.
+$P_\mathrm{hitch} = x_0$ exactly at $N = N_\downarrow$, whatever the value of $x_0$: this is the lower critical population size, above which mutators are favored (the sign inversion of \citet{raynes2018sign}); $N_\downarrow \approx 690$ under simulation parameters.
+With unlimited adaptive potential, $P_\mathrm{fix} = P_\mathrm{escape}$.]
+
+\subsection{Sweep Time} \label{sec:model:sweep}
+
+[Sentence: the time $T$ for a fitness class to sweep, when lineages of that class are founded at per-capita rate $u$ and grow at rate $r$, is where population structure enters the model, and the only place it does.
+Lineages are founded as a Poisson process in space and time and a location stays unswept so long as no earlier-founded lineage has reached it: Kolmogorov--Johnson--Mehl--Avrami kinetics \citep{kolmogorov1937statistical,avrami1939kinetics}, applied to spatial sweeps by \citet{ralph2010parallel,martens2011interfering}.]
+
+\begin{align}
+  T_\mathrm{mixed}(u) &= \frac{\ln(p_m\, r / u) - \gamma}{r}, \label{eq:sweep-mixed} \\
+  T_\mathrm{2D}(u) &= \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, n\, v^2}\right)^{1/3} + \frac{\ln(n\, p_m)}{r},
+  \qquad v = \frac{r}{\ln(n\, r)}. \label{eq:sweep-2d}
+\end{align}
+
+[Explain: $\gamma$ is the Euler--Mascheroni constant and $\Gamma$ the gamma function.
+In a well-mixed population an established lineage grows exponentially, giving the logarithm in \cref{eq:sweep-mixed}.
+On a 2D lattice of demes exchanging one migrant per neighbor per generation, a lineage first takes over its founding deme, then spreads as a disc at wave speed $v$ (demes per generation) \citep{fisher1937wave}; \cref{eq:sweep-2d} assumes strong selection within demes, $n r \gg 1$.
+Note that establishment probability itself is unaffected by this form of population structure \citep{maruyama1970fixation}, so structure does not enter $P_\mathrm{escape}$.
+In $d$ dimensions the first term of \cref{eq:sweep-2d} scales as $(u v^d)^{-1/(d+1)}$.]
+
+\subsection{Hold} \label{sec:model:hold}
+
+[Sentence: share law. Equal-fitness mutators and nonmutators compete on equal terms, so each new fitness class is divided between them in proportion to the rates at which they found it; cf.\ the theory of recurrent-mutation soft sweeps \citep{pennings2006soft}.]
+
+\begin{align}
+  o_k &= \frac{1 - x_0}{x_0}\, P_\mathrm{hitch} \left(\frac{u_n}{u_m}\right)^{k},
+  \qquad a_k = \frac{o_k}{1 + o_k} \quad (k \geq 1),
+  \qquad a_0 = 1 - x_0, \label{eq:share} \\
+  P_\mathrm{hold} &= \exp\!\left(-N\, u_n\, a_{K-1}\, T_K\right),
+  \qquad
+  T_K =
+  \begin{cases}
+    T\!\left(x_0\, u_m / P_\mathrm{hitch}\right) & K = 1, \\
+    T\!\left((1 - a_{K-1})\, u_m\right) & K \geq 2,
+  \end{cases} \label{eq:hold} \\
+  P_\mathrm{fix} &= P_\mathrm{escape}\, P_\mathrm{hold}. \label{eq:fix}
+\end{align}
+
+[Explain: $o_k$ and $a_k$ are nonmutators' odds and share in fitness class $k$; each further class cuts nonmutators' odds by the supply ratio $u_n / u_m$.
+The factor $P_\mathrm{hitch}$ conditions mutators' supply on their having escaped; it is one for a start at appreciable frequency in a large population and matters for a single invader.
+Nonmutators one step below the peak can reach it until mutators' final sweep arrives, a time $T_K$ from \cref{eq:sweep-mixed} or \cref{eq:sweep-2d}; the expected number of nonmutator lineages established at the peak in that time is the exponent of \cref{eq:hold}.
+This formalizes the verbal argument of \citet{desai2011balance} and the multi-step dynamics shown by \citet{tanaka2003evolution,tenaillon1999mutators}.
+Normalized fixation probability, as plotted by \citet{raynes2018sign}, is $P_\mathrm{fix} / x_0$.]
+
+\input{fig/invader-npfix}
+
+[Sentence: upper critical population size. For a start at appreciable frequency, $P_\mathrm{hold}$ falls through $x_0$ at]
+
+\begin{equation}
+  N_\uparrow(K) = \frac{\ln(1 / x_0)}{u_n\, a_{K-1}\, T_K}, \label{eq:ncrit-upper}
+\end{equation}
+
+[Explain: mutators are favored only for $N_\downarrow < N < N_\uparrow(K)$.
+Each further available beneficial mutation raises $N_\uparrow$ by the factor $u_m / u_n$, roughly the mutator strength $M$.
+With unlimited adaptive potential there is no upper threshold, recovering \citet{raynes2018sign}.
+Refer to Figure \ref{fig:invader-npfix} for the single-invader case.
+Give predicted values under simulation parameters for a 50/50 start, well-mixed: $N_\uparrow \approx 1.0 \times 10^5$, $4.6 \times 10^6$, $3.7 \times 10^8$, and $3.0 \times 10^{10}$ for $K = 1$, 2, 3, and 4; and for 256-agent demes: $6.7 \times 10^4$, $3.1 \times 10^6$, $2.6 \times 10^8$, and $2.1 \times 10^{10}$.]
+
+\subsection{Mutators Arising \textit{De Novo}} \label{sec:model:denovo}
+
+[Sentence: small populations, where sweeps do not overlap. Each mutator hitchhikes with probability $u_m / \delta$ before its load removes it, so mutators found sweeps at per-capita rate $\mu\, u_m / \delta$, against $u_n$ for nonmutators.
+The probability that a given sweep is a mutator's, and from it fixation probability, are independent of population size:]
+
+\begin{equation}
+  \rho = \frac{\mu\, u_m}{\delta\, u_n + \mu\, u_m},
+  \qquad
+  P_\mathrm{fix} = 1 - (1 - \rho)^K. \label{eq:denovo-small}
+\end{equation}
+
+[Sentence: large populations. Fixation probability switches from near zero to near one over a narrow range of adaptive potential; $K^*$ denotes the number of available beneficial mutations at which mutators fix half the time.
+Well-mixed: by the share law, mutators' odds multiply by $u_m / u_n$ with each class until nonmutators' share below the peak is too small to catch up.
+2D lattice: a mutator lineage that gets ahead adapts faster than its surroundings but spreads no faster, so mutators fix only if their domains, founded at rate $J$ per deme per generation, cover all $N / n$ demes before nonmutators climb $K$ steps at one sweep time $T_n$ each.]
+
+\begin{align}
+  K^*_\mathrm{mixed} &= 1 + \frac{\ln\!\left[N\, u_n\, T_\mathrm{mixed}(u_m)\, s / (\mu \ln 2)\right]}{\ln(u_m / u_n)}, \label{eq:kstar-mixed} \\
+  K^*_\mathrm{2D} &= \frac{1}{T_n} \left\{\frac{3 \ln\!\left[N / (n \ln 2)\right]}{\pi\, J\, v^2}\right\}^{1/3},
+  \qquad
+  J = n\, \frac{\mu}{\delta}\, u_m \left(1 - \frac{1 - e^{-\delta T_n}}{\delta T_n}\right), \label{eq:kstar-2d} \\
+  \text{peak prevalence} &= 1 - \exp\!\left[-\frac{\pi}{3}\, J\, v^2\, (K\, T_n)^3\right]. \label{eq:peak-prevalence}
+\end{align}
+
+[Explain: $T_n$ is \cref{eq:sweep-2d} evaluated for nonmutators (supply $u_n$, growth $s$, establishment $p_n$).
+The parenthesized factor in $J$ accounts for mutators being purged by each nonmutator sweep and rebuilding toward their mutation-selection balance frequency $\mu / \delta$ \citep{johnson1999approach}.
+$K^*$ depends only logarithmically on $N$ and $\mu$, and is far larger under spatial structure.
+\Cref{eq:peak-prevalence} gives the fraction of the lattice reached by mutator domains when nonmutators reach the fitness peak.
+Note regimes of validity: \cref{eq:kstar-mixed,eq:kstar-2d} assume overlapping sweeps (large $N$); \cref{eq:denovo-small} assumes sequential sweeps (small $N$).]
+
+[Closing paragraph on scope and limitations: closed forms are approximations intended as scaling laws; numerical refinements (diffusion with killing for escape; branching-process recursion for hold; nucleation-and-growth with renewal sweeps for 2D \textit{de novo}) are provided in the supplement/software.
+The single-invader predictions of Figure \ref{fig:invader-npfix} have not been checked against simulation.
+Selection is rank-based here; a resimulation with additive fitness raised $N_\uparrow$ 6-fold at $K = 2$ and 15-fold at $K = 3$.
+Possible relation to clonal interference theory \citep{gerrish1998fate,desai2007beneficial,good2016evolution}.]

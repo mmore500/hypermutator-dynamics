@@ -26,6 +26,7 @@ Genomes were subjected to mutation each generation.
 For each offspring, counts of newly accrued beneficial and deleterious mutations are drawn from independent Poisson distributions.
 Expected deleterious mutations per generation were parameterized as
 $\lambda_d=10^{-3}$ and expected beneficial mutations per generation were parameterized as $\lambda_b=10^{-6}$.
+[Check: simulation source code sets nonmutator $\lambda_d = 10^{-4}$ (mutator $10^{-2}$), and the analytic approximation uses that value; reconcile with the $10^{-3}$ stated here and in Section \ref{sec:site-explicit}.]
 Reversions are not considered, so beneficial and deleterious mutation counts are strictly nondecreasing.
 In some experiments where adaptive potential was limited, we imposed an upper bound on the maximum quantity of beneficial mutations available.
 Any further beneficial mutations accrued past this point were reverted to the bound.

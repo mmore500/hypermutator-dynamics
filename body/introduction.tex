@@ -33,6 +33,19 @@ A wide variety of computational and mathematical modeling approaches have been a
 Although tangential to the present work, mathematical and computational investigations have notably treated a broad variety of additional topics, including coevolutionary pressures \citep{pal2007coevolution} and interactions with sexual recombination \citep{johnson1999beneficial}.
 Within the purifying selection regime (i.e., absent positive selection for beneficial traits), modeling work has also investigated the interplay between mutator alleles and Muller's ratchet \citep{soderberg2011kickstarting} and dynamics steering towards evolutionarily stable mutation rates \citep{lynch2008cellular}.
 
+In a separate vein of inquiry, work by \citet{raynes2018sign} is notable in establishing a systematic understanding of the impact of population size on mutator allele favorability.
+Through paired agent-based simulation and yeast-model experiments, a striking sign-change effect is demonstrated to play out along the spectrum of population size.
+A quantitative basis for this effect is provided by synthesizing independent analytical approximations for the probability of mutator fixation by drift and hitchhiking.
+For small population sizes, mutator alleles' selective cost of imposed deleterious load outweighs their selective benefit in facilitating the discovery of beneficial mutations.
+In larger population sizes, the relative magnitude of these effects switches and mutator alleles become favored via indirect selection for generated beneficial mutations.
+
+Earlier work has also pointed to the role of population size influencing selection on mutators.
+\citet{wylie2009fixation} apply stochastic simulation and diffusion-based analytical methods to study mutator dynamics in asexual populations, partly describing how large population size can favor mutators.
+A similar conclusion is reached by \citet{andre2006evolution}, through analytical models based in game theory.
+Work by \citet{good2016evolution}, notable for extending analytical modeling efforts into the parameter regime where clonal interference between competing beneficial mutations is at play, also predicts population size to increase fixation probability within well-mixed populations.
+This prediction is validated through forward-time Wright-Fisher simulations.
+(Other aspects of this work are notable in considering effects of mutator alleles on population-level adaptation rates and transient overshooting of evolutionarily stable mutation rates.)
+
 Of more direct salience to present work, \citet{desai2011balance} provide a key foundation in understanding transient fluctuations in mutator allele prevalence, who focus on a dynamic (rather than steady-state) framing of the topic.
 For scenarios with positive selection, attention is first paid to the probability for a given \textit{de novo} beneficial mutation to survive drift effects and reach sufficient frequency to be reliably selected upon.
 Principled approximations are applied to suggest parameter regimes where establishment probability for beneficial alleles arising on a mutator background may safely be considered to be essentially zero (i.e., mutator incurs catastrophic mutational load) and where establishment probability is essentially indistinguishable from nonmutators (i.e., mutator incurs negligible mutational load).
@@ -57,18 +70,8 @@ Because the antibiotic agent employed in experiments targeted a pathway involvin
 In line with theoretical expectations, the high-adaptive-potential osmotic stressor induced significantly higher rates of mutator fixation.
 More broadly, existing work has drawn clear connections between elevated mutation rate and long-term environmental, coevolutionary, or ecological fluctuations that introduce a moving evolutionary target \citep{leigh1970natural,travis2002mutator,travis2004mutators,rosenbloom2014frequencydependent,pal2007coevolution,wei2022rapid}.
 
-In a separate vein of inquiry, work by \citet{raynes2018sign} is notable in establishing a systematic understanding of the impact of population size on mutator allele favorability.
-Through paired agent-based simulation and yeast-model experiments, a striking sign-change effect is demonstrated to play out along the spectrum of population size.
-A quantitative basis for this effect is provided by synthesizing independent analytical approximations for the probability of mutator fixation by drift and hitchhiking.
-For small population sizes, mutator alleles' selective cost of imposed deleterious load outweighs their selective benefit in facilitating the discovery of beneficial mutations.
-In larger population sizes, the relative magnitude of these effects switches and mutator alleles become favored via indirect selection for generated beneficial mutations.
-
-Earlier work has also pointed to the role of population size influencing selection on mutators.
-\citet{wylie2009fixation} apply stochastic simulation and diffusion-based analytical methods to study mutator dynamics in asexual populations, partly describing how large population size can favor mutators.
-A similar conclusion is reached by \citet{andre2006evolution}, through analytical models based in game theory.
-Work by \citet{good2016evolution}, notable for extending analytical modeling efforts into the parameter regime where clonal interference between competing beneficial mutations is at play, also predicts population size to increase fixation probability within well-mixed populations.
-This prediction is validated through forward-time Wright-Fisher simulations.
-(Other aspects of this work are notable in considering effects of mutator alleles on population-level adaptation rates and transient overshooting of evolutionarily stable mutation rates.)
+[Paragraph stating the gap and our approach: existing quantitative theory for the sign of selection on mutators \citep{raynes2018sign} assumes unlimited adaptive potential, whereas existing treatments of limited adaptive potential are verbal \citep{desai2011balance} or simulation-based \citep{tenaillon1999mutators,tanaka2003evolution}.
+Here we (1) establish by large-scale simulation that restricting adaptive potential creates a second sign change, with nonmutators regaining favor in very large populations, and (2) develop and test an extension of the formulation of \citet{raynes2018sign} that accounts for this effect, including under spatial structure and for mutators arising \textit{de novo}.]
 
 In this work, we seek to extend understanding of how limited adaptive potential interacts with population size and structure to influence mutator dynamics within asexual populations.
 As noted earlier, such knowledge is needed to improve explanation of how nonmutator alleles can be maintained within large populations.
@@ -87,6 +90,8 @@ Investigating the influence of population structure and composition, we found sp
 However, this effect only occurred when mutator alleles were initially rare within the population.
 We also report qualitative differences between effects of population size on mutator fixation probability under well-mixed versus 2D population structure when mutations are rare.
 In the final part of our investigation, we analyze the spatiotemporal dynamics of our simulations to better understand the mechanisms at play behind these effects.
+
+[Paragraph summarizing analytical results: closed-form mutator fixation probability as the product of an escape term (after \citet{raynes2018sign}) and a hold term; lower critical population size $N_\downarrow$ unchanged by adaptive potential; upper critical population size $N_\uparrow(K)$ rising by roughly the mutator strength per available beneficial mutation; population structure entering only through sweep time; for mutators arising \textit{de novo}, a critical adaptive potential $K^*$ that grows only logarithmically with population size and is far larger under 2D structure; comparison against simulation (Section \ref{sec:results}) and application to data from \citet{callens2023hypermutator}.]
 
 Differing from existing results, we find that in the situation of limited adaptive potential, the effect of population structure on fixation probability is actually opposite to that predicted under the theory.
 Population structure has also been found to influence mutator outcomes, with deviation from well-mixed conditions being linked to a higher probability for hypermutator fixation so long as any connectivity remains between subpopulations \citep{raynes2019migration}.
