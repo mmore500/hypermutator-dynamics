@@ -4,31 +4,32 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     import itertools as it
 
     from IPython.display import display
+    import marimo as mo
     import numpy as np
     import pandas as pd
     import polars as pl
     import seaborn as sns
     from teeplot import teeplot as tp
     from tqdm import tqdm
+    from watermark import watermark
 
+    from pylib._osf_fetch import osf_fetch
+    from pylib.theory._calc_mutator_fixprob_closed import (
+        calc_mutator_fixprob_closed,
+    )
     from pylib.viz._get_nben_cmap import get_nben_cmap
     from pylib.viz._get_nben_hue_norm import get_nben_hue_norm
     from pylib.viz._size_fixation_areaplot import size_fixation_areaplot
     from pylib.viz._size_fixation_heatmap import size_fixation_heatmap
-    from pylib.theory._calc_mutator_fixprob_closed import (
-        calc_mutator_fixprob_closed,
-    )
 
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -40,7 +41,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -53,9 +55,11 @@ def _():
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
-    """)
+    """
+    )
     return
 
 
@@ -71,7 +75,7 @@ def _():
     ]
     dfs = []
     for item in tqdm(data):
-        df = pd.read_parquet(item["url"])
+        df = pd.read_parquet(osf_fetch(item["url"]))
         df["available beneficial mutations"] = item["max ben muts"]
         df = pl.from_pandas(df)
         df = (
@@ -183,9 +187,11 @@ def calc_model(dfxs):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Size Fixation Area Plots
-    """)
+    """
+    )
     return
 
 
@@ -255,7 +261,7 @@ def _(apn, dfxs, model_xy, teeplot_subdir):
         *{model_xy[num_abm[0]]!r}, color="black", linestyle="--"
     )
     """
-            + 'from pylib.viz._add_legend_entry import add_legend_entry\n'
+            + "from pylib.viz._add_legend_entry import add_legend_entry\n"
             + 'add_legend_entry(teed, "analytic\\napprox")\n',
         )
     return
@@ -263,9 +269,11 @@ def _(apn, dfxs, model_xy, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Size Fixation Curves
-    """)
+    """
+    )
     return
 
 
@@ -310,7 +318,7 @@ def _(apn, dfxs, model_xy, teeplot_subdir):
     ):
         ax.plot(*xy, color="black", linestyle="--")
     """
-            + 'from pylib.viz._add_legend_entry import add_legend_entry\n'
+            + "from pylib.viz._add_legend_entry import add_legend_entry\n"
             + 'add_legend_entry(teed, "analytic\\napprox")\n',
         )
     return
@@ -347,9 +355,11 @@ def _(apn, dfxs, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Size Fixation Heatmap
-    """)
+    """
+    )
     return
 
 
@@ -369,9 +379,11 @@ def _(dfxs, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Quality Check: Number Replicates Available
-    """)
+    """
+    )
     return
 
 
@@ -399,7 +411,7 @@ def _(categories, dfxs):
         .cast(pl.Enum(categories))
         .alias("population size cat"),
     )
-    display(dfy.describe()), display(dfy.head()), display(dfy.tail());
+    display(dfy.describe()), display(dfy.head()), display(dfy.tail())
     return (dfy,)
 
 
@@ -441,9 +453,11 @@ def _(apn, dfy, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Quality Check: Has Reached Fixation?
-    """)
+    """
+    )
     return
 
 
@@ -545,7 +559,7 @@ def _(dfxs_, teeplot_subdir):
                 label_type="center",
                 fontsize=8,
                 rotation=90,
-                padding=2
+                padding=2,
             )
 
     saveit()

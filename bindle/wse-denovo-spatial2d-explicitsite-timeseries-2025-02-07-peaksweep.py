@@ -4,24 +4,24 @@ __generated_with = "0.23.2"
 app = marimo.App(width="full")
 
 with app.setup:
-    import marimo as mo
-    from watermark import watermark
-
     import os
 
+    from IPython.display import display
     import downstream
     import imageio
-    from IPython.display import display
+    import marimo as mo
     import numpy as np
     import pandas as pd
     import polars as pl
     import seaborn as sns
     from teeplot import teeplot as tp
     from tqdm import tqdm
+    from watermark import watermark
 
+    from pylib._osf_fetch import osf_fetch
     from pylib.munge._addend_groups import addend_groups
-    from pylib.munge._union_upsample import union_upsample
     from pylib.munge._squeeze import squeeze_int
+    from pylib.munge._union_upsample import union_upsample
     from pylib.theory._calc_denovo_peak_prevalence_demes2d import (
         calc_denovo_peak_prevalence_demes2d,
     )
@@ -29,7 +29,8 @@ with app.setup:
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -41,33 +42,38 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _():
-    teeplot_subdir = "wse-denovo-spatial2d-explicitsite-timeseries-2025-02-07-peaksweep"
+    teeplot_subdir = (
+        "wse-denovo-spatial2d-explicitsite-timeseries-2025-02-07-peaksweep"
+    )
     teeplot_subdir
     return (teeplot_subdir,)
 
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Prep Data
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _():
     dfxs = pl.from_pandas(
-        pd.read_parquet("https://osf.io/yaedh/download"),
+        pd.read_parquet(osf_fetch("https://osf.io/yaedh/download")),
     ).with_row_index(
         "dstream_data_id",
     )
-    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail());
+    display(dfxs.describe()), display(dfxs.head()), display(dfxs.tail())
     return (dfxs,)
 
 
@@ -159,9 +165,11 @@ def _(dfxs):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Plot Data
-    """)
+    """
+    )
     return
 
 
@@ -224,16 +232,21 @@ def _(df_mean, teeplot_subdir):
 @app.cell
 def _(df):
     # take the mean of dstream_value at each dstream_Tbar across tiles
-    df_min_mean = df.group_by("replicate", "dstream_Tbar").agg(
-        pl.col("dstream_value").mean(),
-        pl.col("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
-        .unique()
-        .pipe(squeeze_int),
-    ).group_by("replicate").agg(
-        pl.col("dstream_value").filter(pl.col("dstream_value") > 0).min(),
-        pl.col("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
-        .unique()
-        .pipe(squeeze_int),
+    df_min_mean = (
+        df.group_by("replicate", "dstream_Tbar")
+        .agg(
+            pl.col("dstream_value").mean(),
+            pl.col("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
+            .unique()
+            .pipe(squeeze_int),
+        )
+        .group_by("replicate")
+        .agg(
+            pl.col("dstream_value").filter(pl.col("dstream_value") > 0).min(),
+            pl.col("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
+            .unique()
+            .pipe(squeeze_int),
+        )
     )
     df_min_mean
     return (df_min_mean,)
@@ -249,9 +262,7 @@ def _(df_min_mean, teeplot_subdir):
             .over("CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS")
             .cast(pl.Int32)
             .alias("replicate number")
-        ).with_columns(
-            dstream_value=1 - pl.col("dstream_value")
-        ),
+        ).with_columns(dstream_value=1 - pl.col("dstream_value")),
         x="CEREBRASLIB_HYPERMUT_NUM_AVAIL_BEN_MUTS",
         y="dstream_value",
         alpha=0.5,
@@ -275,7 +286,9 @@ def _(df_min_mean, teeplot_subdir):
             col_template="",
             row_template="{row_name} Avail\nBen Muts",
         )
-        _g.set_axis_labels(x_var="Avail Ben Muts", y_var="Max\nMutator\nPrevalence")
+        _g.set_axis_labels(
+            x_var="Avail Ben Muts", y_var="Max\nMutator\nPrevalence"
+        )
         # math model prediction (see pylib/theory), for the 750 x 994 grid
         # of 256-agent demes simulated here
         _model_K = [*range(2, 11)]
@@ -297,9 +310,11 @@ def _(df_min_mean, teeplot_subdir):
 
 @app.cell(hide_code=True)
 def _():
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Animate Data
-    """)
+    """
+    )
     return
 
 
@@ -324,17 +339,23 @@ def _(df, teeplot_subdir):
             num_cols = dff["col_rank"].max() + 1
 
             frame = np.empty((num_rows, num_cols), dtype=np.uint8)
-            frame[dff["row_rank"], dff["col_rank"]] = dff["dstream_value"] * 255
+            frame[dff["row_rank"], dff["col_rank"]] = (
+                dff["dstream_value"] * 255
+            )
             frame = np.kron(frame, np.ones((4, 4), dtype=frame.dtype))
             frames.append(frame)
 
-            outdir = f"{teeplot_subdir}/a=traitframes+nmut={nmut}+rep={replicate}"
+            outdir = (
+                f"{teeplot_subdir}/a=traitframes+nmut={nmut}+rep={replicate}"
+            )
             os.makedirs(outdir, exist_ok=True)
             outpath = f"{outdir}/dstream_Tbar={dstream_Tbar:06}+ext=.png"
             imageio.imwrite(outpath, frame.T)
 
         print(len(frames))
-        outpath = f"{teeplot_subdir}/a=traits+nmut={nmut}+rep={replicate}+ext=.gif"
+        outpath = (
+            f"{teeplot_subdir}/a=traits+nmut={nmut}+rep={replicate}+ext=.gif"
+        )
         imageio.mimsave(outpath, frames, duration=0.2)
     return
 

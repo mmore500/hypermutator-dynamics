@@ -2,9 +2,7 @@ import pytest
 
 from pylib.theory._calc_drift_fixprob import calc_drift_fixprob
 from pylib.theory._calc_escape_prob_closed import calc_escape_prob_closed
-from pylib.theory._calc_hitchhike_prob_closed import (
-    calc_hitchhike_prob_closed,
-)
+from pylib.theory._calc_hitchhike_prob_closed import calc_hitchhike_prob_closed
 
 
 def test_calc_escape_prob_closed_limits():

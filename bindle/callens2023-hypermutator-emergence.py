@@ -25,7 +25,8 @@ with app.setup:
 
 @app.cell(hide_code=True)
 def do_watermark():
-    mo.md(f"""
+    mo.md(
+        f"""
     ```Text
     {watermark(
         current_date=True,
@@ -37,7 +38,8 @@ def do_watermark():
         globals_=globals(),
     )}
     ```
-    """)
+    """
+    )
     return
 
 
@@ -157,7 +159,9 @@ def _(df_populations):
     )
     for _outcome in outcomes:
         _cis = [
-            scipy_stats.binomtest(int(k), int(n)).proportion_ci(method="wilson")
+            scipy_stats.binomtest(int(k), int(n)).proportion_ci(
+                method="wilson"
+            )
             for k, n in zip(
                 df_observed[f"num {_outcome}"], df_observed["num populations"]
             )
@@ -205,9 +209,13 @@ def _(df_observed, df_od, outcomes):
         "E. coli rates": {"Ub": 1e-5, "Ud": 2e-4, "sweeps": "num sweeps"},
     }
 
-    _od = df_od.assign(
-        weighted=df_od["OD600 mean"] * df_od["OD600 count"],
-    ).groupby("stress")[["weighted", "OD600 count"]].sum()
+    _od = (
+        df_od.assign(
+            weighted=df_od["OD600 mean"] * df_od["OD600 count"],
+        )
+        .groupby("stress")[["weighted", "OD600 count"]]
+        .sum()
+    )
     _records = []
     for _scenario, _params in scenarios.items():
         for __, _row in df_observed.iterrows():
@@ -224,7 +232,11 @@ def _(df_observed, df_od, outcomes):
             # not reported for control, so taken to be not limiting
             _K = {"antibiotic": 23, "osmotic": 43}.get(_stress, 60)
             _s = calc_selection_from_num_sweeps(
-                _N, n_gen, _row[_params["sweeps"]], _params["Ub"], _params["Ud"]
+                _N,
+                n_gen,
+                _row[_params["sweeps"]],
+                _params["Ub"],
+                _params["Ud"],
             )
             for _outcome in outcomes:
                 _lag = calc_sweep_lag(
@@ -282,7 +294,6 @@ def _(df_inputs):
         k, n = group["num observed"], group["num populations"]
         return -float(np.sum(k * np.log(p) + (n - k) * np.log(1 - p)))
 
-
     def fit_supply_rate(group: pd.DataFrame) -> tuple:
         if not (group["supply coefficient"] > 0).any():
             return np.nan, np.nan
@@ -294,14 +305,14 @@ def _(df_inputs):
         )
         return 10**res.x, res.fun
 
-
     _records = []
     for (_scenario, _outcome), _group in df_inputs.groupby(
         ["scenario", "outcome"], sort=False
     ):
         _mu, _nll = fit_supply_rate(_group)
         _separate = {
-            stress: fit_supply_rate(g) for stress, g in _group.groupby("stress")
+            stress: fit_supply_rate(g)
+            for stress, g in _group.groupby("stress")
         }
         _lr = 2 * (_nll - sum(nll for __, nll in _separate.values()))
         _records.append(
@@ -329,7 +340,8 @@ def _(df_fit, df_inputs):
         df_predicted["num observed"] / df_predicted["num populations"]
     )
     df_predicted["fraction predicted"] = -np.expm1(
-        -df_predicted["shared supply rate"] * df_predicted["supply coefficient"]
+        -df_predicted["shared supply rate"]
+        * df_predicted["supply coefficient"]
     )
     df_predicted[
         [
@@ -433,7 +445,6 @@ def _(
         fig.tight_layout()
         return fig
 
-
     tp.tee(
         plot_takeover_by_stress,
         df_observed=df_observed,
@@ -497,7 +508,8 @@ def _(df_fit, df_inputs, df_is10, n_gen):
                         - _inputs.loc[stress, "detection lag"]
                     ),
                 )
-                if transfer * n_gen / 148 > _inputs.loc[stress, "detection lag"] + 1
+                if transfer * n_gen / 148
+                > _inputs.loc[stress, "detection lag"] + 1
                 else 0.0,
             }
             for stress in ("antibiotic", "osmotic")
@@ -513,7 +525,9 @@ def _(df_timing_model, df_timing_observed, teeplot_subdir):
     def plot_emergence_timing(
         df_timing_observed: pd.DataFrame, df_timing_model: pd.DataFrame
     ) -> plt.Figure:
-        fig, axs = plt.subplots(1, 2, figsize=(6.5, 2.8), sharex=True, sharey=True)
+        fig, axs = plt.subplots(
+            1, 2, figsize=(6.5, 2.8), sharex=True, sharey=True
+        )
         palette = sns.color_palette("colorblind")
         for ax, stress, color in zip(
             axs, ("antibiotic", "osmotic"), palette[1:]
@@ -549,7 +563,6 @@ def _(df_timing_model, df_timing_observed, teeplot_subdir):
         sns.despine(fig)
         fig.tight_layout()
         return fig
-
 
     tp.tee(
         plot_emergence_timing,
