@@ -167,3 +167,53 @@
 	path = tex
 	url = https://github.com/mmore500/hypermutator-dynamics.git
 	branch = tex
+[submodule "bindle/bindle-callens2023-hypermutator-emergence.py"]
+	path = bindle/bindle-callens2023-hypermutator-emergence.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-callens2023-hypermutator-emergence.py
+	shallow = true
+[submodule "bindle/bindle-cupy-5050-traits.py"]
+	path = bindle/bindle-cupy-5050-traits.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-cupy-5050-traits.py
+	shallow = true
+[submodule "bindle/bindle-cupy-traits.py"]
+	path = bindle/bindle-cupy-traits.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-cupy-traits.py
+	shallow = true
+[submodule "bindle/bindle-perf-wse-vs-gpu.py"]
+	path = bindle/bindle-perf-wse-vs-gpu.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-perf-wse-vs-gpu.py
+	shallow = true
+[submodule "bindle/bindle-theory-invader-npfix.py"]
+	path = bindle/bindle-theory-invader-npfix.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-theory-invader-npfix.py
+	shallow = true
+[submodule "bindle/bindle-wse-5050-spatial2d-2048atile-infben-traits.py"]
+	path = bindle/bindle-wse-5050-spatial2d-2048atile-infben-traits.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-wse-5050-spatial2d-2048atile-infben-traits.py
+	shallow = true
+[submodule "bindle/bindle-wse-5050-spatial2d-2048atile-traits.py"]
+	path = bindle/bindle-wse-5050-spatial2d-2048atile-traits.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-wse-5050-spatial2d-2048atile-traits.py
+	shallow = true
+[submodule "bindle/bindle-wse-5050-spatial2d-32atile-infben-traits.py"]
+	path = bindle/bindle-wse-5050-spatial2d-32atile-infben-traits.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-wse-5050-spatial2d-32atile-infben-traits.py
+	shallow = true
+[submodule "bindle/bindle-wse-denovo-spatial2d-explicitsite-timeseries-2025-02-07-peaksweep.py"]
+	path = bindle/bindle-wse-denovo-spatial2d-explicitsite-timeseries-2025-02-07-peaksweep.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-wse-denovo-spatial2d-explicitsite-timeseries-2025-02-07-peaksweep.py
+	shallow = true
+[submodule "bindle/bindle-wse-denovo-spatial2d-explicitsite-timeseries.py"]
+	path = bindle/bindle-wse-denovo-spatial2d-explicitsite-timeseries.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-wse-denovo-spatial2d-explicitsite-timeseries.py
+	shallow = true
