@@ -236,7 +236,9 @@ def _(apn, dfxs, model_xy, teeplot_subdir):
             + f"""teed.ax.plot(
         *{model_xy[num_abm[0]]!r}, color="black", linestyle="--"
     )
-    """,
+    """
+            + 'from pylib.viz._add_legend_entry import add_legend_entry\n'
+            + '    add_legend_entry(teed, "analytic\\napprox")\n    ',
         )
     return
 

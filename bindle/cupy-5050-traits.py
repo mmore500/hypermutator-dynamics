@@ -15,6 +15,7 @@ with app.setup:
     from teeplot import teeplot as tp
     from tqdm import tqdm
 
+    from pylib.viz._add_legend_entry import add_legend_entry
     from pylib.viz._size_fixation_areaplot import size_fixation_areaplot
     import numpy as np
     from pylib.theory._calc_mutator_fixprob_closed import (
@@ -262,6 +263,7 @@ def _(dfxs, model_xy, teeplot_subdir):
                 ncol=2,
                 title=None,
             )
+            add_legend_entry(_teed, "analytic approximation")
             for _ax in _teed.axes.flat:
                 _ax.set_xticks([1e3, 1e5, 1e7])
                 _ax.axhline(0.5, color="black", linestyle="--")
