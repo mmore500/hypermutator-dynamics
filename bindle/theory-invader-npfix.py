@@ -98,19 +98,19 @@ def _(model_N, model_npfix, teeplot_subdir):
                 np.inf,
                 "tab:blue",
                 "-",
-                "unlimited adaptive potential (Raynes et al. 2018)",
+                "unlimited adaptive potential\n(Raynes et al. 2018)",
             ),
             (
                 1,
                 "#e6550d",
                 "--",
-                "limited adaptive potential (1 beneficial mutation)",
+                "limited adaptive potential\n(1 beneficial mutation)",
             ),
             (
                 2,
                 "#fdae6b",
                 "--",
-                "limited adaptive potential (2 beneficial mutations)",
+                "limited adaptive potential\n(2 beneficial mutations)",
             ),
         ):
             ax.plot(
