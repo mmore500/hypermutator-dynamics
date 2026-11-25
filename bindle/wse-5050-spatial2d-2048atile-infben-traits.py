@@ -254,7 +254,9 @@ def _(apn, dfxs, model_xy, teeplot_subdir):
             + f"""teed.ax.plot(
         *{model_xy[num_abm[0]]!r}, color="black", linestyle="--"
     )
-    """,
+    """
+            + 'from pylib.viz._add_legend_entry import add_legend_entry\n'
+            + '    add_legend_entry(teed, "analytic\\napprox")\n    ',
         )
     return
 
@@ -307,7 +309,9 @@ def _(apn, dfxs, model_xy, teeplot_subdir):
         {[model_xy[K] for K in sorted(model_xy)]!r},
     ):
         ax.plot(*xy, color="black", linestyle="--")
-    """,
+    """
+            + 'from pylib.viz._add_legend_entry import add_legend_entry\n'
+            + '    add_legend_entry(teed, "analytic\\napprox")\n    ',
         )
     return
 
