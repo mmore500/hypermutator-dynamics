@@ -13,3 +13,7 @@ def test_calc_wave_speed_faster_with_stronger_selection():
 
 def test_calc_wave_speed_slower_in_larger_demes():
     assert calc_wave_speed(2048, 0.1) < calc_wave_speed(256, 0.1)
+
+
+def test_calc_wave_speed_faster_with_more_migration():
+    assert calc_wave_speed(256, 0.1, migrants=4) > calc_wave_speed(256, 0.1)
