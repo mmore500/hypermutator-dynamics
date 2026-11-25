@@ -14,6 +14,9 @@ with app.setup:
     from teeplot import teeplot as tp
     from tqdm import tqdm
     from pylib.theory._calc_denovo_fixprob import calc_denovo_fixprob
+    from pylib.theory._calc_denovo_fixprob_demes2d import (
+        calc_denovo_fixprob_demes2d,
+    )
     from pylib.theory._calc_mutator_fixprob import calc_mutator_fixprob
 
 
@@ -130,16 +133,22 @@ def _():
 
 @app.cell
 def calc_model(dfxs_1):
-    # math model predictions for well-mixed populations (see pylib/theory)
-    model_K = [*range(1, 17)]
-    model_xy = {
-        (init, N): (model_K, [calc(int(N), K) for K in model_K])
-        for init, calc in (
-            ("50/50", calc_mutator_fixprob),
-            ("de novo", calc_denovo_fixprob),
-        )
-        for N in sorted(dfxs_1["population size"].unique())
-    }
+    # math model predictions (see pylib/theory): 2D deme model for de novo,
+    # well-mixed model for 50/50
+    model_grid = [*range(1, 17)]
+    _data = dfxs_1[dfxs_1["genome model"] == "counter-based"]
+    data_K = _data.groupby(["initial conditions", "population size"])[
+        "available beneficial mutations"
+    ].agg(["min", "max"])
+    # predictions extend only as far along the x axis as the data do
+    model_xy = {}
+    for (_init, _N), _range in data_K.iterrows():
+        _calc = {
+            "50/50": calc_mutator_fixprob,
+            "de novo": calc_denovo_fixprob_demes2d,
+        }[_init]
+        _Ks = [K for K in model_grid if _range["min"] <= K <= _range["max"]]
+        model_xy[_init, _N] = (_Ks, [_calc(int(_N), K) for K in _Ks])
     return (model_xy,)
 
 
@@ -179,7 +188,7 @@ def _(dfxs_1, model_xy, teeplot_subdir):
                 if _what == "counter-based":
                     for _N, _ax in _teed.axes_dict.items():
                         for _init in "de novo", "50/50":
-                            _ax.plot(*model_xy[_init, _N], color="black", linestyle="--")
+                            _ax.plot(*model_xy.get((_init, _N), ([], [])), color="black", linestyle="--")
                 _teed.set_titles(
                     col_template="",
                     row_template="",
@@ -281,7 +290,7 @@ def _(dfxs_1, model_xy, teeplot_subdir):
                 if _what == "counter-based":
                     for _N, _ax in _teed.axes_dict.items():
                         for _init in "de novo", "50/50":
-                            _ax.plot(*model_xy[_init, _N], color="black", linestyle="--")
+                            _ax.plot(*model_xy.get((_init, _N), ([], [])), color="black", linestyle="--")
                 _teed.set_titles(
                     col_template="",
                     row_template="",
