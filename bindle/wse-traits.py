@@ -239,6 +239,113 @@ def _(dfxs_1, model_xy, teeplot_subdir):
 @app.cell(hide_code=True)
 def _():
     mo.md(r"""
+    ### Log-scaled x axis
+    """)
+    return
+
+
+@app.cell
+def _(dfxs_1, model_xy, teeplot_subdir):
+    _row = "population size"
+    for _errorbar in ["sd", "se", "ci", None]:
+        for _what, _data in dfxs_1.groupby("genome model"):
+            with tp.teed(
+                sns.relplot,
+                data=_data[
+                    _data["genotype"] == "hypermutator"
+                ],
+                x="available beneficial mutations",
+                y="fix\nprob",
+                row=_row,
+                row_order=sorted(
+                    _data[_row].unique(), reverse=True
+                ),
+                hue="initial\nconditions",
+                hue_order=["de novo", "50/50"],
+                style="initial\nconditions",
+                style_order=["de novo", "50/50"],
+                aspect=8,
+                errorbar=_errorbar,
+                # facet_kws=dict(margin_titles=True),
+                height=0.65,
+                kind="line",
+                markers=True,
+                palette="Set2_r",
+                seed=1,
+                teeplot_subdir=teeplot_subdir,
+                teeplot_outattrs={
+                    "what": _what.replace(" ", "-").replace("/", "-"),
+                        "xscale": "log",
+                },
+            ) as _teed:
+                if _what == "counter-based":
+                    for _N, _ax in _teed.axes_dict.items():
+                        for _init in "de novo", "50/50":
+                            _ax.plot(*model_xy[_init, _N], color="black", linestyle="--")
+                _teed.set_titles(
+                    col_template="",
+                    row_template="",
+                )
+                _teed.set(
+                    ylim=(0, 1),
+                    xlim=(1, 16),
+                )
+                sns.move_legend(
+                    _teed,
+                    "lower center",
+                    bbox_to_anchor=(0.45, 0.97),
+                    frameon=False,
+                    ncol=2,
+                    title=None,
+                    columnspacing=0.7,
+                )
+                for _ax in _teed.axes.flat:
+                    _ax.axhline(0.5, ls=":", c="gray", lw=1)
+                    _ax.set_yticks([0, 0.5, 1])
+                    _ax.set_yticklabels(["", "0.5", ""])
+                    _ax.set_ylabel("")
+
+                _teed.tight_layout()
+
+                _teed.figure.subplots_adjust(top=0.85)
+                _teed.set(xscale="log")
+                for _ax in _teed.axes.flat:
+                    _ax.set_xticks([1, 2, 4, 8, 16])
+                    _ax.xaxis.set_major_formatter(mpl_ticker.ScalarFormatter())
+                    _ax.xaxis.set_minor_formatter(mpl_ticker.NullFormatter())
+                _delta = 0.001  # Small height for the dummy axis
+                _pos = _teed.axes.flat[0].get_position()
+                _dummy_ax = _ax.figure.add_axes(
+                    [
+                        _pos.x0 + _pos.width * 1.1,
+                        _pos.y0 - _pos.height * _data[_row].nunique() * 1.3,
+                        _delta,
+                        _pos.height * _data[_row].nunique() * 1.7,
+                    ],
+                )
+                _yvals = _data[_row]
+                _dummy_ax.set_ylim(_yvals.min(), _yvals.max())
+                _dummy_ax.yaxis.set_label_position("right")
+                _dummy_ax.set_ylabel(_row)
+
+                _dummy_ax.set_yscale("log")
+                _dummy_ax.yaxis.set_ticks_position("right")
+                _dummy_ax.yaxis.set_major_locator(
+                    mpl_ticker.LogLocator(base=10),
+                )
+                _formatter = mpl_ticker.LogFormatterMathtext(base=10)
+                _dummy_ax.yaxis.set_major_formatter(_formatter)
+
+                # Hide unwanted spines
+                _dummy_ax.get_xaxis().set_visible(False)
+
+                _teed.tight_layout()
+    return
+
+
+@app.cell(hide_code=True)
+def _():
+    mo.md(r"""
     ## genome model
     """)
     return
