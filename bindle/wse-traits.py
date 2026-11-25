@@ -17,7 +17,9 @@ with app.setup:
     from pylib.theory._calc_denovo_fixprob_demes2d import (
         calc_denovo_fixprob_demes2d,
     )
-    from pylib.theory._calc_mutator_fixprob import calc_mutator_fixprob
+    from pylib.theory._calc_mutator_fixprob_closed import (
+        calc_mutator_fixprob_closed,
+    )
 
 
 @app.cell(hide_code=True)
@@ -133,8 +135,8 @@ def _():
 
 @app.cell
 def calc_model(dfxs_1):
-    # math model predictions (see pylib/theory): 2D deme model for de novo,
-    # well-mixed model for 50/50
+    # math model predictions (see pylib/theory), for a 2D lattice of 256-agent
+    # demes
     model_grid = [*range(1, 17)]
     _data = dfxs_1[dfxs_1["genome model"] == "counter-based"]
     data_K = _data.groupby(["initial conditions", "population size"])[
@@ -144,7 +146,9 @@ def calc_model(dfxs_1):
     model_xy = {}
     for (_init, _N), _range in data_K.iterrows():
         _calc = {
-            "50/50": calc_mutator_fixprob,
+            "50/50": lambda N, K: calc_mutator_fixprob_closed(
+                N, K, deme_size=256
+            ),
             "de novo": calc_denovo_fixprob_demes2d,
         }[_init]
         _Ks = [K for K in model_grid if _range["min"] <= K <= _range["max"]]

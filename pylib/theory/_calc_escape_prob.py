@@ -16,12 +16,10 @@ def calc_escape_prob(
     hitchhiking jointly rather than additively.
 
     Mutator frequency x is a Wright-Fisher diffusion with selection -delta,
-    "killed" in favor of mutators at rate a x (a mutator establishes a
-    beneficial mutation) and in favor of nonmutators at rate b(x) (1 - x) (a
-    nonmutator establishes a beneficial mutation and mutators fail to answer
-    within one selective timescale). The win probability u(x) solves
+    "killed" in favor of mutators at rate a x, when a mutator establishes a
+    beneficial mutation. The win probability u(x) solves
 
-        x(1-x)/(2N) u'' - delta x(1-x) u' + a x (1-u) - b(x)(1-x) u = 0,
+        x(1-x)/(2N) u'' - delta x(1-x) u' + a x (1-u) = 0,
 
     with u(0) = 0 and u(1) = 1.
     """
@@ -33,12 +31,11 @@ def calc_escape_prob(
     n = int(min(max(2000, 40 * N * delta), 400000))
     x = np.linspace(0.0, 1.0, n + 1)[1:-1]
     h = 1.0 / n
-    b = N * Ub * p["pi_non"] * np.exp(-a * x / s)
     diffusion = x * (1.0 - x) / (2.0 * N)
     drift = delta * x * (1.0 - x)  # toward x = 0; upwinded
     lower = diffusion / h**2 + drift / h
     upper = diffusion / h**2
-    diag = -(lower + upper) - (a * x + b * (1.0 - x))
+    diag = -(lower + upper) - a * x
     rhs = -a * x
     rhs[-1] -= upper[-1]  # boundary condition u(1) = 1
     banded = np.zeros((3, n - 1))
@@ -46,6 +43,4 @@ def calc_escape_prob(
     banded[1] = diag
     banded[2, :-1] = lower[1:]
     u = sp_linalg.solve_banded((1, 1), banded, rhs)
-    u_x0 = float(np.interp(x0, x, u))
-    # load takes ~t_lag generations to build, extending mutators' window
-    return 1.0 - (1.0 - u_x0) * float(np.exp(-a * x0 * p["t_lag"]))
+    return float(np.interp(x0, x, u))
