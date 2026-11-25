@@ -122,7 +122,7 @@ def _(model_N, model_npfix, teeplot_subdir):
                 linewidth=2,
                 zorder=3 if linestyle == "-" else 2,
             )
-        ax.plot([], [], " ", label="⋮")  # further mutations, not drawn
+        ax.plot([], [], " ", label="…")  # further mutations, not drawn
         ax.axhline(1, color="black", linestyle=":", linewidth=0.8)
         ax.set(
             xlabel="Population size ($N$)",
