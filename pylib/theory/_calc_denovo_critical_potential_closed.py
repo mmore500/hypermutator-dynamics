@@ -31,10 +31,10 @@ def calc_denovo_critical_potential_closed(
 
     2D lattice of demes. A mutator lineage that gets ahead adapts faster
     than its surroundings but spreads no faster, so mutators fix only if
-    their domains, founded at rate J = deme_size x supply_mut per deme per
-    generation and spreading at speed v, cover all N / deme_size demes
-    before nonmutators climb K steps at one sweep time T_non each:
-        K* = {3 ln[N / (deme_size ln 2)] / (pi J v^2)}^(1/3) / T_non.
+    their domains, founded at per-capita rate x supply_mut, cover all
+    N / deme_size demes before nonmutators climb K steps at one sweep time
+    T_non each. With S from `calc_unswept_prob`, K* solves
+        (N / deme_size) S(K* T_non; x supply_mut) = ln 2.
 
     K* depends only logarithmically on N and mu, and is far larger in the
     structured case. In small populations sweeps do not overlap and mutators
@@ -55,11 +55,11 @@ def calc_denovo_critical_potential_closed(
             + np.log(N * p["supply_non"] * sweep_time / (freq * np.log(2.0)))
             / np.log(p["supply_mut"] / p["supply_non"]),
         )
-    rate_lead = deme_size * freq * p["supply_mut"]
+    # invert S(t) = deme_size ln 2 / N for t
     speed = calc_wave_speed(deme_size, p["growth_mut"])
-    cover_time = (
+    cover_time = np.log(deme_size * p["pi_mut"]) / p["growth_mut"] + (
         3.0
         * np.log(N / (deme_size * np.log(2.0)))
-        / (np.pi * rate_lead * speed**2)
+        / (np.pi * freq * p["supply_mut"] * deme_size * speed**2)
     ) ** (1.0 / 3.0)
     return float(cover_time / sweep_time_non)
