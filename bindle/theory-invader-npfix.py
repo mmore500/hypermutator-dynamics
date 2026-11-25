@@ -92,7 +92,7 @@ def _(model_N, model_npfix):
 @app.cell
 def _(model_N, model_npfix, teeplot_subdir):
     def plot_invader_npfix() -> plt.Figure:
-        fig, ax = plt.subplots(figsize=(3.35, 3.35))
+        fig, ax = plt.subplots(figsize=(4, 4))
         for K, color, linestyle, label in (
             (
                 np.inf,
@@ -133,9 +133,7 @@ def _(model_N, model_npfix, teeplot_subdir):
             yscale="log",
         )
         ax.spines[["top", "right"]].set_visible(False)
-        ax.legend(
-            bbox_to_anchor=(0, 1), frameon=False, loc="lower left", fontsize=8
-        )
+        ax.legend(frameon=False, loc="upper left", fontsize=8)
         fig.tight_layout()
         return fig
 
