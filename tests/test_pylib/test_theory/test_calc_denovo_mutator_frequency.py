@@ -15,9 +15,14 @@ def test_calc_denovo_mutator_frequency_balance_limit():
 
 
 def test_calc_denovo_mutator_frequency_frequent_sweeps_limit():
-    # short intervals: mutators accumulate linearly, averaging mu T / 2
-    assert calc_denovo_mutator_frequency(1.0) == pytest.approx(
-        1e-6 / 2, rel=1e-2
+    # short intervals: mutators accumulate for about one interval, mu T
+    assert calc_denovo_mutator_frequency(1.0) == pytest.approx(1e-6, rel=0.02)
+
+
+def test_calc_denovo_mutator_frequency_supply_over_loss():
+    delta = calc_load_params()["delta"]
+    assert calc_denovo_mutator_frequency(100.0) == pytest.approx(
+        1e-6 / (delta + 0.01)
     )
 
 
