@@ -211,9 +211,7 @@ def _(dfxs_1, model_xy, teeplot_subdir):
                     title=None,
                     columnspacing=0.7,
                 )
-                add_legend_entry(
-                    _teed, "analytic\napprox", before="initial\nconditions"
-                )
+                add_legend_entry(_teed, "analytic\napprox")
                 for _ax in _teed.axes.flat:
                     _ax.axhline(0.5, ls=":", c="gray", lw=1)
                     _ax.set_yticks([0, 0.5, 1])
@@ -318,9 +316,7 @@ def _(dfxs_1, model_xy, teeplot_subdir):
                     title=None,
                     columnspacing=0.7,
                 )
-                add_legend_entry(
-                    _teed, "analytic\napprox", before="initial\nconditions"
-                )
+                add_legend_entry(_teed, "analytic\napprox")
                 for _ax in _teed.axes.flat:
                     _ax.axhline(0.5, ls=":", c="gray", lw=1)
                     _ax.set_yticks([0, 0.5, 1])
