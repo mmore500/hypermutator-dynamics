@@ -24,7 +24,7 @@ In line with expectations, no further qualitative differences in mutator fixatio
 For the largest-scale trials, shown in the left panel of Figure \ref{fig:wse-inf-one:2048}, an increased subpopulation size of 2,048 agents per deme was used.
 As such, in these trials, note that coarsened spacing between surveyed population sizes obscures the sign-change fitness effect near the lower bound of population size.
 
-[Paragraph comparing against \cref{eq:escape}: with unlimited adaptive potential the analytic approximation reduces to the escape term, which reproduces the sign change at $N_\mathrm{crit}^{-} = \delta / u_m \approx 690$ and saturation of mutator fixation probability at larger sizes (dashed lines, left panels of Figure \ref{fig:wse-inf-one}); note the lower sign change is unaffected by deme size.]
+[Paragraph comparing against \cref{eq:escape}: with unlimited adaptive potential the analytic approximation reduces to the escape term, which reproduces the sign change at $N_\mathrm{crit}^{-} = \delta / u_m \approx 600$ and saturation of mutator fixation probability at larger sizes (dashed lines, left panels of Figure \ref{fig:wse-inf-one}); note the lower sign change is unaffected by deme size.]
 
 \subsection{Restricting Adaptive Potential}
 \label{sec:restricting-adaptive-potential}
@@ -43,7 +43,7 @@ These results substantiate an earlier verbal hypothesis by \citet{desai2011balan
 The rationale behind this expectation is that where fixation time is long, non-mutators are more likely to discover a comparable beneficial allele before being driven to extinction.
 From this point, disadvantage in mutational load dooms the mutator allele.
 
-[Paragraph: \cref{eq:catchup} makes this argument quantitative for $K = 1$. Report predicted upper critical population size $N_\mathrm{crit}^{+}(1)$ from \cref{eq:ncrit-upper} ($1.0 \times 10^5$ well-mixed; somewhat lower with deme structure) against the observed second sign change near 100,000 agents (dashed lines, right panels of Figure \ref{fig:wse-inf-one}). Note where the approximation is rough: it overshoots peak mutator fixation probability near $N \approx 5{,}000$ and falls off somewhat more sharply than simulation above $N_\mathrm{crit}^{+}$.]
+[Paragraph: \cref{eq:catchup} makes this argument quantitative for $K = 1$. Report predicted upper critical population size $N_\mathrm{crit}^{+}(1)$ from \cref{eq:ncrit-upper} ($9.8 \times 10^4$ well-mixed; somewhat lower with deme structure) against the observed second sign change near 100,000 agents (dashed lines, right panels of Figure \ref{fig:wse-inf-one}). Note where the approximation is rough: it overshoots peak mutator fixation probability near $N \approx 5{,}000$ and falls off somewhat more sharply than simulation above $N_\mathrm{crit}^{+}$.]
 
 \input{fig/avail-ben-muts}
 
@@ -54,7 +54,7 @@ Even with the largest surveyed billion-agent population size, mutators regain se
 Interestingly, this result may help explain an earlier observation by \citet{tenaillon1999mutators} that below a threshold of four beneficial mutations available, mutator alleles never rose from background levels to fix within their compartment-based model of a well-mixed billion-member population.
 Notwithstanding differences in model parameterization and population structure, our findings suggest that this threshold may coincide with the point where the net fitness effect of the mutator allele neutralizes in commensurately scaled populations.
 
-[Paragraph comparing Figure \ref{fig:avail-ben-muts} against \cref{eq:fix,eq:ncrit-upper}: the share law predicts $N_\mathrm{crit}^{+}$ rises by $u_m / u_n \approx 81$ per available beneficial mutation ($N_\mathrm{crit}^{+} \approx 1.0 \times 10^5$, $4.6 \times 10^6$, $3.7 \times 10^8$, $3.0 \times 10^{10}$ for $K = 1$ to 4, well-mixed). Describe agreement (dashed lines) and where the approximation shifts $N_\mathrm{crit}^{+}$ too little under 2D structure at $K \geq 3$. Note the prediction places a billion-member population between $N_\mathrm{crit}^{+}(3)$ and $N_\mathrm{crit}^{+}(4)$, consistent with the four-mutation threshold of \citet{tenaillon1999mutators}.]
+[Paragraph comparing Figure \ref{fig:avail-ben-muts} against \cref{eq:fix,eq:ncrit-upper}: the share law predicts $N_\mathrm{crit}^{+}$ rises by about $u_m / u_n = M q_0 \approx 90$ per available beneficial mutation ($N_\mathrm{crit}^{+} \approx 9.8 \times 10^4$, $4.9 \times 10^6$, $4.4 \times 10^8$, $4.0 \times 10^{10}$ for $K = 1$ to 4, well-mixed). Describe agreement (dashed lines) and where the approximation shifts $N_\mathrm{crit}^{+}$ too little under 2D structure at $K \geq 3$. Note the prediction places a billion-member population between $N_\mathrm{crit}^{+}(3)$ and $N_\mathrm{crit}^{+}(4)$, consistent with the four-mutation threshold of \citet{tenaillon1999mutators}.]
 
 \input{fig/avail-ben-muts-gen}
 
@@ -86,7 +86,7 @@ In line with expectations, the \textit{de novo} treatment substantially reduces 
 Under \textit{de novo} conditions, nonmutators reliably resist mutator fixation in populations of 136 million through more than 10 beneficial mutations available.
 Under 50/50 conditions, by contrast, mutators begin to fix in these large populations past 2 beneficial mutations available.
 
-[Paragraph comparing Figure \ref{fig:denovo-5050-conditions-combined} against Section \ref{sec:model:denovo}: in small populations, fixation probability follows $1 - (1 - \rho)^K$ with $\rho \approx 0.008$ independent of population size (\cref{eq:denovo-small}); in large populations it switches near the critical adaptive potential $K^*$ of \cref{eq:kstar-2d}, predicted at 12 to 14 available beneficial mutations against 12 to 16 observed. Note the approximation places the switch about one mutation early at the largest sizes.]
+[Paragraph comparing Figure \ref{fig:denovo-5050-conditions-combined} against Section \ref{sec:model:denovo}: in small populations, fixation probability follows $1 - (1 - \rho)^K$ with $\rho \approx 0.009$ independent of population size (\cref{eq:denovo-small}); in large populations it switches near the critical adaptive potential $K^*$ of \cref{eq:kstar-2d}, predicted at 12 to 13.5 available beneficial mutations against 12 to 16 observed. Note the approximation places the switch about one mutation early at the largest sizes.]
 
 We performed sensitivity analysis of our findings to the underlying counter-based genome model used.
 For this purpose, we implemented an alternate ``site-explicit'' model where the probability of discovering a beneficial mutation scales proportional to the number available.
@@ -121,7 +121,7 @@ At peak mutator prevalence, we observed nonmutators shrink to less than 0.1\% of
 To assess the magnitude of transient peak mutator concentrations across levels of adaptive potential, we performed an additional set of four-replicate simulations with adaptive potentials ranging from 2 to 10 available beneficial mutations.
 For all replicates with 6 or more available beneficial mutations, mutators peaked beyond 50\% prevalence (Figure \ref{fig:peaksweep}).
 
-[Paragraph: nucleation-and-growth interpretation of Figure \ref{fig:dynamics} (mutator patches founded \textit{de novo} and expanding at a wave speed, racing nonmutator adaptation) and comparison of observed peak prevalence against \cref{eq:peak-prevalence} (dashed line in Figure \ref{fig:peaksweep}; predicted 0.03, 0.26, 0.65, 0.92, 0.99 at 2 to 10 available beneficial mutations). Caveat that these simulations used the site-explicit genome model whereas the approximation assumes the counter-based one.]
+[Paragraph: nucleation-and-growth interpretation of Figure \ref{fig:dynamics} (mutator patches founded \textit{de novo} and expanding at a wave speed, racing nonmutator adaptation) and comparison of observed peak prevalence against \cref{eq:peak-prevalence} (dashed line in Figure \ref{fig:peaksweep}; predicted 0.04, 0.28, 0.69, 0.94, 1.00 at 2 to 10 available beneficial mutations). Caveat that these simulations used the site-explicit genome model whereas the approximation assumes the counter-based one.]
 
 \subsection{Effects of Population Structure}
 \label{sec:population-structure}
@@ -143,7 +143,7 @@ These findings contrast with previous modeling work assuming unlimited adaptive 
 One possible explanation for why spatial structure can decrease mutator fixation probability is in extending fixation times, which extends the opportunity for nonmutators to exploit available adaptive potential before being driven to extinction.
 This described effect notably aligns with findings from \textit{in vivo} evolution experiments with \textit{E. coli} that show that migration barriers delaying introduction of mutator strains into nonmutator populations can reduce mutator advantage \citep{lechat2006escherichia}.
 
-[Paragraph: the analytic approximation supports this explanation and makes it quantitative (dashed lines in Figure \ref{fig:spatial-structure-combined}). Well-mixed, $K^*$ follows \cref{eq:kstar-mixed} (about 4.5 to 6, against 6 to 7 in simulation); with 2D structure, \cref{eq:kstar-2d} (about 12 to 14). The opposite effect at intermediate sizes also follows: on small grids a single mutator domain covers the lattice before nonmutators adapt, while slower sweeps give each mutator more time to hitchhike.]
+[Paragraph: the analytic approximation supports this explanation and makes it quantitative (dashed lines in Figure \ref{fig:spatial-structure-combined}). Well-mixed, $K^*$ follows \cref{eq:kstar-mixed} (about 4.5 to 5.5, against 6 to 7 in simulation); with 2D structure, \cref{eq:kstar-2d} (about 12 to 13.5). The opposite effect at intermediate sizes also follows: on small grids a single mutator domain covers the lattice before nonmutators adapt, while slower sweeps give each mutator more time to hitchhike.]
 
 On a separate front, it is surprising that substantial differences in mutator dynamics between deme-structured and well-mixed conditions only become apparent with low initial mutator frequency, given the established expectation of fitness effects of mutator alleles as a density- and number- independent \citep{raynes2019selection}.
 While one possible explanation may be in part that detectability of fitness effect magnitudes is masked by sensitivity limitations of the 50/50 assay, this result draws into question the extent to which density-independence of mutator fitness effects generalizes to scenarios with limited adaptive potential and spatial structure.

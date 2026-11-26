@@ -20,7 +20,7 @@ With unlimited adaptive potential there is no peak to catch up at, $P_\mathrm{ca
     \hline
     Indirect selection against mutators & $\delta \approx (M - 1) \lambda_d$ & \citet{johnson1999approach} \\
     Load-free fraction of mutators & $q_0$ & \citet{haigh1978accumulation} \\
-    Establishment probability & $p \approx 2 (s - \lambda)$ & \citet{haldane1927mathematical} \\
+    Establishment probability & $p = 1 - e^{-2s}$ & \citet{kimura1962probability,raynes2018sign} \\
     Fixation by drift & \cref{eq:drift} & \citet{kimura1962probability} \\
     Fixation by hitchhiking & \cref{eq:hitch} & \citet{raynes2018sign} \\
     Sweep kinetics & \cref{eq:unswept} & \citet{kolmogorov1937statistical,avrami1939kinetics,ralph2010parallel} \\
@@ -42,14 +42,16 @@ With unlimited adaptive potential there is no peak to catch up at, $P_\mathrm{ca
 \begin{align}
   \delta &= e^{-\lambda_d} - e^{-M \lambda_d} \approx (M - 1) \lambda_d
   && \text{indirect selection against mutators,} \label{eq:delta} \\
-  u_n &= \lambda_b\, p_n, \quad
-  u_m = M \lambda_b\, q_0\, p_m
+  p &= 1 - e^{-2s}
+  && \text{establishment probability of a beneficial mutation,} \label{eq:establishment} \\
+  u_n &= \lambda_b\, p, \quad
+  u_m = M \lambda_b\, q_0\, p
   && \text{supply of established beneficial lineages,} \label{eq:supply} \\
   r &= s - \delta
   && \text{growth rate of an established mutator lineage.} \label{eq:growth}
 \end{align}
 
-[Rank-based selection: $q_0$, $p_n$, $p_m$ and $r$ take these forms because a lineage's advantage is $s$ whatever the size of its fitness lead, and a loaded individual loses to any unloaded rival of its class.
+[Rank-based selection: $q_0$, $p$ and $r$ take these forms because a lineage's advantage is $s$ whatever the size of its fitness lead, and a loaded individual loses to any unloaded rival of its class.
 With additive or multiplicative fitness, $q_0$ becomes the classical $e^{-M \lambda_d / s_d}$ for deleterious effect $s_d$ \citep{haigh1978accumulation}, and establishment probability and growth rate scale with the lineage's lead over the population mean rather than being fixed at one step's worth.
 $\delta$ and the definitions of $u_n$, $u_m$ are unchanged.]
 
@@ -62,11 +64,11 @@ All assume the load-free class is not lost by drift; where $N q_0$ is small, Mul
 
 [Explain briefly, citing precedent.
 $\delta$: mutators' excess rate of producing loaded offspring \citep{johnson1999approach}.
-$p_n$, $p_m$: establishment probabilities of a beneficial mutation arising in a nonmutator or a load-free mutator, the survival probability $p$ of a branching process with Poisson offspring, $1 - p = e^{-W p}$ at mean offspring number $W = (1 + s) e^{-\lambda}$; approximately $2 (s - \lambda)$ \citep{haldane1927mathematical}.
+$p$: probability that a new beneficial mutation escapes early stochastic loss, the large-population limit of the fixation probability of \citet{kimura1962probability}, as used by \citet{raynes2018sign}; approximately $2s$. The same value is used for both types: mutators' load enters their supply through $q_0$ alone, following the standard result that a beneficial mutation succeeds only if it arises in the least-loaded class [suggest citing Peck 1994 and Johnson \& Barton 2002 here; references to be verified and added]. Solving the branching process separately for each type instead gives $0.176$ for nonmutators and $0.159$ for mutators.
 $q_0$: fraction of mutators free of deleterious mutations at mutation-selection balance \citep{haigh1978accumulation}; under the rank-based selection used here, $q_0 = 1 - (1 - e^{-M \lambda_d}) / s$.
 Only load-free mutators found lasting beneficial lineages \citep{johnson1999beneficial,desai2011balance}.
 Note that selection in the simulations is rank-based within a tournament of two, so a fitter lineage gains advantage $s$ regardless of the size of its lead; predictions would differ quantitatively under additive or multiplicative fitness.
-Numerical values under simulation parameters: $\delta \approx 0.0099$, $q_0 \approx 0.90$, $p_n \approx 0.176$, $p_m \approx 0.159$, $u_m / u_n \approx 81$.]
+Numerical values under simulation parameters: $\delta \approx 0.0099$, $q_0 \approx 0.90$, $p \approx 0.181$, $u_m / u_n = M q_0 \approx 90$.]
 
 \subsection{Escape} \label{sec:model:escape}
 
@@ -79,11 +81,11 @@ Numerical values under simulation parameters: $\delta \approx 0.0099$, $q_0 \app
   P_\mathrm{escape} &= P_\mathrm{drift} + (1 - P_\mathrm{drift})\, P_\mathrm{hitch}. \label{eq:escape}
 \end{align}
 
-[Rank-based selection: \cref{eq:drift,eq:hitch,eq:escape} keep their form under other selection schemes, changing only through the values of $u_m$ (via $q_0$ and $p_m$).]
+[Rank-based selection: \cref{eq:drift,eq:hitch,eq:escape} keep their form under other selection schemes, changing only through the values of $u_m$ (via $q_0$ and $p$).]
 
 [Explain: \cref{eq:drift} is the diffusion-approximation fixation probability of an allele with disadvantage $\delta$ \citep{kimura1962probability}.
 \Cref{eq:hitch} is the probability that at least one mutator founds an established beneficial lineage while loaded mutators decline at rate $\delta$; for $x_0 = 1/N$ it reduces to eq.\ 1c of \citet{raynes2018sign}.
-$P_\mathrm{hitch} = x_0$ exactly at $N = N_\mathrm{crit}^{-}$, whatever the value of $x_0$: the lower critical population size, above which mutators are favored (the sign inversion of \citet{raynes2018sign}); $N_\mathrm{crit}^{-} \approx 690$ under simulation parameters.]
+$P_\mathrm{hitch} = x_0$ exactly at $N = N_\mathrm{crit}^{-}$, whatever the value of $x_0$: the lower critical population size, above which mutators are favored (the sign inversion of \citet{raynes2018sign}); $N_\mathrm{crit}^{-} \approx 600$ under simulation parameters.]
 
 \subsection{Sweeps} \label{sec:model:sweep}
 
@@ -100,8 +102,8 @@ These are Kolmogorov--Johnson--Mehl--Avrami kinetics \citep{kolmogorov1937statis
 [Sentence: where $V(\tau)$ is the number of individuals a lineage has reached at age $\tau$. Structure sets $V$:]
 
 \begin{align}
-  \text{well-mixed:} \quad V(\tau) &= \frac{e^{r \tau}}{p_m},
-  & T(u) &= \frac{\ln(p_m\, r / u) - \gamma}{r}, \label{eq:sweep-mixed} \\
+  \text{well-mixed:} \quad V(\tau) &= \frac{e^{r \tau}}{p},
+  & T(u) &= \frac{\ln(p\, r / u) - \gamma}{r}, \label{eq:sweep-mixed} \\
   \text{2D:} \quad V(\tau) &= \sigma\, \pi\, v^2\, (\tau - \tau_0)^2,
   & T(u) &= \tau_0 + \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, \sigma\, v^2}\right)^{1/3}. \label{eq:sweep-2d}
 \end{align}
@@ -113,7 +115,7 @@ With additive or multiplicative fitness, a lineage $j$ steps ahead grows $j$ tim
 Well-mixed, an established lineage grows exponentially \citep{desai2007beneficial}.
 In two dimensions a lineage, after a local delay $\tau_0$, spreads as a disc at wave speed $v$ through a population of density $\sigma$ individuals per unit area \citep{fisher1937wave}; the resulting $T$ is the characteristic time of \citet{ralph2010parallel}.
 The 2D model thus needs only $\sigma$, $v$ and $\tau_0$, whatever the fine-scale structure.
-For the lattice of demes simulated here, measuring distance in demes, $\sigma = n$; a lineage takes $\tau_0 = \ln(n\, p_m) / r$ generations to take over its founding deme; and it advances one deme once a migrant establishes in the next, giving $v = r / \ln(n\, r / m)$ demes per generation under strong selection within demes ($n r \gg m$).
+For the lattice of demes simulated here, measuring distance in demes, $\sigma = n$; a lineage takes $\tau_0 = \ln(n\, p) / r$ generations to take over its founding deme; and it advances one deme once a migrant establishes in the next, giving $v = r / \ln(n\, r / m)$ demes per generation under strong selection within demes ($n r \gg m$).
 Establishment probability is unaffected by this form of structure \citep{maruyama1970fixation}, so structure does not enter $P_\mathrm{escape}$.
 Other structures need only their own $V$: in $d$ dimensions $V \propto (v \tau)^d$ and $T \propto (u v^d)^{-1/(d+1)}$.]
 
@@ -157,7 +159,7 @@ Normalized fixation probability, as plotted by \citet{raynes2018sign}, is $P_\ma
 
 [Explain: mutators are favored only for $N_\mathrm{crit}^{-} < N < N_\mathrm{crit}^{+}(K)$.
 Each further available beneficial mutation raises $N_\mathrm{crit}^{+}$ by the factor $u_m / u_n$, roughly the mutator strength $M$.
-Predicted values under simulation parameters for a 50/50 start, well-mixed: $N_\mathrm{crit}^{+} \approx 1.0 \times 10^5$, $4.6 \times 10^6$, $3.7 \times 10^8$, and $3.0 \times 10^{10}$ for $K = 1$, 2, 3, and 4; and for 256-agent demes: $6.7 \times 10^4$, $3.2 \times 10^6$, $2.6 \times 10^8$, and $2.1 \times 10^{10}$.]
+Predicted values under simulation parameters for a 50/50 start, well-mixed: $N_\mathrm{crit}^{+} \approx 9.8 \times 10^4$, $4.9 \times 10^6$, $4.4 \times 10^8$, and $4.0 \times 10^{10}$ for $K = 1$, 2, 3, and 4; and for 256-agent demes: $6.6 \times 10^4$, $3.4 \times 10^6$, $3.1 \times 10^8$, and $2.8 \times 10^{10}$.]
 
 \subsection{Mutators Arising \textit{De Novo}} \label{sec:model:denovo}
 
@@ -188,7 +190,7 @@ Well-mixed: $K^*$ is where \cref{eq:catchup} at start frequency $\bar{x}$ gives 
 
 [Rank-based selection: \cref{eq:xbar,eq:denovo-small} are unchanged in form. \Cref{eq:kstar-mixed} inherits the share law's dependence, and \cref{eq:kstar-2d,eq:peak-prevalence} assume nonmutators climb at a constant $T_n$ per step and mutator domains spread at a constant $v$, both of which would vary with fitness lead under other schemes.]
 
-[Explain: $T_n$ is \cref{eq:sweep-mixed} or \cref{eq:sweep-2d} evaluated for nonmutators (supply $u_n$, growth $s$, establishment $p_n$).
+[Explain: $T_n$ is \cref{eq:sweep-mixed} or \cref{eq:sweep-2d} evaluated for nonmutators (supply $u_n$, growth $s$).
 $K^*$ depends only logarithmically on $N$ and $\mu$, and is far larger under spatial structure.
 \Cref{eq:peak-prevalence} gives the fraction of the lattice reached by mutator domains when nonmutators reach the fitness peak.]
 
