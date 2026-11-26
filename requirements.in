@@ -26,6 +26,7 @@ requests==2.33.1
 ruff==0.0.260
 scipy==1.14.1
 seaborn==0.13.2
+sympy==1.13.3
 teeplot==1.2.0
 tqdm==4.64.1
 uv==0.4.20
