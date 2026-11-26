@@ -9,10 +9,14 @@ import seaborn as sns
 def add_legend_entry(
     obj: typing.Union[sns.FacetGrid, mpl_axes.Axes],
     label: str = "analytic approximation",
+    before: typing.Optional[str] = None,
     **kwargs,
 ) -> typing.Optional[mpl_legend.Legend]:
-    """Append a line entry to the existing legend of a seaborn grid or
+    """Add a line entry to the existing legend of a seaborn grid or
     matplotlib axes, keeping the legend's position and styling.
+
+    The entry is appended, or, if `before` names an existing entry's label,
+    inserted ahead of that entry.
 
     Keyword arguments set the entry's line properties; the default is a
     dashed black line, as used for math model predictions. Returns the new
@@ -25,10 +29,12 @@ def add_legend_entry(
 
     handles = [*old.legend_handles]
     labels = [text.get_text() for text in old.texts]
-    handles.append(
-        mpl_lines.Line2D([], [], **{"color": "black", "ls": "--", **kwargs})
+    index = len(labels) if before is None else labels.index(before)
+    handles.insert(
+        index,
+        mpl_lines.Line2D([], [], **{"color": "black", "ls": "--", **kwargs}),
     )
-    labels.append(label)
+    labels.insert(index, label)
 
     owner = old.axes if old.isaxes else old.figure
     transform = old.axes.transAxes if old.isaxes else old.figure.transFigure
