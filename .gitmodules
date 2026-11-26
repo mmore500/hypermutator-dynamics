@@ -187,11 +187,6 @@
 	url = https://github.com/mmore500/hypermutator-dynamics.git
 	branch = bindle-perf-wse-vs-gpu.py
 	shallow = true
-[submodule "bindle/bindle-theory-invader-npfix.py"]
-	path = bindle/bindle-theory-invader-npfix.py
-	url = https://github.com/mmore500/hypermutator-dynamics.git
-	branch = bindle-theory-invader-npfix.py
-	shallow = true
 [submodule "bindle/bindle-wse-5050-spatial2d-2048atile-infben-traits.py"]
 	path = bindle/bindle-wse-5050-spatial2d-2048atile-infben-traits.py
 	url = https://github.com/mmore500/hypermutator-dynamics.git
@@ -216,4 +211,9 @@
 	path = bindle/bindle-wse-denovo-spatial2d-explicitsite-timeseries.py
 	url = https://github.com/mmore500/hypermutator-dynamics.git
 	branch = bindle-wse-denovo-spatial2d-explicitsite-timeseries.py
+	shallow = true
+[submodule "bindle/bindle-theory-hypermutator-advantage.py"]
+	path = bindle/bindle-theory-hypermutator-advantage.py
+	url = https://github.com/mmore500/hypermutator-dynamics.git
+	branch = bindle-theory-hypermutator-advantage.py
 	shallow = true
