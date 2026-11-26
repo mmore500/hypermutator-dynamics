@@ -3,7 +3,7 @@ import typing
 import numpy as np
 from scipy import special as sp_special
 
-from ._calc_wave_speed import calc_wave_speed
+from ._calc_fill_time import calc_fill_time
 
 
 def calc_sweep_time(
@@ -21,18 +21,18 @@ def calc_sweep_time(
     with gamma the Euler-Mascheroni constant, for supply << growth.
 
     2D lattice of demes:
-        T = Gamma(4/3) [3 / (pi supply deme_size v^2)]^(1/3)
-            + ln(deme_size establishment) / growth,
-    with wave speed v from `calc_wave_speed`. In d dimensions the first term
-    scales as (supply v^d)^(-1/(d+1)) (cf. Ralph & Coop 2010).
+        T = t_fill + Gamma(4/3) [3 t_fill^2 / (pi supply deme_size)]^(1/3),
+    with t_fill from `calc_fill_time`: a lineage fills its founding deme,
+    then advances one deme per t_fill. In d dimensions the second term
+    scales as (supply / t_fill^d)^(-1/(d+1)) (cf. Ralph & Coop 2010).
     """
     if deme_size is None:
         return (
             np.log(establishment * growth / supply) - np.euler_gamma
         ) / growth
-    speed = calc_wave_speed(deme_size, growth)
+    fill_time = calc_fill_time(deme_size, growth, establishment)
     return float(
-        sp_special.gamma(4.0 / 3.0)
-        * (3.0 / (np.pi * supply * deme_size * speed**2)) ** (1.0 / 3.0)
-        + np.log(deme_size * establishment) / growth
+        fill_time
+        + sp_special.gamma(4.0 / 3.0)
+        * (3.0 * fill_time**2 / (np.pi * supply * deme_size)) ** (1.0 / 3.0)
     )
