@@ -3,9 +3,9 @@ import typing
 import numpy as np
 
 from ._calc_denovo_mutator_frequency import calc_denovo_mutator_frequency
+from ._calc_fill_time import calc_fill_time
 from ._calc_load_params import calc_load_params
 from ._calc_sweep_time import calc_sweep_time
-from ._calc_wave_speed import calc_wave_speed
 
 
 def calc_denovo_critical_potential_closed(
@@ -56,10 +56,11 @@ def calc_denovo_critical_potential_closed(
             / np.log(p["supply_mut"] / p["supply_non"]),
         )
     # invert S(t) = deme_size ln 2 / N for t
-    speed = calc_wave_speed(deme_size, p["growth_mut"])
-    cover_time = np.log(deme_size * p["pi_mut"]) / p["growth_mut"] + (
+    fill_time = calc_fill_time(deme_size, p["growth_mut"], p["pi_mut"])
+    cover_time = fill_time + (
         3.0
+        * fill_time**2
         * np.log(N / (deme_size * np.log(2.0)))
-        / (np.pi * freq * p["supply_mut"] * deme_size * speed**2)
+        / (np.pi * freq * p["supply_mut"] * deme_size)
     ) ** (1.0 / 3.0)
     return float(cover_time / sweep_time_non)
