@@ -33,7 +33,9 @@ def calc_catchup_prob_closed(
 
     2. Exposure. Nonmutators one step below the peak can reach it until
        mutators' final sweep arrives, a time T from `calc_sweep_time` at
-       mutators' supply into the peak class, (1 - a_{K-1}) supply_mut.
+       mutators' supply rate supply_mut. One sweep time is used for every
+       K; allowing for the smaller founding population at the first step
+       changes the upper critical size by about 10%.
 
     3. Count. The expected number of nonmutator lineages established at the
        peak is N supply_non a_{K-1} T, so
@@ -55,9 +57,8 @@ def calc_catchup_prob_closed(
     ratio = p["supply_non"] / p["supply_mut"]
     odds = (1.0 - x0) / x0 * hitch * ratio ** (K - 1)
     share_non = odds / (1.0 + odds)
-    supply = (1.0 - share_non) * p["supply_mut"]
     sweep_time = calc_sweep_time(
-        supply, p["growth_mut"], p["pi_mut"], deme_size
+        p["supply_mut"], p["growth_mut"], p["pi_mut"], deme_size
     )
     num_established = N * p["supply_non"] * share_non * sweep_time
     return float(-np.expm1(-num_established)), float(
