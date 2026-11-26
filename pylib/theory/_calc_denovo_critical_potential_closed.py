@@ -22,8 +22,8 @@ def calc_denovo_critical_potential_closed(
     adapting nonmutator population (`calc_denovo_mutator_frequency`).
 
     Well-mixed (`deme_size` None). By the share law of
-    `calc_hold_prob_closed` at start frequency x, nonmutators' odds in class
-    k are (supply_non / supply_mut)^k / x, and mutators hold their lead half
+    `calc_catchup_prob_closed` at start frequency x, nonmutators' odds in class
+    k are (supply_non / supply_mut)^k / x, and nonmutators catch up half
     the time once nonmutators' share of the class below the peak satisfies
     N supply_non a T = ln 2:
         K* = 1 + ln[N supply_non T / (x ln 2)]
