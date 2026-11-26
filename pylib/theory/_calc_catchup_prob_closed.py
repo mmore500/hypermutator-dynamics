@@ -7,20 +7,21 @@ from ._calc_load_params import calc_load_params
 from ._calc_sweep_time import calc_sweep_time
 
 
-def calc_hold_prob_closed(
+def calc_catchup_prob_closed(
     N: float,
     K: int,
     x0: float = 0.5,
     deme_size: typing.Optional[int] = None,
     **kwargs,
 ) -> typing.Tuple[float, float]:
-    """P(no nonmutator lineage establishes at the fitness peak K before
+    """P(some nonmutator lineage establishes at the fitness peak K before
     nonmutators are swept out by adapting mutators), given that mutators
     escape their load, for any start frequency x0, in closed form.
 
     Once mutators reach the peak they stall, still carrying their load, so
-    any nonmutator lineage also established there takes over. Three steps
-    give the expected number of such lineages.
+    any nonmutator lineage that catches up there takes over. Mutators fix
+    with probability P_escape * (1 - P_catchup). Three steps give the
+    expected number of such lineages.
 
     1. Share law. Equal-fitness mutators and nonmutators compete on equal
        terms, so each new fitness class is divided between them in
@@ -36,14 +37,15 @@ def calc_hold_prob_closed(
 
     3. Count. The expected number of nonmutator lineages established at the
        peak is N supply_non a_{K-1} T, so
-           P_hold = exp(-N supply_non a_{K-1} T) = exp(-N Ub C_K).
+           P_catchup = 1 - exp(-N supply_non a_{K-1} T)
+                     = 1 - exp(-N Ub C_K).
 
     For a start at appreciable frequency in a large population P_hitch is
     one; for a single invader, x0 = 1 / N, conditioning on escape matters at
     every N. Population structure enters only through the sweep time T. Pass
     `deme_size` for a large 2D lattice of demes; the default is well-mixed.
 
-    Returns (P_hold, C_K).
+    Returns (P_catchup, C_K).
     """
     if deme_size is not None and N <= deme_size:  # a single deme
         deme_size = None
@@ -58,4 +60,6 @@ def calc_hold_prob_closed(
         supply, p["growth_mut"], p["pi_mut"], deme_size
     )
     num_established = N * p["supply_non"] * share_non * sweep_time
-    return float(np.exp(-num_established)), float(num_established / (N * Ub))
+    return float(-np.expm1(-num_established)), float(
+        num_established / (N * Ub)
+    )
