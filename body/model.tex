@@ -137,29 +137,29 @@ Nonmutators one step below the peak can reach it until mutators' final sweep arr
 As in evolutionary rescue \citep{orr2008population}, the probability $P_\mathrm{catchup}$ that at least one nonmutator lineage does so is one minus the zero term of a Poisson distribution whose mean is the expected number of nonmutator lineages established at the peak in that time:]
 
 \begin{equation}
-  P_\mathrm{catchup} = 1 - \exp\!\left(-N\, u_n\, a_{K-1}\, T_K\right),
+  P_\mathrm{catchup} = 1 - \exp\!\left(-N\, u_n\, a_{K-1}\, T\right),
   \qquad
-  T_K = T\!\left((1 - a_{K-1})\, u_m\right). \label{eq:catchup}
+  T = T(u_m). \label{eq:catchup}
 \end{equation}
 
-[Rank-based selection: the Poisson form of \cref{eq:catchup} is general; $a_{K-1}$ and $T_K$ inherit the changes noted for \cref{eq:share} and \cref{eq:sweep-mixed,eq:sweep-2d}.
+[Rank-based selection: the Poisson form of \cref{eq:catchup} is general; $a_{K-1}$ and $T$ inherit the changes noted for \cref{eq:share} and \cref{eq:sweep-mixed,eq:sweep-2d}.
 That nonmutators established at the peak always displace stalled mutators, at rate $\delta$, does not depend on the selection scheme.]
 
-[Explain: $(1 - a_{K-1})\, u_m$ is mutators' supply into the peak class.
+[Explain: $T$ is the sweep time of \cref{eq:sweep-mixed} or \cref{eq:sweep-2d} at mutators' supply rate $u_m$, taken the same for every $K$; allowing for the smaller founding population at the first step changes $N_\mathrm{crit}^{+}$ by about 10\%.
 This formalizes the verbal argument of \citet{desai2011balance} and the multi-step dynamics shown by \citet{tanaka2003evolution,tenaillon1999mutators}.
 Normalized fixation probability, as plotted by \citet{raynes2018sign}, is $P_\mathrm{fix} / x_0$; see Figure \ref{fig:invader-npfix}.]
 
 [Sentence: upper critical population size. For a start at appreciable frequency, $1 - P_\mathrm{catchup}$ falls through $x_0$ at]
 
 \begin{equation}
-  N_\mathrm{crit}^{+}(K) = \frac{\ln(1 / x_0)}{u_n\, a_{K-1}\, T_K}, \label{eq:ncrit-upper}
+  N_\mathrm{crit}^{+}(K) = \frac{\ln(1 / x_0)}{u_n\, a_{K-1}\, T}, \label{eq:ncrit-upper}
 \end{equation}
 
 [Rank-based selection: under other schemes $N_\mathrm{crit}^{+}$ is expected to be larger and to rise by more than $u_m / u_n$ per available mutation; a resimulation with additive fitness raised it 6-fold at $K = 2$ and 15-fold at $K = 3$.]
 
 [Explain: mutators are favored only for $N_\mathrm{crit}^{-} < N < N_\mathrm{crit}^{+}(K)$.
 Each further available beneficial mutation raises $N_\mathrm{crit}^{+}$ by the factor $u_m / u_n$, roughly the mutator strength $M$.
-Predicted values under simulation parameters for a 50/50 start, well-mixed: $N_\mathrm{crit}^{+} \approx 9.8 \times 10^4$, $4.9 \times 10^6$, $4.4 \times 10^8$, and $4.0 \times 10^{10}$ for $K = 1$, 2, 3, and 4; and for 256-agent demes: $6.6 \times 10^4$, $3.4 \times 10^6$, $3.1 \times 10^8$, and $2.8 \times 10^{10}$.]
+Predicted values under simulation parameters for a 50/50 start, well-mixed: $N_\mathrm{crit}^{+} \approx 1.1 \times 10^5$, $5.0 \times 10^6$, $4.4 \times 10^8$, and $4.0 \times 10^{10}$ for $K = 1$, 2, 3, and 4; and for 256-agent demes: $7.6 \times 10^4$, $3.5 \times 10^6$, $3.1 \times 10^8$, and $2.8 \times 10^{10}$.]
 
 \subsection{Mutators Arising \textit{De Novo}} \label{sec:model:denovo}
 
