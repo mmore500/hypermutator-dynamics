@@ -35,7 +35,7 @@ With unlimited adaptive potential there is no peak to catch up at, $P_\mathrm{ca
 
 \subsection{Ingredients} \label{sec:model:parameters}
 
-[Sentence introducing notation, with reference to \cref{sec:poisson,sec:evolution}: population size $N$; for 2D populations, density $\sigma$, wave speed $v$ and local delay $\tau_0$ (set, for a lattice of demes, by deme size $n$ and migrants per neighbor per generation $m$); initial mutator frequency $x_0$ ($1/2$ for 50/50 competitions, $1/N$ for a single invader); number of available beneficial mutations $K$; selective advantage $s$ of a one-step higher fitness score; nonmutator beneficial and deleterious mutation rates $\lambda_b$, $\lambda_d$; mutator strength $M$; and rate $\mu$ at which the mutator allele arises \textit{de novo}.]
+[Sentence introducing notation, with reference to \cref{sec:poisson,sec:evolution}: population size $N$; for 2D populations, density $\sigma$, wave speed $v$ and local delay $\tau_0$ (set, for a lattice of demes, by deme size $n$ and migrants per neighbor per generation $m$); initial mutator frequency $x_0$ ($1/2$ for 50/50 competitions; $1/N$ for the single invader of \citet{raynes2018sign}, which needs the modifications noted below); number of available beneficial mutations $K$; selective advantage $s$ of a one-step higher fitness score; nonmutator beneficial and deleterious mutation rates $\lambda_b$, $\lambda_d$; mutator strength $M$; and rate $\mu$ at which the mutator allele arises \textit{de novo}.]
 
 [Sentence: the model uses these only through four standard quantities.]
 
@@ -82,6 +82,8 @@ Numerical values under simulation parameters: $\delta \approx 0.0099$, $q_0 \app
 \end{align}
 
 [Rank-based selection: \cref{eq:drift,eq:hitch,eq:escape} keep their form under other selection schemes, changing only through the values of $u_m$ (via $q_0$ and $p$).]
+
+[Single invader: \cref{eq:drift,eq:hitch,eq:escape} apply unchanged with $x_0 = 1/N$, where they reduce to eq.\ 1 of \citet{raynes2018sign}. One caveat: a lone invader starts load-free, as do mutators in the 50/50 simulations, so whether $q_0$ belongs in $u_m$ for the escape step is open; \citet{raynes2018sign} have no such factor.]
 
 [Explain: \cref{eq:drift} is the diffusion-approximation fixation probability of an allele with disadvantage $\delta$ \citep{kimura1962probability}.
 \Cref{eq:hitch} is the probability that at least one mutator founds an established beneficial lineage while loaded mutators decline at rate $\delta$; for $x_0 = 1/N$ it reduces to eq.\ 1c of \citet{raynes2018sign}.
@@ -132,6 +134,8 @@ Nonmutators' odds $o_k$ and share $a_k$ in fitness class $k$ are]
 [Rank-based selection: \cref{eq:share} relies on it most. The constant factor $u_n / u_m$ per class holds because being further ahead confers no extra advantage, so each class is contested afresh on equal terms.
 With additive or multiplicative fitness, mutators' lead compounds: a lineage several steps ahead outgrows one a single step ahead, as in traveling-wave theory \citep{desai2007beneficial}, so nonmutators' odds fall faster than geometrically with $k$.]
 
+[Single invader: the factor $P_\mathrm{hitch}$ in \cref{eq:share} matters only here. For a start at appreciable frequency it is one and can be dropped, leaving $o_k = [(1 - x_0)/x_0]\,(u_n/u_m)^k$. For a lone invader escape is rare ($P_\mathrm{hitch} \approx u_m / \delta$), and without the factor every escaped mutator would be assigned almost none of the first class; with it, nonmutators' odds in class 1 are about $N u_n / \delta$.]
+
 [Sentence: each further class cuts nonmutators' odds by the supply ratio $u_n / u_m$; the factor $P_\mathrm{hitch}$ conditions on mutators having escaped (it is one for a start at appreciable frequency in a large population).
 Nonmutators one step below the peak can reach it until mutators' final sweep arrives.
 As in evolutionary rescue \citep{orr2008population}, the probability $P_\mathrm{catchup}$ that at least one nonmutator lineage does so is one minus the zero term of a Poisson distribution whose mean is the expected number of nonmutator lineages established at the peak in that time:]
@@ -145,9 +149,11 @@ As in evolutionary rescue \citep{orr2008population}, the probability $P_\mathrm{
 [Rank-based selection: the Poisson form of \cref{eq:catchup} is general; $a_{K-1}$ and $T$ inherit the changes noted for \cref{eq:share} and \cref{eq:sweep-mixed,eq:sweep-2d}.
 That nonmutators established at the peak always displace stalled mutators, at rate $\delta$, does not depend on the selection scheme.]
 
+[Single invader: the sweep time in \cref{eq:catchup} would differ. $T(u_m)$ assumes mutators numerous enough to found lineages throughout the population, giving a sweep time independent of $N$. A lone invader's first sweep has one founder: a wait of about $1/\delta$ for it to arise, then growth from one copy, roughly $T \approx 1/\delta + \ln(N p)/r$, which increases with $N$ (about 210 generations at $N = 10^5$ against 70). Using $T(u_m)$ for a lone invader overstates mutators' advantage; this alternative is a rough argument and is untested.]
+
 [Explain: $T$ is the sweep time of \cref{eq:sweep-mixed} or \cref{eq:sweep-2d} at mutators' supply rate $u_m$, taken the same for every $K$; allowing for the smaller founding population at the first step changes $N_\mathrm{crit}^{+}$ by about 10\%.
 This formalizes the verbal argument of \citet{desai2011balance} and the multi-step dynamics shown by \citet{tanaka2003evolution,tenaillon1999mutators}.
-Normalized fixation probability, as plotted by \citet{raynes2018sign}, is $P_\mathrm{fix} / x_0$; see Figure \ref{fig:invader-npfix}.]
+Figure \ref{fig:hypermutator-advantage} plots the resulting hypermutator advantage, $2 P_\mathrm{fix} - 1$, for a 50/50 start; normalized fixation probability, as plotted by \citet{raynes2018sign} for a single invader, is $P_\mathrm{fix} / x_0$.]
 
 [Sentence: upper critical population size. For a start at appreciable frequency, $1 - P_\mathrm{catchup}$ falls through $x_0$ at]
 
@@ -195,6 +201,6 @@ $K^*$ depends only logarithmically on $N$ and $\mu$, and is far larger under spa
 \Cref{eq:peak-prevalence} gives the fraction of the lattice reached by mutator domains when nonmutators reach the fitness peak.]
 
 [Closing paragraph on scope and limitations: closed forms are approximations intended as scaling laws; numerical refinements (diffusion with killing for escape; branching-process recursion for catch-up; nucleation-and-growth with renewal sweeps for 2D \textit{de novo}) are provided in the supplement/software.
-The single-invader predictions of Figure \ref{fig:invader-npfix} have not been checked against simulation.
+The model is stated and tested for mutators starting at appreciable frequency or arising \textit{de novo}; the single-invader case of \citet{raynes2018sign} needs the modifications noted above and has not been checked against simulation.
 Selection is rank-based here; a resimulation with additive fitness raised $N_\mathrm{crit}^{+}$ 6-fold at $K = 2$ and 15-fold at $K = 3$.
 Possible relation to clonal interference theory \citep{gerrish1998fate,desai2007beneficial,good2016evolution}.]
