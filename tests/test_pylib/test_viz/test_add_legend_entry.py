@@ -51,3 +51,16 @@ def test_add_legend_entry_no_legend():
     __, ax = plt.subplots()
     assert add_legend_entry(ax) is None
     plt.close("all")
+
+
+def test_add_legend_entry_before():
+    __, ax = plt.subplots()
+    sns.lineplot(df, x="x", y="y", hue="what", ax=ax)
+    legend = add_legend_entry(ax, before="b")
+    assert [t.get_text() for t in legend.texts] == [
+        "a",
+        "analytic approximation",
+        "b",
+    ]
+    assert legend.legend_handles[1].get_linestyle() == "--"
+    plt.close("all")
