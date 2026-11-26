@@ -35,7 +35,7 @@ With unlimited adaptive potential there is no peak to catch up at, $P_\mathrm{ca
 
 \subsection{Ingredients} \label{sec:model:parameters}
 
-[Sentence introducing notation, with reference to \cref{sec:poisson,sec:evolution}: population size $N$; for 2D populations, density $\sigma$, wave speed $v$ and local delay $\tau_0$ (set, for a lattice of demes, by deme size $n$ and migrants per neighbor per generation $m$); initial mutator frequency $x_0$ ($1/2$ for 50/50 competitions; $1/N$ for the single invader of \citet{raynes2018sign}, which needs the modifications noted below); number of available beneficial mutations $K$; selective advantage $s$ of a one-step higher fitness score; nonmutator beneficial and deleterious mutation rates $\lambda_b$, $\lambda_d$; mutator strength $M$; and rate $\mu$ at which the mutator allele arises \textit{de novo}.]
+[Sentence introducing notation, with reference to \cref{sec:poisson,sec:evolution}: population size $N$; for 2D populations, density $\\rho$, wave speed $v$ and local delay $\tau_0$ (set, for a lattice of demes, by deme size $n$ and migrants per neighbor per generation $m$); initial mutator frequency $x_0$ ($1/2$ for 50/50 competitions; $1/N$ for the single invader of \citet{raynes2018sign}, which needs the modifications noted below); number of available beneficial mutations $K$; selective advantage $s$ of a one-step higher fitness score; nonmutator beneficial and deleterious mutation rates $\lambda_b$, $\lambda_d$; mutator strength $M$; and rate $\mu$ at which the mutator allele arises \textit{de novo}.]
 
 [Sentence: the model uses these only through four standard quantities.]
 
@@ -106,8 +106,8 @@ These are Kolmogorov--Johnson--Mehl--Avrami kinetics \citep{kolmogorov1937statis
 \begin{align}
   \text{well-mixed:} \quad V(\tau) &= \frac{e^{r \tau}}{p},
   & T(u) &= \frac{\ln(p\, r / u) - \gamma}{r}, \label{eq:sweep-mixed} \\
-  \text{2D:} \quad V(\tau) &= \sigma\, \pi\, v^2\, (\tau - \tau_0)^2,
-  & T(u) &= \tau_0 + \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, \sigma\, v^2}\right)^{1/3}. \label{eq:sweep-2d}
+  \text{2D:} \quad V(\tau) &= \\rho\, \pi\, v^2\, (\tau - \tau_0)^2,
+  & T(u) &= \tau_0 + \Gamma\!\left(\tfrac{4}{3}\right) \left(\frac{3}{\pi\, u\, \\rho\, v^2}\right)^{1/3}. \label{eq:sweep-2d}
 \end{align}
 
 [Rank-based selection: the kernel \cref{eq:unswept} is general, but the growth law $V$ is not. Here every sweeping lineage grows at the same rate $r$, so every sweep takes the same form.
@@ -115,9 +115,9 @@ With additive or multiplicative fitness, a lineage $j$ steps ahead grows $j$ tim
 
 [Explain: $\gamma$ is the Euler--Mascheroni constant and $\Gamma$ the gamma function.
 Well-mixed, an established lineage grows exponentially \citep{desai2007beneficial}.
-In two dimensions a lineage, after a local delay $\tau_0$, spreads as a disc at wave speed $v$ through a population of density $\sigma$ individuals per unit area \citep{fisher1937wave}; the resulting $T$ is the characteristic time of \citet{ralph2010parallel}.
-The 2D model thus needs only $\sigma$, $v$ and $\tau_0$, whatever the fine-scale structure.
-For the lattice of demes simulated here, measuring distance in demes, $\sigma = n$; a lineage takes $\tau_0 = \ln(n\, p) / r$ generations to take over its founding deme; and it advances one deme once a migrant establishes in the next, giving $v = r / \ln(n\, r / m)$ demes per generation under strong selection within demes ($n r \gg m$).
+In two dimensions a lineage, after a local delay $\tau_0$, spreads as a disc at wave speed $v$ through a population of density $\\rho$ individuals per unit area \citep{fisher1937wave}; the resulting $T$ is the characteristic time of \citet{ralph2010parallel}.
+The 2D model thus needs only $\\rho$, $v$ and $\tau_0$, whatever the fine-scale structure.
+For the lattice of demes simulated here, measuring distance in demes, $\\rho = n$; a lineage takes $\tau_0 = \ln(n\, p) / r$ generations to take over its founding deme; and it advances one deme once a migrant establishes in the next, giving $v = r / \ln(n\, r / m)$ demes per generation under strong selection within demes ($n r \gg m$).
 Establishment probability is unaffected by this form of structure \citep{maruyama1970fixation}, so structure does not enter $P_\mathrm{escape}$.
 Other structures need only their own $V$: in $d$ dimensions $V \propto (v \tau)^d$ and $T \propto (u v^d)^{-1/(d+1)}$.]
 
@@ -176,12 +176,12 @@ Absent sweeps this is the mutation-selection balance frequency $\mu / \delta$ \c
   \bar{x} = \frac{\mu}{\delta} \left(1 - \frac{1 - e^{-\delta T_n}}{\delta T_n}\right). \label{eq:xbar}
 \end{equation}
 
-[Sentence: small populations, where sweeps are rare and do not overlap ($\bar{x} \to \mu / \delta$). By the share law, the probability $\rho$ that a given sweep is a mutator's, and from it fixation probability, are independent of population size:]
+[Sentence: small populations, where sweeps are rare and do not overlap ($\bar{x} \to \mu / \delta$). By the share law, the probability $P_\mathrm{sweep}$ that a given sweep is a mutator's, and from it fixation probability, are independent of population size:]
 
 \begin{equation}
-  \rho = \frac{\bar{x}\, u_m}{u_n + \bar{x}\, u_m},
+  P_\mathrm{sweep} = \frac{\bar{x}\, u_m}{u_n + \bar{x}\, u_m},
   \qquad
-  P_\mathrm{fix} = 1 - (1 - \rho)^K. \label{eq:denovo-small}
+  P_\mathrm{fix} = 1 - (1 - P_\mathrm{sweep})^K. \label{eq:denovo-small}
 \end{equation}
 
 [Sentence: large populations, where sweeps overlap. Fixation probability switches from near zero to near one over a narrow range of adaptive potential; $K^*$ denotes the number of available beneficial mutations at which mutators fix half the time.
@@ -190,7 +190,7 @@ Well-mixed: $K^*$ is where \cref{eq:catchup} at start frequency $\bar{x}$ gives 
 
 \begin{align}
   \text{well-mixed:} \quad K^* &= 1 + \frac{\ln\!\left[N\, u_n\, T(u_m) / (\bar{x} \ln 2)\right]}{\ln(u_m / u_n)}, \label{eq:kstar-mixed} \\
-  \text{2D:} \quad K^* &= \frac{1}{T_n} \left[\tau_0 + \left\{\frac{3 \ln\!\left[N / (n \ln 2)\right]}{\pi\, \bar{x}\, u_m\, \sigma\, v^2}\right\}^{1/3}\right], \label{eq:kstar-2d} \\
+  \text{2D:} \quad K^* &= \frac{1}{T_n} \left[\tau_0 + \left\{\frac{3 \ln\!\left[N / (n \ln 2)\right]}{\pi\, \bar{x}\, u_m\, \\rho\, v^2}\right\}^{1/3}\right], \label{eq:kstar-2d} \\
   \text{peak prevalence} &= 1 - S\!\left(K\, T_n;\, \bar{x}\, u_m\right). \label{eq:peak-prevalence}
 \end{align}
 
