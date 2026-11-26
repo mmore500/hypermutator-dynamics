@@ -59,9 +59,7 @@ def test_calc_catchup_prob_closed_invader_share_conditioned_on_escape():
     p, N = calc_load_params(), 1e4
     odds = N * p["supply_non"] / p["delta"]
     share = odds / (1 + odds)
-    T = calc_sweep_time(
-        (1 - share) * p["supply_mut"], p["growth_mut"], p["pi_mut"]
-    )
+    T = calc_sweep_time(p["supply_mut"], p["growth_mut"], p["pi_mut"])
     expected = -np.expm1(-N * p["supply_non"] * share * T)
     assert calc_catchup_prob_closed(N, 2, x0=1 / N)[0] == pytest.approx(
         expected, rel=1e-3
