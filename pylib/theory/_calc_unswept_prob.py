@@ -2,7 +2,7 @@ import typing
 
 import numpy as np
 
-from ._calc_wave_speed import calc_wave_speed
+from ._calc_fill_time import calc_fill_time
 
 
 def calc_unswept_prob(
@@ -27,16 +27,15 @@ def calc_unswept_prob(
 
     Well-mixed (`deme_size` None): V(tau) = exp(growth tau) / establishment.
 
-    2D lattice of demes: a clone takes tau0 = ln(deme_size establishment) /
-    growth generations to take over its founding deme, then spreads as a
-    disc at speed v from `calc_wave_speed`, so
-    V(tau) = deme_size pi v^2 (tau - tau0)^2 for tau > tau0. In d dimensions
-    V grows as (v tau)^d (cf. Ralph & Coop 2010).
+    2D lattice of demes: a clone takes t_fill (`calc_fill_time`) to take
+    over its founding deme, then spreads as a disc, advancing one deme per
+    t_fill, so V(tau) = deme_size pi (tau / t_fill - 1)^2 for tau > t_fill.
+    In d dimensions V grows as tau^d (cf. Ralph & Coop 2010).
     """
     if deme_size is None:
         reach = np.expm1(growth * t) / (growth * establishment)
     else:
-        speed = calc_wave_speed(deme_size, growth)
-        spread = max(t - np.log(deme_size * establishment) / growth, 0.0)
-        reach = deme_size * np.pi * speed**2 * spread**3 / 3.0
+        fill_time = calc_fill_time(deme_size, growth, establishment)
+        spread = max(t - fill_time, 0.0)
+        reach = deme_size * np.pi * spread**3 / (3.0 * fill_time**2)
     return float(np.exp(-supply * reach))
