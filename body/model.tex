@@ -53,6 +53,17 @@ With unlimited adaptive potential there is no peak to catch up at, $P_\mathrm{ca
 With additive or multiplicative fitness, $q_0$ becomes the classical $e^{-M \lambda_d / s_d}$ for deleterious effect $s_d$ \citep{haigh1978accumulation}, and establishment probability and growth rate scale with the lineage's lead over the population mean rather than being fixed at one step's worth.
 $\delta$ and the definitions of $u_n$, $u_m$ are unchanged.]
 
+[Other forms of $q_0$, writing $U = M \lambda_d$ and $s_d$ for the cost of one deleterious mutation.
+Rank-based (here): $q_0 = 1 - (1 - e^{-U}) / s \approx 1 - U / s$, with deleterious load roughly geometrically distributed.
+Multiplicative fitness: $q_0 = e^{-U / s_d}$, with load Poisson distributed with mean $U / s_d$ \citep{haigh1978accumulation}; additive fitness is approximately the same.
+Lethal deleterious mutations: $q_0 = e^{-U}$.
+The forms agree to first order in $U / s$ ($0.9005$ against $0.905$ under simulation parameters) and diverge as $U$ approaches $s$, where the rank-based form falls to zero.
+All assume the load-free class is not lost by drift; where $N q_0$ is small, Muller's ratchet operates and no balance formula applies.]
+
+[Other forms of $\delta$.
+The long-run cost of an elevated deleterious mutation rate equals the excess rate whatever the cost per mutation, so $\delta \approx (M - 1) \lambda_d$ holds across selection schemes; in log growth-rate terms it is exactly $(M - 1) \lambda_d$, and \cref{eq:delta} is the same quantity per generation.
+Two caveats apply under any scheme: mutators that start load-free pay almost nothing at first, the cost building toward $\delta$ over roughly $1 / s_d$ generations, a lag the model neglects; and with very weakly deleterious mutations, or where the ratchet operates, a constant $\delta$ is not a good description.]
+
 [Explain briefly, citing precedent.
 $\delta$: mutators' excess rate of producing loaded offspring \citep{johnson1999approach}.
 $p_n$, $p_m$: establishment probabilities of a beneficial mutation arising in a nonmutator or a load-free mutator, the survival probability $p$ of a branching process with Poisson offspring, $1 - p = e^{-W p}$ at mean offspring number $W = (1 + s) e^{-\lambda}$; approximately $2 (s - \lambda)$ \citep{haldane1927mathematical}.
