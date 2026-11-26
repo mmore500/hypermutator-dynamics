@@ -170,11 +170,13 @@ Predicted values under simulation parameters for a 50/50 start, well-mixed: $N_\
 \subsection{Mutators Arising \textit{De Novo}} \label{sec:model:denovo}
 
 [Sentence: mutators arising \textit{de novo} are treated as standing at their typical frequency $\bar{x}$ in an adapting nonmutator population; the results above then apply with $x_0 = \bar{x}$.
-Absent sweeps this is the mutation-selection balance frequency $\mu / \delta$ \citep{johnson1999approach}; each nonmutator sweep purges mutators, which rebuild over the interval $T_n$ between sweeps, so on average]
+Mutators are supplied at rate $\mu$ and lost in two ways: to their own deleterious load at rate $\delta$, which alone gives the mutation-selection balance $\mu / \delta$ \citep{johnson1999approach}, and to nonmutator sweeps, which pass about once every $T_n$ generations. Supply over total loss gives]
 
 \begin{equation}
-  \bar{x} = \frac{\mu}{\delta} \left(1 - \frac{1 - e^{-\delta T_n}}{\delta T_n}\right). \label{eq:xbar}
+  \bar{x} = \frac{\mu}{\delta + 1 / T_n}. \label{eq:xbar}
 \end{equation}
+
+[Explain: this treats sweeps as arriving at random, as in models of recurrent hitchhiking [suggest citing Kaplan, Hudson \& Langley 1989 and Gillespie 2000; references to be verified and added]. It reduces to $\mu / \delta$ when sweeps are rare and to $\mu T_n$ when they are frequent, and a further loss process, such as mutator reversion, would add its rate to the denominator. Under simulation parameters neither loss dominates: $\delta T_n \approx 3$ on the 2D lattice and about 1 when well-mixed.]
 
 [Sentence: small populations, where sweeps are rare and do not overlap ($\bar{x} \to \mu / \delta$). By the share law, the probability $P_\mathrm{sweep}$ that a given sweep is a mutator's, and from it fixation probability, are independent of population size:]
 
