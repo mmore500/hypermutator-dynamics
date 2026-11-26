@@ -10,6 +10,5 @@ def calc_drift_fixprob(N: float, x0: float = 0.5, **kwargs) -> float:
     """
     delta = calc_load_params(**kwargs)["delta"]
     a = 2.0 * N * delta
-    if a * (1.0 - x0) > 700:
-        return 0.0
-    return float(np.expm1(a * x0) / np.expm1(a))
+    # (e^{a x0} - 1) / (e^a - 1), arranged to avoid overflow at large a
+    return float(np.exp(a * (x0 - 1.0)) * np.expm1(-a * x0) / np.expm1(-a))
